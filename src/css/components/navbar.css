@@ -1,0 +1,30 @@
+.navbar {
+    width: 178px;
+    height: 100vh;
+    background-color: rgb(56 57 61);
+    overflow: hidden;
+}
+.navbar-header {
+    height: 48px;
+    display: flex;
+    align-items: center;
+    color: #fff;
+}
+
+.navbar-header__logo {
+    width: 92px;
+    height: 32px;
+    background-position: center;
+    background-size: contain;
+}
+
+.navbar-header__icon {
+    margin-left: 24px;
+    margin-right: 10px;
+    color: #fff;
+}
+
+.navbar-header__text {
+    text-transform: uppercase;
+    font-weight: 500;
+}
