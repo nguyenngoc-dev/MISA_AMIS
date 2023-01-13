@@ -333,12 +333,32 @@ export default {
       ],
     };
   },
-  async created() {
+   created() {
+   
+    // Lấy ra 20 th đầu tiên
+    this.getEmployeesFirst();
+    // Lấy toàn bộ 
+    this.getAllEmployees();
+  },
+  methods: {
+     /**
+     * author:Nguyễn Văn Ngọc(8/1/2023)
+     * Hàm getAllEmployees lấy ra toàn bộ nhân viên
+     */
+     getAllEmployees(){
+      try {
+        axios.get("https://cukcuk.manhnv.net/api/v1/Employees").then((res) => {
+          this.employeeList = [...res.data];
+        });
+      } catch (error) {
+        console.log(error);
+      }
+    },
     /**
      * author:Nguyễn Văn Ngọc(2/1/2023)
      * Hàm getAllEmployees lấy ra số nhân viên trang đầu tiên
      */
-    const getEmployeesFirst = async () => {
+     async getEmployeesFirst(){
       try {
         // show loading
         this.isShowLoading = true;
@@ -358,27 +378,7 @@ export default {
       } catch (error) {
         console.log(error);
       }
-    };
-
-    await getEmployeesFirst();
-    // đóng loading
-
-    /**
-     * author:Nguyễn Văn Ngọc(8/1/2023)
-     * Hàm getAllEmployees lấy ra toàn bộ nhân viên
-     */
-    const getAllEmployees = () => {
-      try {
-        axios.get("https://cukcuk.manhnv.net/api/v1/Employees").then((res) => {
-          this.employeeList = [...res.data];
-        });
-      } catch (error) {
-        console.log(error);
-      }
-    };
-    getAllEmployees();
-  },
-  methods: {
+    },
     // Ẩn hiện form nhân viên
     /**
      * author:Nguyễn Văn Ngọc(2/1/2023)

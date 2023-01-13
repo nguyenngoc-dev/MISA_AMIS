@@ -74,7 +74,7 @@
                 :inputType="'text'"
                 v-model="employees.FullName"
                 @focus="employees.isName = false"
-               
+                
               />
 
               <p class="text-error">Tên nhân viên không được để trống</p>
@@ -126,10 +126,11 @@
             >
               <li class="textfield-item">CÔNG TY CỔ PHẦN MISA</li>
               <li
-                class="textfield-item"
+                :class="{'textfield-item':true,
+                  active: index === itemActive}"
                 v-for="(item, index) in Departments"
                 :key="index"
-                @click="setDepartment(item)"
+                @click="setDepartment(item,index)"
                 :value="item.DepartmentId"
               >
                 {{ item.DepartmentName }}
@@ -509,6 +510,7 @@ export default {
       isNotice: true, // có phải dialog cảnh báo
       isQuestion: false, // có phải dialog cảnh báo thay đổi dữ liệu
       questionMessage: "",
+      itemActive: null, // set class active cho list item selected
       showBtnCancel: false, // show nút không ở dialog
       showBtnChangeVal: false, // show nút thay đổi ở dialog khi click vào x
     };
@@ -533,7 +535,6 @@ export default {
     // Truyền dữ liệu vào input khi Sửa
     if (this.employeeIdUpdate || this.isDuplicate) {
       // gọi api lấy dữ liệu truyền vào th employee
-
       axios
         .get(
           `https://cukcuk.manhnv.net/api/v1/Employees/${this.employeeIdUpdate}`
@@ -541,12 +542,12 @@ export default {
         .then((response) => {
           this.employees = response.data;
           // Lấy ra department được chọn
-          const departmentSelected = this.Departments.filter(
+          const departmentSelected = this.Departments.find(
             (deparment) =>
-              deparment.DepartmentId === this.employees.DepartmentId
+              deparment.DepartmentId === this.employees?.DepartmentId
           );
-          this.employees.DepartmentName = departmentSelected[0].DepartmentName;
-          console.log("deparment: ", departmentSelected[0].DepartmentName);
+          this.employees.DepartmentName = departmentSelected.DepartmentName;
+          console.log("deparment: ", departmentSelected.DepartmentName);
         });
     }
 
@@ -576,11 +577,8 @@ export default {
      */
 
     async getDepartment() {
-      await axios
-        .get("https://cukcuk.manhnv.net/api/v1/Departments")
-        .then((response) => {
-          this.Departments = response.data;
-        });
+      const res = await axios.get("https://cukcuk.manhnv.net/api/v1/Departments");
+      this.Departments = res.data;
     },
     /**
      * author:Nguyễn Văn Ngọc(3/1/2023)
@@ -593,10 +591,11 @@ export default {
      * author:Nguyễn Văn Ngọc(3/1/2023)
      * Hàm setDepartment truyền name và id cho employee khi click vào một phòng ban
      */
-    setDepartment(item) {
+    setDepartment(item,index) {
       this.employees.DepartmentName = item.DepartmentName;
       this.employees.DepartmentId = item.DepartmentId;
       this.isCheckDV = false;
+      this.itemActive = index;
     },
     /**
      * author:Nguyễn Văn Ngọc(4/1/2023)

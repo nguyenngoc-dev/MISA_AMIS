@@ -94,7 +94,7 @@ th {
 .tbl .tbl-col:last-child {
     width: 110px;
     min-width: 110px;
-    border-right: none;
+    border-right: none !important;
     position: sticky;
     right: 0;
     table-layout: fixed;
