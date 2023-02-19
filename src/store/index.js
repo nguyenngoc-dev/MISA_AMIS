@@ -3,7 +3,9 @@ import { reactive, readonly} from 'vue';
 const state = reactive({
     sidebar: {
         isOpen: true,
-    }
+    },
+    
+
 })
 
 const handleCloseSidebar = () => {

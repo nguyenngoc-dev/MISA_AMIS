@@ -76,7 +76,7 @@
             v-if="isDelete "
             @click="$emit('onBtnAccept')"
             id="btn-delete-yes"
-            class="btn btn-primary"
+            class="btn btn-primary btn-delete"
           >
             Có
           </button>

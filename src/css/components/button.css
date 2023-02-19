@@ -36,7 +36,12 @@
 .btn-primary {
     background-color: var(--primary-color);
 }
-
+.btn-delete {
+    background-color: #DE3617;
+}
+.btn-delete:hover {
+    background-color: #b45a5a;
+}
 /* button has icon & content */
 .btn__has-icon {
     padding: 0 16px 0 0;
@@ -106,4 +111,16 @@
 .btn-disable {
     opacity: 0.56;
     cursor: not-allowed;
+}
+.btn:focus-visible {
+    outline: none;
+}
+.disable-btn {
+    opacity: 0.3;
+    border: 1px solid;
+}
+.disable-btn:hover {
+    opacity: 0.3;
+    border: 1px solid;
+    background-color: unset;
 }

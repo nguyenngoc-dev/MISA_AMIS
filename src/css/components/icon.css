@@ -191,3 +191,14 @@
 	height: 16px;
 	margin-right: 8px;
 }
+.icon-toast-error{
+	background: url('../../assets/img/Sprites.64af8f61.svg') no-repeat -538px -146px;
+	width: 16px;
+	height: 16px;
+	margin-right: 8px;
+}
+.icon-export {
+	background: url('../../assets/img/Sprites.64af8f61.svg') no-repeat -1265px -90px;
+	width: 23px;
+	height: 20px;
+}

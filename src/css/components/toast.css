@@ -53,6 +53,7 @@
 
 .toast.toast--success .toast__content__title {
   color: #50b83c;
+  margin-right: 8px;
 }
 
 .toast.toast--error .toast__content__title {

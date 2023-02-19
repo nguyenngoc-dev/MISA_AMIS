@@ -1,9 +1,10 @@
 <template>
-  <div class="overlay">
-    <div class="modal">
+  <div class="overlay" @keydown.ctrl.s.prevent="onSavebtn(false)"
+  @keyup.ctrl.shift.s="onSavebtn(true)">
+    <div class="modal"  @keydown.esc="isChangeData()">
       <div class="modal__header">
         <div class="modal__header-left">
-          <div class="modal__header-left-text">Thông tin nhân viên</div>
+          <div class="modal__header-left-text">{{ formTitle }}</div>
           <label for="radio1" class="modal__header-left-wrapper">
             <input type="radio" name="doituong" checked id="radio1" />
             <div class="icon-checked"></div>
@@ -20,7 +21,7 @@
             <span class="tooltiptext">Giúp (F1)</span>
           </div>
           <div
-            @click="onShowDialogChangeData()"
+            @click="isChangeData()"
             class="icon-close tooltip"
             for="show-modal"
           >
@@ -29,35 +30,23 @@
         </div>
       </div>
       <div class="modal-main">
-        <div
-          style="
-            display: flex;
-            justify-content: center;
-            align-items: flex-start;
-            flex-direction: column;
-            width: 414px;
-            padding-right: 26px;
-          "
-        >
-          <div
-            style="
-              display: flex;
-              justify-content: flex-start;
-              align-items: center;
-              padding-bottom: 12px;
-            "
-          >
+        <div class="modal-main-container">
+          <div class="pb-12 flex-start">
             <div class="textfield">
               <label for="" class="textfield__label modal-label">
                 Mã <span class="required">*</span>
               </label>
               <BaseInput
-                :class="{
-                  'textfield--error-input': this.isCode || this.isCodeLoss,
-                }"
+                :isErrorInput ="this.isCode || this.isCodeLoss || this.errorOject['EmployeeCode']"
                 style="min-width: 149px; width: 149px; margin-right: 6px"
                 v-model="employees.EmployeeCode"
+                :name="'EmployeeCode'"
+                :rules="['NOT_EMPTY','HAS_FORMAT']"
+                placeholder="NV-12345"
+                @errorInputMessage="validateInput"
                 ref="EmployeeCode"
+                tabindex="1"
+                @blur="onBlurInput(employees.EmployeeCode)"
               />
               <p class="text-error">{{ errorCodeMessage }}</p>
             </div>
@@ -66,112 +55,52 @@
                 Tên <span class="required">*</span>
               </label>
               <BaseInput
-                :isErrorInput="this.isName"
-                :class="{
-                  'textfield--error-input': this.isName,
-                }"
+                :isErrorInput ="this.errorOject['FullName']"
                 style="min-width: 233px; width: 233px"
                 :inputType="'text'"
                 v-model="employees.FullName"
-                @focus="employees.isName = false"
-                
+                :rules="['NOT_EMPTY']"
+                @errorInputMessage="validateInput"
+                :name="'FullName'"
+                ref="FullName"
+                tabindex="1"
+                @blur="onBlurInput(employees.FullName)"
               />
 
               <p class="text-error">Tên nhân viên không được để trống</p>
             </div>
           </div>
+
           <div class="textfield modal-textfield" style="padding-bottom: 12px">
-            <label for="" class="textfield__label modal-label">
-              Đơn vị <span class="required">*</span>
-              <label
-                for="donvi"
-                class="modal-icon textfield__icon"
-                style="
-                  display: flex;
-                  justify-content: center;
-                  align-items: center;
-                  transform: translate(-1px, -2px);
-                  height: 35px !important;
-                "
-                tabindex="0"
-                @click="isCheck()"
-              >
-                <div class="icon-dropdown"></div>
-              </label>
-              <!-- <input
-                ref="checkDv"
-                :checked="isCheckDV"
-                type="checkbox"
-                name=""
-                id="donvi"
-              /> -->
-            </label>
-            <input
-              type="text"
-              :class="{
-                textfield__input: true,
-                'modal-textfield__input': true,
-                'textfield--error-input': this.isUnit,
-              }"
-              v-model="employees.DepartmentName"
-              @focus="this.isUnit = false"
+            <BaseCombobox
+              :comboName="'Đơn vị'"
+              :errorMessage="'Đơn vị không hợp lệ'"
+              :isUnit="errorOject['DepartmentId']"
+              :api="'https://localhost:44387/api/v1/Departments'"
+              :propName="'DepartmentName'"
+              :rules="['NOT_EMPTY']"
+              @errorInputMessage="validateInput"
+              :propValue="'DepartmentId'"
+              @invalidUnit="invalidUnit"
+              :name="'DepartmentId'"
+              ref="DepartmentId"
+              v-model="this.employees.DepartmentId"
             />
-            <p class="text-error">Đơn vị không được để trống</p>
-            <ul
-              :class="{
-                'textfield-list': true,
-                'modal-list': true,
-                'show-list': isCheckDV,
-              }"
-            >
-              <li class="textfield-item">CÔNG TY CỔ PHẦN MISA</li>
-              <li
-                :class="{'textfield-item':true,
-                  active: index === itemActive}"
-                v-for="(item, index) in Departments"
-                :key="index"
-                @click="setDepartment(item,index)"
-                :value="item.DepartmentId"
-              >
-                {{ item.DepartmentName }}
-              </li>
-            </ul>
           </div>
           <div class="textfield modal-textfield" style="padding-bottom: 12px">
             <label for="" class="textfield__label modal-label">
               Chức danh
             </label>
-            <BaseInput v-model="employees.PositionName" />
-            <!-- <input
-              type="text"
-              class="textfield__input modal-textfield__input"
-              property-name="PositionName"
-              v-model="employees.PositionName"
-            /> -->
+            <BaseInput v-model="employees.Position" tabindex="5" />
           </div>
         </div>
-        <div
-          style="
-            display: flex;
-            justify-content: center;
-            align-items: flex-start;
-            flex-direction: column;
-            width: 414px;
-          "
-        >
-          <div
-            style="
-              display: flex;
-              justify-content: flex-start;
-              align-items: center;
-              padding-bottom: 12px;
-            "
-          >
+        <div class="flex-start" style="flex-direction: column; width: 414px">
+          <div class="pb-12 flex-start">
             <div
               class="textfield modal-textfield"
               style="min-width: 166px; width: 166px"
             >
-              <label for="" class="textfield__label modal-label">
+              <label for="" class="textfield__label modal-label pt-16">
                 Ngày sinh
               </label>
 
@@ -180,11 +109,27 @@
                 class="textfield__input datepicker"
                 v-model="employees.DateOfBirth"
                 :format="format"
+                tabindex="2"
+                :disabled-dates="disabledDate"
+                :enable-time-picker="false"
+                @update:modelValue="changeDateValue()"
+                :esc-close="true"
+                placeholder="DD/MM/YYYY"
+                ref="DateOfBirth"
+                locale="vi"
+                text-input
+                now-button-label="Hôm nay"
+                auto-apply
+                close-on-scroll
+                show-now-button
+                :day-names="['T2', 'T3', 'T4', 'T5', 'T6', 'T7', 'CN']"
               />
             </div>
 
             <div style="padding-left: 10px; margin-left: 6px">
-              <label class="textfield__label modal-label"> Giới tính </label>
+              <label class="textfield__label modal-label pt-16">
+                Giới tính
+              </label>
               <div class="modal__gender">
                 <label for="malegender" class="modal__gender-item">
                   <input
@@ -194,6 +139,7 @@
                     id="malegender"
                     v-model="employees.Gender"
                     value="0"
+                    tabindex="2"
                   />
                   <div class="icon-radio-checked"></div>
                 </label>
@@ -203,9 +149,9 @@
                     type="radio"
                     name="gioitinh"
                     id="femalegender"
-                    property-name="GenderName"
                     v-model="employees.Gender"
                     value="1"
+                    tabindex="2"
                   />
                   <div class="icon-radio-checked"></div>
                 </label>
@@ -217,6 +163,7 @@
                     id="other"
                     v-model="employees.Gender"
                     value="2"
+                    tabindex="2"  
                   />
                   <div class="icon-radio-checked"></div>
                 </label>
@@ -224,39 +171,34 @@
               </div>
             </div>
           </div>
-          <div
-            style="
-              display: flex;
-              justify-content: flex-start;
-              align-items: center;
-              padding-bottom: 12px;
-            "
-          >
+          <div class="pb-12 flex-start">
             <div
               class="textfield modal-textfield"
               style="min-width: 242px; width: 242px; margin-right: 6px"
             >
-              <label for="" class="tooltip textfield__label modal-label">
+              <label for="" class="tooltip textfield__label modal-label pt-16">
                 <span
                   class="tooltiptext"
-                  style="width: 200px; font-size: 12px; left: 27%"
+                  style="width: 200px; font-size: 12px; left: -12%;"
                   >Số chứng minh nhân dân</span
                 >
                 Số CMND
               </label>
-              <!-- <input
-                type="text"
-                class="textfield__input modal-textfield__input"
-                style="min-width: 242px; width: 242px"
-                v-model="employees.IdentityNumber"
-              /> -->
               <BaseInput
                 style="min-width: 242px; width: 242px"
                 v-model="employees.IdentityNumber"
+                tabindex="4"
+                :isErrorInput ="this.errorOject['IdentityNumber']"
+                ref="IdentityNumber"
+                  :name="'IdentityNumber'"
+                placeholder="038205673319"
+                :rules="['HAS_FORMAT']"
+                @errorInputMessage="validateInput"
               />
+              <p class="text-error">Số căn cước không hợp lệ</p>
             </div>
             <div
-              class="textfield modal-textfield"
+              class="textfield modal-textfield pt-16"
               style="min-width: 166px; width: 166px"
             >
               <label for="" class="textfield__label modal-label">
@@ -268,21 +210,29 @@
                 class="textfield__input datepicker"
                 v-model="employees.IdentityDate"
                 :format="format"
+                tabindex="4"
+                ref="IdentityDate"
+                :disabled-dates="disabledDate"
+                :enable-time-picker="false"
+                @update:modelValue="changeDateValue"
+                placeholder="DD/MM/YYYY"
+                locale="vi"
+                text-input
+                now-button-label="Hôm nay"
+                auto-apply
+                close-on-scroll
+                show-now-button
+                :day-names="['T2', 'T3', 'T4', 'T5', 'T6', 'T7', 'CN']"
               />
             </div>
           </div>
 
           <div class="textfield modal-textfield" style="padding-bottom: 12px">
             <label for="" class="textfield__label modal-label"> Nơi cấp </label>
-            <!-- <input
-              type="text"
-              class="textfield__input modal-textfield__input"
-              style="min-width: 414px; width: 414px"
-              v-model="employees.IdentityPlace"
-            /> -->
             <BaseInput
               style="min-width: 414px; width: 414px"
               v-model="employees.IdentityPlace"
+              tabindex="6"
             />
           </div>
         </div>
@@ -295,59 +245,63 @@
               <label for="" class="textfield__label modal-label">
                 Địa chỉ
               </label>
-              <!-- <input
-                type="text"
-                class="textfield__input modal-textfield__input full-w"
+              <BaseInput
+                tabindex="7"
+                class="full-w"
                 v-model="employees.Address"
-              /> -->
-              <BaseInput class="full-w" v-model="employees.Address" />
+              />
             </div>
             <div class="modal-contact__content--middle">
               <div class="textfield" style="float: left; padding-bottom: 12px">
                 <label for="" class="textfield__label modal-label">
                   Điện thoại di động
                 </label>
-                <!-- <input
-                  type="text"
-                  class="textfield__input"
-                  style="min-width: 186px; width: 186px; margin-right: 12px"
-                  v-model="employees.PhoneNumber"
-                /> -->
                 <BaseInput
                   style="min-width: 186px; width: 186px; margin-right: 12px"
                   v-model="employees.PhoneNumber"
+                  placeholder="0333258458"
+                  tabindex="8"
+                  :isErrorInput ="this.errorOject['PhoneNumber']"
+                  :name="'PhoneNumber'"
+                  :rules="['HAS_FORMAT']"
+                  @errorInputMessage="validateInput"
+                  ref="PhoneNumber"
                 />
+                <p class="text-error">Số diện thoại không hợp lệ</p>
               </div>
               <div class="textfield" style="float: left; padding-bottom: 12px">
                 <label for="" class="textfield__label modal-label">
                   Điện thoại cố định
                 </label>
-                <!-- <input
-                  type="text"
-                  class="textfield__input"
-                  style="min-width: 186px; width: 186px; margin-right: 12px"
-                  v-model="employees.PhoneNumber"
-                /> -->
                 <BaseInput
                   style="min-width: 186px; width: 186px; margin-right: 12px"
-                  v-model="employees.PhoneNumber"
+                  v-model="employees.LandlineNumber"
+                  placeholder="0333258458"
+                  tabindex="9"
+                  :isErrorInput ="this.errorOject['LandlineNumber']"
+                  :rules="['HAS_FORMAT']"
+                  @errorInputMessage="validateInput"
+                  :name="'LandlineNumber'"
+                  ref="LandlineNumber"
                 />
+              <p class="text-error">Số diện thoại cố định không hợp lệ</p>
               </div>
               <div class="textfield" style="float: left; padding-bottom: 12px">
                 <label for="" class="textfield__label modal-label">
                   Email
                 </label>
-                <!-- <input
-                  type="text"
-                  class="textfield__input"
-                  style="min-width: 186px; width: 186px; margin-right: 12px"
-                  id="Email"
-                  v-model="employees.Email"
-                /> -->
                 <BaseInput
                   style="min-width: 186px; width: 186px; margin-right: 12px"
                   v-model="employees.Email"
+                  :isErrorInput ="this.errorOject['Email']"
+                  placeholder="nguyen@gmail.com"
+                  :rules="['HAS_FORMAT']"
+                  @errorInputMessage="validateInput"
+                  ref="Email"
+                  :name="'Email'"
+                  tabindex="10"
                 />
+                <p class="text-error">Email không hợp lệ</p>
               </div>
             </div>
             <div class="modal-contact__content--bottom">
@@ -355,40 +309,37 @@
                 <label for="" class="textfield__label modal-label">
                   Tài khoản ngân hàng
                 </label>
-                <!-- <input
-                  type="text"
-                  class="textfield__input"
-                  style="min-width: 186px; width: 186px; margin-right: 12px"
-                  id="BankAccount"
-                /> -->
                 <BaseInput
+                  tabindex="11"
                   style="min-width: 186px; width: 186px; margin-right: 12px"
+                  placeholder="533325845758"
+                  :isErrorInput ="this.errorOject['BankAccount']"
+                  v-model="employees.BankAccount"
+                  ref="BankAccount"
+                  :name="'BankAccount'"
+                  :rules="['HAS_FORMAT']"
+                  @errorInputMessage="validateInput"
                 />
+                <p class="text-error">Số tài khoản ngân hàng không hợp lệ</p>
               </div>
               <div class="textfield" style="float: left; padding-bottom: 12px">
                 <label for="" class="textfield__label modal-label">
                   Tên ngân hàng
                 </label>
-                <!-- <input
-                  type="text"
-                  class="textfield__input"
-                  style="min-width: 186px; width: 186px; margin-right: 12px"
-                /> -->
                 <BaseInput
+                  tabindex="12"
                   style="min-width: 186px; width: 186px; margin-right: 12px"
+                  v-model="employees.BankName"
                 />
               </div>
               <div class="textfield" style="float: left; padding-bottom: 12px">
                 <label for="" class="textfield__label modal-label">
                   Chi nhánh
                 </label>
-                <!-- <input
-                  type="text"
-                  class="textfield__input"
-                  style="min-width: 186px; width: 186px; margin-right: 12px"
-                /> -->
                 <BaseInput
+                  tabindex="13"
                   style="min-width: 186px; width: 186px; margin-right: 12px"
+                  v-model="employees.BankBranch"
                 />
               </div>
             </div>
@@ -399,41 +350,32 @@
       <div class="modal-footer">
         <BaseButton
           class="btn btn-secondary modal-btn-cancel"
-          tabindex="0"
+          tabindex="14"
           @click="$emit('hideDialog')"
           :btnText="'Hủy'"
           :isprimary="false"
         />
-
         <div class="modal-footer__wrapper">
-          <!-- <BaseButton
-            class="tooltip modal-btn__secondary"
+          <BaseButton
+            class="modal-btn__secondary"
             :isSecondary="true"
             :isprimary="false"
-            @click="onSavebtn()"
+            @click="onSavebtn(false)"
+            :btnText="'Cất'"
+            :isShowTooltip="true"
+            tabindex="15"
+            :tooltipContent="'Cất (Ctrl + S)'"
           >
-          Cất
-            <span style="padding: 0; font-weight: 100" class="tooltiptext"
-              >Cất (Ctrl + S)</span>
-          </BaseButton> -->
-          <button
-            id="btn-save"
-            class="tooltip btn btn-secondary modal-btn__secondary"
-            @click="onSavebtn()"
+          </BaseButton>
+          <BaseButton
+            @click="onSavebtn(true)"
+            :btnText="'Cất và thêm'"
+            :isShowTooltip="true"
+            tabindex="16"
+            :tooltipContent="'Cất và thêm'"
+            @keydown.tab.prevent="onFocusFirstInput()"
           >
-            Cất
-            <span style="padding: 0; font-weight: 100" class="tooltiptext"
-              >Cất (Ctrl + S)</span
-            >
-          </button>
-          <button
-            @click="onSaveAndAddBtn()"
-            id="btn-save-add"
-            class="tooltip btn btn-primary"
-          >
-            Cất và thêm
-            <span style="padding: 0" class="tooltiptext">Cất và thêm</span>
-          </button>
+          </BaseButton>
         </div>
       </div>
     </div>
@@ -442,7 +384,7 @@
     :errorMessage="titleLossData"
     v-if="isShowDialog"
     :isNotice="isNotice"
-    :isDelete="isDelete"
+    :isDelete="false"
     :isQuestion="isQuestion"
     @onHideDialog="onShowDialog(false)"
     :questionMessage="questionMessage"
@@ -451,19 +393,23 @@
     :dialogHeader="'Cảnh báo'"
     :showBtnChangeVal="showBtnChangeVal"
     @onHideEmpDetail="$emit('hideDialog')"
-    @onSaveBtn="this.onSavebtn"
+    @onSaveBtn="this.onSavebtn(false)"
   />
 </template>
 <script>
 import axios from "axios";
 import { ref } from "vue";
 import BaseInput from "../../components/base/BaseInput.vue";
-import {toastMsgText} from "../../js/base/resouce.js"
+import RESOURCES from "../../js/base/resouce.js";
+import KEYDOWN from "../../js/base/enums.js";
+import { HTTP, HTTPDepartments } from "../../js/api/ConnectApi.js";
+
 export default {
   components: {
     BaseInput,
   },
   setup() {
+    var me = this;
     const date = ref(new Date());
     // In case of a range picker, you'll receive [Date, Date]
     const format = (date) => {
@@ -484,29 +430,31 @@ export default {
     "onLoadData",
     "onshowToast",
     "onhideToast",
-    "nullIdSelected",
-    "changeToastMsg"
+    "changeToastMsg",
   ],
-  props: ["employeeIdUpdate", "employeeList", "isDuplicate"],
+  props: ["employeeIdUpdate", "isDuplicate"],
 
   data() {
     return {
+      formTitle: RESOURCES.FORM_TITLE.ADD, // Title form
       isShowDialog: false, // show dialog báo lỗi khi nhập liệu
       validateError: [], //
       Departments: [], //Danh sách phòng ban
-      isCheckDV: false, // check để sổ dữ liệu phòng ban
-      employees: {}, // object nhân viên
-      DepartmentIdSelected: "", // id phòng ban được chọn
+      DepartmentFilter: [], //Danh sách phòng ban tìm kiếm
+      employees: this.onDefaultEmployee(""), // object nhân viên
+      departmentSelected: {}, // phòng ban được chọn
       isCode: false, // cờ thông báo mã khong hợp lệ
+      oldEmployee:{},//nhân viên ban 
+      errorOject:{},// object chứa lỗi 
       isName: false, // .... tên không hợp lệ
-      isEmail: false, // .. email khoog hợp lệ
-      isDateOfBirth: false, // .. ngày tháng không hợp lệ
+      newEmployeeCode:"",// lấy ra mã nhân viên mỗi lần click thêm mới
+      isSaveAndAdd: false, // check xem có phải thêm và cất hay k
       isIndentityDate: false,
+      RESOURCES,
       isUnit: false,
       isCodeLoss: false, // mã bị trùng
       titleLossData: "", // Thông báo khi nhập liệu sai
       errorCodeMessage: "", // thông báo lỗi của mã nhân viên
-      isDelete: false, // có phải dialog xóa?
       isNotice: true, // có phải dialog cảnh báo
       isQuestion: false, // có phải dialog cảnh báo thay đổi dữ liệu
       questionMessage: "",
@@ -514,6 +462,12 @@ export default {
       showBtnCancel: false, // show nút không ở dialog
       showBtnChangeVal: false, // show nút thay đổi ở dialog khi click vào x
     };
+  },
+  watch: {
+    employees: {
+      handler: function (newValue) {},
+      deep: true,
+    },
   },
   computed: {
     /**
@@ -530,46 +484,73 @@ export default {
     },
   },
   created() {
+    // Thay đổi form title
+    if (this.isDuplicate) {
+      this.formTitle = RESOURCES.FORM_TITLE.DUPLICATE;
+    } else if (this.employeeIdUpdate) {
+      this.formTitle = RESOURCES.FORM_TITLE.UPDATE;
+    } else {
+      this.formTitle = RESOURCES.FORM_TITLE.ADD;
+    }
     // lấy dữ liệu phòng ban đẩy vào combobox
     this.getDepartment();
     // Truyền dữ liệu vào input khi Sửa
     if (this.employeeIdUpdate || this.isDuplicate) {
-      // gọi api lấy dữ liệu truyền vào th employee
-      axios
-        .get(
-          `https://cukcuk.manhnv.net/api/v1/Employees/${this.employeeIdUpdate}`
-        )
-        .then((response) => {
+      try {
+        // gọi api lấy dữ liệu truyền vào th employee
+        HTTP.get(`/${this.employeeIdUpdate}`).then((response) => {
           this.employees = response.data;
+          for(const property in this.employees) {
+            this.oldEmployee[property] = this.employees[property]
+          }
           // Lấy ra department được chọn
           const departmentSelected = this.Departments.find(
             (deparment) =>
               deparment.DepartmentId === this.employees?.DepartmentId
           );
           this.employees.DepartmentName = departmentSelected.DepartmentName;
-          console.log("deparment: ", departmentSelected.DepartmentName);
         });
+      } catch (error) {
+        console.log(error);
+      }
     }
-
     // click vào thêm mới hoặc nhân bản thì  gọi api lấy mã nhân viên mới để truyền vào input Mã nhân viên
     if (this.isAdd || this.isDuplicate) {
-      this.getNewEmCode();
+      this.employees.EmployeeCode = this.getNewEmCode();
     }
   },
   mounted() {
     // forcus vào ô mã nhân viên khi hiển thị form chi tiết
+    var me = this;
+    this.$refs.EmployeeCode.onFocus();
   },
 
   methods: {
     /**
      * author:Nguyễn Văn Ngọc(3/1/2023)
+     * Hàm validateInput check vidate ô input
+     */
+    validateInput(name,errorMessage) {
+      this.errorOject[name] = errorMessage;
+    },
+    /**
+     * author:Nguyễn Văn Ngọc(3/1/2023)
+     * Hàm changeDateValue đóng menu khi chọn ngày
+     */
+    changeDateValue() {
+      this.$refs.DateOfBirth.closeMenu();
+    },
+    /**
+     * author:Nguyễn Văn Ngọc(3/1/2023)
      * Hàm getEmpById Lấy ra dữ liệu của phòng ban truyền vào combobox
      */
     async getEmpById() {
-      const res = await axios.get(
-        `https://cukcuk.manhnv.net/api/v1/Employees/${this.employeeIdUpdate}`
-      );
-      this.employees = res.data;
+      try {
+        const res = await HTTP.get(`/${this.employeeIdUpdate}`);
+        this.employees = res.data;
+      } catch (error) {
+        console.log(error);
+      }
     },
     /**
      * author:Nguyễn Văn Ngọc(3/1/2023)
@@ -577,152 +558,142 @@ export default {
      */
 
     async getDepartment() {
-      const res = await axios.get("https://cukcuk.manhnv.net/api/v1/Departments");
-      this.Departments = res.data;
+      try {
+        var res = await HTTPDepartments.get();
+        this.Departments = res.data;
+        this.DepartmentFilter = res.data;
+      } catch (error) {
+        console.log(error);
+      }
     },
     /**
      * author:Nguyễn Văn Ngọc(3/1/2023)
-     * Hàm isCheck set trạng thái khi click vào icon dropdown của đơn vị
+     * Hàm onBlurInput xử lí khi blur khỏi ô input
      */
-    isCheck(state) {
-      this.isCheckDV = !this.isCheckDV;
+    onBlurInput(inputName) {
+      switch (inputName) {
+        case this.employees.EmployeeCode:
+          this.isValidFiled(this.employees.EmployeeCode, "EmployeeCode"); // kiểm tra mã
+          break;
+        case this.employees.FullName:
+          this.isValidFiled(this.employees.FullName, "FullName"); // kiểm tra tên
+          break;
+        default:
+          break;
+      }
     },
     /**
      * author:Nguyễn Văn Ngọc(3/1/2023)
-     * Hàm setDepartment truyền name và id cho employee khi click vào một phòng ban
+     * Hàm onFocusFirstInput tab index nhảy vào ô đầu tiên
      */
-    setDepartment(item,index) {
-      this.employees.DepartmentName = item.DepartmentName;
-      this.employees.DepartmentId = item.DepartmentId;
-      this.isCheckDV = false;
-      this.itemActive = index;
+    onFocusFirstInput() {
+      this.$refs.EmployeeCode.onFocus();
+    },
+    /**
+     * author:Nguyễn Văn Ngọc(10/1/2023)
+     * Hàm reset employee về mặc định
+     */
+    onDefaultEmployee(employeeCode) {
+      return {
+        EmployeeCode: employeeCode,
+        FullName: "",
+        DateOfBirth: null,
+        Gender: 0,
+        DepartmentId: "",
+        IdentityNumber: "",
+        IdentityDate: null,
+        Position: "",
+        IdentityPlace: "",
+        Address: "",
+        PhoneNumber: "",
+        LandlineNumber: "",
+        Email: "",
+        BankAccount: "",
+        BankName: "",
+        BankBranch: "",
+      };
     },
     /**
      * author:Nguyễn Văn Ngọc(4/1/2023)
      * Hàm onSavebtn Xử lí khi click nút cất
      */
-    async onSavebtn() {
+    async onSavebtn(isSaveAndAdd) {
+      var me = this;
+      // Chuyển giới tính thành số
       // validate
       if (!this.validate()) {
-        this.isShowDialog = true;
-        this.isNotice = true;
-        this.showBtnCancel = false;
-        this.isQuestion = false;
-        this.showBtnChangeVal = false;
-        this.questionMessage = "";
+        this.onShowDialogChangeData(false,true,this.errorCodeMessage,null,this.titleLossData);
       } else {
-        if (this.isAdd) {
-          // ckeck mã trùng
-          if (!this.checkCode(this.employees.EmployeeCode)) {
-            this.errorCodeMessage = "Mã nhân viên đã tồn tại";
-            this.titleLossData = "Mã nhân viên đã tồn tại";
-          }
-          console.log(this.isCodeLoss);
-          // xử lí khi thêm
-          // gọi đến api thêm nhân viên
-          await axios
-            .post(`https://cukcuk.manhnv.net/api/v1/Employees`, this.employees)
-            .then((response) => {
-              console.log(response);
-              // hiển thị toast thông báo thành công
-              this.$emit('changeToastMsg');
-              this.$emit("onshowToast");
-            });
-
-          // load lại danh sách
-          this.$emit("onLoadData");
-          // đóng form
-          this.$emit("hideDialog");
+        this.employees.Gender = parseInt(this.employees.Gender);
+        if (this.isAdd || this.isDuplicate) {
+          //Xử lí khi thêm
+          this.handleOnSave(isSaveAndAdd, true, RESOURCES.FORM_MODE.ADD);
         } else {
           // xử lí khi sửa
-          // gọi đến api thêm nhân viên
-          await axios
-            .put(
-              `https://cukcuk.manhnv.net/api/v1/Employees/${this.employeeIdUpdate}`,
-              this.employees
-            )
-            .then((response) => {
-              console.log(response);
-              // hiển thị toast thông báo thành công
-              this.$emit("onshowToast");
-            });
-
-          // load lại danh sách
-          this.$emit("onLoadData");
-          // đóng form
-          this.$emit("hideDialog");
+          this.handleOnSave(isSaveAndAdd, false, RESOURCES.FORM_MODE.EDIT);
         }
       }
     },
     /**
-     * author:Nguyễn Văn Ngọc(7/1/2023)
-     * Hàm onSaveAndAddBtn Xử lí khi click nút cất và thêm
+     * Xử lý exception khi thêm, sửa
+     * Author: Nguyễn Văn Ngọc (6/2/2023)
      */
-    async onSaveAndAddBtn() {
-      console.log(this.employees);
-      if (!this.validate()) {
-        this.isShowDialog = true;
-        this.isNotice = true;
-        this.showBtnCancel = false;
-        this.isQuestion = false;
-        this.showBtnChangeVal = false;
-        this.questionMessage = "";
-      } else {
-        if (this.isAdd) {
-          // ckeck mã trùng
-
-          if (!this.checkCode(this.employees.EmployeeCode)) {
-            this.errorCodeMessage = "Mã nhân viên đã tồn tại";
-            this.titleLossData = "Mã nhân viên đã tồn tại";
-          }
-          // xử lí khi thêm
-          // gọi đến api thêm nhân viên
-          
-          await axios
-            .post(`https://cukcuk.manhnv.net/api/v1/Employees`, this.employees)
-            .then((response) => {
-              console.log(response);
-              console.log("nv", this.employees);
-            });
-
-          // load lại danh sách
-          this.$emit("onLoadData");
-          // Làm mới form
-          this.employees = {};
-          // lấy mã nhân viên với
-          this.getNewEmCode();
-        } else {
-          // xử lí khi sửa
-          // gọi đến api thêm nhân viên
-          await axios
-            .put(
-              `https://cukcuk.manhnv.net/api/v1/Employees/${this.employeeIdUpdate}`,
-              this.employees
-            )
-            .then((response) => {
-              console.log(response);
-            });
-          // load lại danh sách
-          this.$emit("onLoadData");
-          // Làm mới form
-          this.employees = {};
-          // lấy mã nhân viên với
-          this.getNewEmCode();
-          // set id update = null
-          //this.$emit("nullIdSelected");
+    handleException(error) {
+      var me = this;
+      if (error.response.status == RESOURCES.STATUSCODE.BadRequest) {
+        switch (error.response.data.MoreInfo.ErrorCode) {
+          case RESOURCES.ERRORCODE.DuplicateCode:
+            this.isCodeLoss = true;
+            this.onShowDialogChangeData(false,true,RESOURCES.FORM_MESSAGE.ERROR.DUPLICATE_CODE,"",error.response.data.MoreInfo.UserMsg);
+            break;
+          // eslint-disable-next-line
+          case RESOURCES.ERRORCODE.InvalidInput:
+            this.onShowDialogChangeData(false,true, null,"", error.response.data.MoreInfo.MoreInfo[0]);
+            break;
+          default:
+            break;
         }
+      } else if (error.response.status == RESOURCES.STATUSCODE.ServerError) {
+        // Chọn toast sửa
+        this.$emit("changeToastMsg",RESOURCES.FORM_MODE.ERROR,true,false,RESOURCES.NOTIFICATION_TITLE.ERROR);
+        this.$emit("onshowToast");
       }
     },
     /**
      * author:Nguyễn Văn Ngọc(2/1/2023)
+     * Hàm handleOnSave xử lí khi thêm hoặc sửa
+     */
+    async handleOnSave(isSaveAndAdd, isAdd, toastMessage) {
+      try {
+        const response = isAdd
+          ? await HTTP.post("", this.employees)
+          : await HTTP.put(`/${this.employeeIdUpdate}`, this.employees);
+        this.$emit("changeToastMsg",toastMessage,false,true, RESOURCES.NOTIFICATION_TITLE.SUCCESS);
+        this.$emit("onshowToast");
+        this.$emit("onLoadData");
+        this.isCodeLoss = false;
+        this.errorCodeMessage = "";
+        if (isSaveAndAdd) {
+          this.employees = this.onDefaultEmployee("");
+          this.getNewEmCode();
+        }
+        else {
+          this.$emit("hideDialog");
+        }
+      } catch (error) {
+        this.handleException(error);
+        console.log(error);
+      }
+    },
+
+    /**
+     * author:Nguyễn Văn Ngọc(2/1/2023)
      * Hàm getNewEmCode lấy mã nhân viên mới
      */
-    getNewEmCode() {
-      axios
-        .get(`https://cukcuk.manhnv.net/api/v1/Employees/NewEmployeeCode`)
-        .then((response) => {
-          this.employees.EmployeeCode = response.data;
-        });
+    async getNewEmCode() {
+      const response = await HTTP.get(`/new-employee-code`);
+      this.employees.EmployeeCode = response.data;
+      this.newEmployeeCode = response.data;
     },
     /**
      * author:Nguyễn Văn Ngọc(4/1/2023)
@@ -730,186 +701,115 @@ export default {
      */
     onShowDialog(state) {
       this.isShowDialog = state;
+      for(const property in this.errorOject) {
+        if(this.errorOject[property]) {
+          this.$refs[property].onFocus();
+          return;
+        }
+      }
     },
     /**
      * author:Nguyễn Văn Ngọc(4/1/2023)
      * Hàm onShowDialogChangeData Xử lí dialog thông báo
      * data thay đổi khi click vào nút x
      */
-    onShowDialogChangeData() {
-      this.isQuestion = true;
-      this.isNotice = false;
+    onShowDialogChangeData(isChange,isNotice,errorCodeMessage = "",questionMessage,titleLossData) {
       this.isShowDialog = true;
-      this.showBtnCancel = true;
-      this.showBtnChangeVal = true;
-      this.titleLossData = "";
-      this.questionMessage = "Dữ liệu đã bị thay đổi. Bạn có muốn cất không?";
+      this.isNotice = isNotice;
+      this.showBtnCancel = isChange;
+      this.isQuestion = isChange;
+      this.showBtnChangeVal = isChange;
+      this.errorCodeMessage = errorCodeMessage;
+      this.questionMessage = questionMessage;
+      this.titleLossData =titleLossData;
+    },
+     /**
+     * author:Nguyễn Văn Ngọc(4/1/2023)
+     * Hàm isChangeData Xử lí dialog thông báo
+     * data thay đổi khi click vào nút x
+     */
+    isChangeData() {
+      // trường hợp thêm mới
+      if(this.isAdd) {
+       if(JSON.stringify(this.onDefaultEmployee(this.newEmployeeCode)) != JSON.stringify(this.employees)) {
+        this.onShowDialogChangeData(true,false,'', RESOURCES.MODAL_MESSAGE.INFO,'');
+       }
+       else {
+          this.$emit("hideDialog");
+       }
+      }   
+      else {
+        if(JSON.stringify(this.oldEmployee) != JSON.stringify(this.employees)){
+            this.onShowDialogChangeData(true,false,'', RESOURCES.MODAL_MESSAGE.INFO,'');
+          }
+        else {
+          this.$emit("hideDialog");
+        }
+      }
     },
     /**
      * author:Nguyễn Văn Ngọc(4/1/2023)
      * Hàm validate validate khi click nút cất hoặc cất và thêm
      */
     validate() {
-      var ch = true;
-      if (
-        !this.employees.EmployeeCode ||
-        !this.employees.FullName ||
-        !this.employees.DepartmentName
-      ) {
-        ch = false;
-      } else {
-        ch = true;
+      var me = this;
+      for(const property in RESOURCES.FORM_FIELD) {
+        me.$refs[property].checkValidate()
       }
-      this.valiCode(); // kiểm tra mã
-      this.valiName(); // kiểm tra tên
-      //this.valiEmail(); // kiểm tra email
+      console.log(this.errorOject)
+      var isValid = true;
+      isValid = this.processPopup(); // Thông báo nếu có lỗi
+      return isValid;
+    },
+    /**
+     * author:Nguyễn Văn Ngọc(4/1/2023)
+     * Hàm isValidFiled kiểm tra các trường bắt buộc
+     */
+    isValidFiled(object, error) {
+      if (!object) {
+        this.errorOject[error] = "lỗi";
+        this.errorCodeMessage = RESOURCES.FORM_MESSAGE.ERROR.INVALID_CODE
+      } else {
+        this.errorOject[error] = null;
+      }
+    },
+    /**
+     * Disable ngày lớn hơn ngày hiện tại
+     * Author: Nguyễn Văn Ngọc (10/2/2023)
+     */
 
-      this.valiUnit(); // kiểm tra phòng ban
-      this.processPopup();
-      return ch;
+    disabledDate(time) {
+      return time.getTime() > Date.now();
     },
     /**
      * author:Nguyễn Văn Ngọc(4/1/2023)
-     * Hàm valiCode kiểm tra mã
+     * Hàm invalidUnit kiểm tra đơn vị có hợp lệ hay không
      */
-    valiCode() {
-      // mã khongo được để trống
-      if (!this.employees.EmployeeCode) {
-        this.isCode = true;
-      } else {
-        this.isCode = false;
-      }
-    },
-    /**
-     * author:Nguyễn Văn Ngọc(4/1/2023)
-     * Hàm valiUnit kiểm tra phòng ban
-     */
-    valiUnit() {
-      // phòng ban không được để trống
-      if (!this.employees.DepartmentName) {
-        this.isUnit = true;
-      } else {
-        this.isUnit = false;
-      }
-    },
-    /**
-     * author:Nguyễn Văn Ngọc(4/1/2023)
-     * Hàm valiUnit kiểm tra tên
-     */
-    valiName() {
-      // tên không được đẻ trống
-      if (!this.employees.FullName) {
-        this.isName = true;
-      } else {
-        this.isName = false;
-      }
-    },
-    /**
-     * author:Nguyễn Văn Ngọc(4/1/2023)
-     * Hàm valiEmail kiểm tra email
-     */
-    valiEmail() {
-      // email phải đúng định dạng
-      var regex = /^\w+\@\w+\.\w+$/;
-      var check = true;
-      if (this.employees.Email != null && !regex.test(this.employees.Email)) {
-        this.isEmail = true;
-        check = false;
-      }
-      //khong được dể trống
-      return check;
+    invalidUnit(isInvalid) {
+      this.errorOject.DepartmentId = isInvalid;
     },
 
-    /**
-     * author:Nguyễn Văn Ngọc(4/1/2023)
-     * Hàm valiDateTime kiểm tra ngày tháng
-     */
-    valiDateTime(str) {
-      let check = true;
-      if (str != null) {
-        let dob = new Date(str);
-        if (dob instanceof Date && !isNaN(dob)) {
-          if (dob - new Date() >= 0) {
-            check = false;
-          } else {
-            check = true;
-          }
-        } else {
-          check = false;
-        }
-      }
-      return check;
-    },
-    /**
-     * author:Nguyễn Văn Ngọc(4/1/2023)
-     * Hàm checkCode kiểm tra mã trùng
-     */
-    checkCode(res) {
-      let check = true;
-      for (const e of this.employeeList) {
-        if (res == e.EmployeeCode) {
-          // Nếu trùng thì thông báo
-          check = false;
-          this.isCodeLoss = true;
-          break;
-        }
-        this.isCodeLoss = false;
-      }
-      return check;
-    },
     /**
      * author:Nguyễn Văn Ngọc(4/1/2023)
      * Hàm processPopup xử lí thông báo khi nhập liệu
      */
     processPopup() {
-      if (this.isCode) {
-        this.titleLossData = "Mã nhân viên không được để trống";
-        this.errorCodeMessage = "Mã nhân viên không được để trống";
-      } else if (this.isName) {
-        this.titleLossData = "Tên nhân viên không được để trống";
-      } else if (this.isDateOfBirth || this.isIndentityDate) {
-        this.titleLossData = "Ngày tháng không hợp lệ";
-      } else if (this.isUnit) {
-        this.titleLossData = "Đơn vị không được để trống";
+      let isValid = true;
+      for(const property in this.errorOject) {
+        if(this.errorOject[property]) {
+          this.titleLossData = this.errorOject[property];
+          this.errorCodeMessage = this.errorOject[property];
+          isValid = false;
+          return;
+        }
       }
-      // else if (!this.valiEmail()) {
-      //   this.titleLossData = "Email không đúng định dạng";
-      //}
-      else {
-        this.titleLossData = "";
-      }
+      return isValid;
     },
   },
+
 };
 </script>
-<style >
-.dp__input_icon_pad {
-  padding-left: 0;
-}
-.dp__input {
-  border: none !important;
-}
-.dp__clear_icon {
-  display: none;
-}
-.dp__input_icon {
-  left: unset;
-  right: 0;
-  background: url("../../assets/img/Sprites.64af8f61.svg") no-repeat -125px -310px;
-  margin-right: 0;
-}
-.dp__input:hover {
-  background-color: #f6f6f6;
-}
-.dp__input_icons {
-  display: inline-block;
-  width: 0;
-  height: 1rem;
-  stroke-width: 0;
-  font-size: 1rem;
-  line-height: 1.5rem;
-  padding: 3px 12px;
-  color: var(--dp-icon-color);
-  box-sizing: content-box;
-}
+<style  scoped>
+@import "../../css/components/datepicker.css";
 </style>
+

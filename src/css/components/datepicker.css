@@ -1,0 +1,66 @@
+.dp__input_icon_pad {
+  padding-left: 0;
+}
+.dp__input {
+  border: none !important;
+}
+.dp__clear_icon {
+  display: none;
+}
+.dp__input:hover {
+  background-color: #f6f6f6;
+}
+.dp__input_icon {
+  left: unset;
+  right: 0;
+  background: url("../../assets/img/Sprites.64af8f61.svg") no-repeat -125px -310px;
+  margin-right: 0;
+}
+.dp__input:hover {
+  background-color: #f6f6f6;
+}
+.dp__input_icons {
+  display: inline-block;
+  width: 0;
+  height: 1rem;
+  stroke-width: 0;
+  font-size: 1rem;
+  line-height: 1.5rem;
+  padding: 3px 12px;
+  color: var(--dp-icon-color);
+  box-sizing: content-box;
+}
+.dp__range_end,
+.dp__range_start,
+.dp__active_date {
+  background: #50b83c;
+  color: var(--dp-primary-text-color);
+}
+.dp__cell_inner {
+  display: flex;
+  align-items: center;
+  text-align: center;
+  justify-content: center;
+  border-radius: 42px;
+  height: 35px;
+  padding: 5px;
+  width: 35px;
+  border: 1px solid rgba(0, 0, 0, 0);
+  box-sizing: border-box;
+  position: relative;
+}
+
+.dp__now_button {
+    color: #50b83c;
+    width: 100%;
+    padding: 10px 4px;
+    font-weight: bold;
+    border-radius: 0;;
+    font-size: 1rem;
+    cursor: pointer;
+    background: rgba(0,0,0,0);
+    outline: none;
+    border: none;
+    border-top: 1px solid #ccc;
+}
+

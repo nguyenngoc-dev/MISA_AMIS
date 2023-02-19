@@ -2,7 +2,8 @@
 <div
 		class="toast"
 		:class="{
-			'toast--success': true
+			'toast--success': isSuccessToast,
+			'toast--error':isErrorToast
 		}"
 	>
 		<p class="toast__icon">
@@ -10,7 +11,7 @@
 		</p>
 		<div class="toast__content">
 			<p class="toast__content__title">
-				Thành công!
+				{{toastTitle}}
 			</p>
 			<p class="toast__content__text">{{toastContent}}</p>
 		</div>
@@ -23,16 +24,56 @@
 	</div>
 </template>
 <script>
+import RESOURCES from "../../js/base/resouce.js";
 export default {
   emits:["closeToast","onhideToast"],
+  data() {
+	return {
+		toastContent:"",// Nội dung toast
+	}
+  },
   props:{
-    toastContent:String
+    toastType:String,
+	toastTitle:{
+		default:'Thành công!',
+		type: String
+	},
+	isSuccessToast:{
+		default:true,
+		type: Boolean
+	},
+	isErrorToast: {
+		default:false,
+		type: Boolean
+	}
+
   },
   mounted() {
 	// eslint-disable-next-line
 	 setTimeout(() => {
         this.$emit("onhideToast");
     }, 2000);
+  },
+  methods: {
+	changeToastContent() {
+		switch(this.toastType){
+			case RESOURCES.FORM_MODE.ADD:
+				this.toastContent = RESOURCES.FORM_MESSAGE.SUCCESS.ADD
+				break;
+			case RESOURCES.FORM_MODE.EDIT:
+				this.toastContent = RESOURCES.FORM_MESSAGE.SUCCESS.EDIT
+				break;
+			case RESOURCES.FORM_MODE.DELETE:
+				this.toastContent = RESOURCES.FORM_MESSAGE.SUCCESS.DELETE
+				break;
+			case RESOURCES.FORM_MODE.ERROR:
+				this.toastContent = RESOURCES.FORM_MESSAGE.ERROR.ERRORSERVER
+		}
+		
+	}
+  },
+  created() {
+	this.changeToastContent()
   }
 };
 </script>

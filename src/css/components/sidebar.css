@@ -78,3 +78,7 @@
 .navbar.navbar-collapse .icon-menu-collapse {
     display: block;
 }
+.list-action-open {
+    border: 1px solid #0075c0;
+    height: 16px;
+}
