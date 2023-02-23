@@ -10,96 +10,96 @@
       />
     </div>
     <ul class="sidebar-list">
-      <li class="sidebar-item" tabindex="0">
+      <router-link to="/employee" class="sidebar-item" tabindex="0">
         <div class="sidebar-item__icon">
           <div class="icon-sumary"></div>
         </div>
         <div class="slidebar-item-text">Tổng quan</div>
-      </li>
-      <li class="sidebar-item" tabindex="0">
+      </router-link>
+      <router-link to="/cash" class="sidebar-item" tabindex="0">
         <div class="sidebar-item__icon">
           <div class="icon-cash"></div>
         </div>
         <div class="slidebar-item-text">Tiền mặt</div>
-      </li>
-      <li class="sidebar-item" tabindex="0">
+      </router-link>
+      <router-link to="/save-money" class="sidebar-item" tabindex="0">
         <div class="sidebar-item__icon">
           <div class="icon-deposits"></div>
         </div>
         <div class="slidebar-item-text">Tiền gửi</div>
-      </li>
-      <li class="sidebar-item" tabindex="0">
+      </router-link>
+      <router-link to="/purchases" class="sidebar-item" tabindex="0">
         <div class="sidebar-item__icon">
           <div class="icon-buy"></div>
         </div>
         <div class="slidebar-item-text">Mua hàng</div>
-      </li>
-      <li class="sidebar-item" tabindex="0">
+      </router-link>
+      <router-link to="/sell" class="sidebar-item" tabindex="0">
         <div class="sidebar-item__icon">
           <div class="icon-cart"></div>
         </div>
         <div class="slidebar-item-text">Bán hàng</div>
-      </li>
-      <li class="sidebar-item" tabindex="0">
+      </router-link>
+      <router-link to="/manage-order" class="sidebar-item" tabindex="0">
         <div class="sidebar-item__icon">
           <div class="icon-manage"></div>
         </div>
         <div class="slidebar-item-text">Quản lý đơn hàng</div>
-      </li>
-      <li class="sidebar-item" tabindex="0">
+      </router-link>
+      <router-link to="/store" class="sidebar-item" tabindex="0">
         <div class="sidebar-item__icon">
           <div class="icon-warehouse"></div>
         </div>
         <div class="slidebar-item-text">Kho</div>
-      </li>
-      <li class="sidebar-item" tabindex="0">
+      </router-link>
+      <router-link to="/tool" class="sidebar-item" tabindex="0">
         <div class="sidebar-item__icon">
           <div class="icon-tool"></div>
         </div>
         <div class="slidebar-item-text">Công cụ dụng cụ</div>
-      </li>
-      <li class="sidebar-item" tabindex="0">
+      </router-link>
+      <router-link to="/assets" class="sidebar-item" tabindex="0">
         <div class="sidebar-item__icon">
           <div class="icon-oto"></div>
         </div>
         <div class="slidebar-item-text">Tài sản cố định</div>
-      </li>
-      <li class="sidebar-item" tabindex="0">
+      </router-link>
+      <router-link to="/tax" class="sidebar-item" tabindex="0">
         <div class="sidebar-item__icon">
           <div class="icon-tax"></div>
         </div>
         <div class="slidebar-item-text">Thuế</div>
-      </li>
-      <li class="sidebar-item" tabindex="0">
+      </router-link>
+      <router-link to="/price" class="sidebar-item" tabindex="0">
         <div class="sidebar-item__icon">
           <div class="icon-price"></div>
         </div>
         <div class="slidebar-item-text">Giá thành</div>
-      </li>
-      <li class="sidebar-item" tabindex="0">
+      </router-link>
+      <router-link to="/sumary" class="sidebar-item" tabindex="0">
         <div class="sidebar-item__icon">
           <div class="icon-sum"></div>
         </div>
         <div class="slidebar-item-text">Tổng hợp</div>
-      </li>
-      <li class="sidebar-item" tabindex="0">
+      </router-link>
+      <router-link to="/budget" class="sidebar-item" tabindex="0">
         <div class="sidebar-item__icon">
           <div class="icon-budget"></div>
         </div>
         <div class="slidebar-item-text">Ngân sách</div>
-      </li>
-      <li class="sidebar-item" tabindex="0">
+      </router-link>
+      <router-link to="/report" class="sidebar-item" tabindex="0">
         <div class="sidebar-item__icon">
           <div class="icon-report"></div>
         </div>
         <div class="slidebar-item-text">Báo cáo</div>
-      </li>
-      <li class="sidebar-item" tabindex="0">
+      </router-link>
+      <router-link to="/financial-analysis" class="sidebar-item" tabindex="0">
         <div class="sidebar-item__icon">
           <div class="icon-analysis"></div>
         </div>
         <div class="slidebar-item-text">Phân tích tài chính</div>
-      </li>
+      </router-link>
     </ul>
   </div>
 </template>

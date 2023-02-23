@@ -50,6 +50,7 @@
             @click="$emit('onHideDialog')"
             id="btn-dialog-delete--close"
             class="btn btn-secondary btn-dialog--close"
+            style="margin-right:8px"
           >
             {{btnCancelText}}
           </button>
@@ -59,6 +60,7 @@
             @click="$emit('onHideEmpDetail')"
             id="btn-dialog-delete--close"
             class="btn btn-secondary btn-dialog--close"
+            
           >
             Không
           </button>

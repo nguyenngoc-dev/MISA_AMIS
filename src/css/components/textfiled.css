@@ -259,7 +259,7 @@
     padding: 2px 6px;
     position: absolute;
     border-radius: 4px;
-    top: 68px;
+    top: 120%;
     left: 50%;
     transform: translateX(-50%);
     display: none;
@@ -293,4 +293,24 @@
 [type="date"]::-webkit-calendar-picker-indicator {
     opacity: 0;
     z-index: 100;
+}
+div .m-input__error-msg {
+    top:100%;
+    color: #e61d1d;
+    white-space: nowrap; 
+    width: 233px; 
+    overflow: hidden;
+    text-overflow: ellipsis; 
+}
+.m-input__error-msg.m-input__error-msg-short {
+    width: 149px; 
+}
+.m-input__error-msg.m-input__error-msg-normal {
+    width: 180px; 
+}
+.text-overflow {
+    white-space: nowrap;
+    width: inherit;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }

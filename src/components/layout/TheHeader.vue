@@ -12,7 +12,7 @@
 
     <div class="header__right">
       <div class="sidebar-item__icon icon-notification tooltip">
-        <span class="tooltiptext">Thông báo</span>
+        <span class="tooltiptext" style="min-width: 120px;left: -38%;">Đang phát triển</span>
       </div>
       <div class="header__right-box">
         <div class="sidebar-item__icon header__right-avt icon-avatar"></div>

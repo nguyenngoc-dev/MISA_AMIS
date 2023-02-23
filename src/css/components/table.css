@@ -18,11 +18,7 @@
     overflow: auto;
     height: calc(100vh - 48px - 71px - 68px - 68px);
 }
-.grid-table {
-    /* width: 100%;
-  height: calc(100% - 56px);
-  overflow: scroll; */
-}
+
 
 tbody::-webkit-scrollbar-track { 
     margin-top: 40px;
@@ -76,7 +72,7 @@ th {
 
 .tbl .tbl-col--large {
     width: 186px;
-    min-width: 185px;
+    min-width: 200px;
 }
 
 .tbl .tbl-col:first-child {
@@ -202,4 +198,13 @@ th {
 }
 .tbl tr td {
     box-sizing: border-box;
+}
+.empty-data {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+}
+.empty-data-text {
+    text-align: center;
+    margin-top: 8px;
 }

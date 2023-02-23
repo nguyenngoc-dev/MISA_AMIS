@@ -7,7 +7,7 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 24px 0 11px 0;
+    padding: 16px 0 16px 0;
 }
 
 .content__header-text {
@@ -19,7 +19,7 @@
     background-color: #fff;
     box-shadow: 0 0 3px #01161e29;
     height: calc(100vh - 48px - 71px - 10px);
-    padding: 0 30px 0 20px;
+    padding: 0 24px 0 24px;
     position: relative;
 }
 .content-wrapper::-webkit-scrollbar-track {
@@ -30,14 +30,13 @@
     display: flex;
     justify-content: flex-end;
     align-items: center;
-    padding: 8px 0 16px 0;
+    padding: 16px 0 16px 0;
     width: calc(100% + 10px);
 }
 
 .content-wrapper__action-refresh {
     margin-left: 16px;
     position: relative;
-    top: 4px;
 }
 
 .content-footer {
@@ -52,22 +51,23 @@
 } */
 .content-icon {
     position: absolute;
-    top: 18px;
+    top: 12px;
     right: 6px;
 }
 .content-wrapper__action--muiltiple {
-    padding-top: 8px;
+    display: flex;
+    align-items: center;
 }
 .content-wrapper-btn--muiltiple{
     position: relative;
-    height: 26px;
+    height: 30px;
     width: 180px;
     padding-right: 32px;
     border-radius: 20px;
 }
 .content-wrapper-btn-icon {
     position: absolute;
-    top: 10px;
+    top: 12px;
     right: 20px;
 }
 .content-wrapper-btn--action {
@@ -80,4 +80,42 @@
     border-radius: 0;
     width: 86px;
     height: 30px;
+}
+.content-wrapper__action-checked {
+    margin-right: 16px
+}
+
+.content-wrapper__action--remove {
+    color: #e61d1d;
+    cursor: pointer;
+}
+
+.content-wrapper__action--delete {
+    height: 36px;
+    width: 108px;
+    border: 1px solid #E0E0E0;
+    border-radius: 4px;
+    margin-left: 16px;
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+}
+.content-wrapper__action--delete:hover {
+    background-color: #F6F6F6;
+}
+.content-wrapper__action-container {
+    width: 24px;
+    border: 1px solid #E0E0E0;
+    height: 24px;
+    border-radius: 8px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #F6F6F6;
+    margin-right: 8px;
+    margin-left: 8px;
+}
+
+.content-wrapper__action-text {
+    font-weight: 700;
 }

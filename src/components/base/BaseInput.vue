@@ -3,7 +3,7 @@
     :type="inputType"
     :class="{
       textfield__input: true,
-      'textfield--error-input': isErrorInput,
+      'textfield--error-input': !!isErrorInput,
       'modal-textfield__input': true,
     }"
     :value="modelValue"
@@ -11,21 +11,19 @@
     :ref="name"
     :name="name"
   />
+  
 </template>
 <script>
 import {inputValidation} from "../../js/base/common.js"
 export default {
   name: "BaseInput",
   emits: [
-    "errorInputMessage"
+    "errorInputMessage","update:modelValue"
   ],
   props: {
     modelValue: String,
     inputType: String,
-    isErrorInput: {
-      default: false,
-      type: Boolean,
-    },
+    isErrorInput: String,
     name:String,
     rules:{
       default: new Array(),

@@ -98,23 +98,41 @@ const RESOURCES = {
     HAS_FORMAT: "HAS_FORMAT",
     UNIQUE: "UNIQUE",
     ADULT: "ADULT",
+    MAX_LENGTH:"MAX_LENGTH"
   },
   ERROR: {
-    NOT_EMPTY: (name) => `${name} không được để trống.`,
-    UNIQUE: (name) => `${name} đã tồn tại.`,
-    ADULT: (name) => `${name} không hợp lệ.`,
-    HAS_FORMAT: (name) => `${name} chưa đúng định dạng.`,
+    NOT_EMPTY: (name) => `${name} không được để trống`,
+    ADULT: (name) => `${name} không hợp lệ`,
+    HAS_FORMAT: (name) => `${name} chưa đúng định dạng`,
+    MAX_LENGTH:(name,value) => `${name} giới hạn ${value} kí tự`
   },
   FORM_FIELD: {
     EmployeeCode: "Mã nhân viên",
     FullName: "Tên nhân viên",
     DepartmentId:"Đơn vị",
+    DateOfBirth:"Ngày sinh",
     IdentityNumber:"Số căn cước",
+    IdentityDate:"Ngày cấp",
+    Position:"Chức danh",
     PhoneNumber: "Số điện thoại",
     LandlineNumber:"Điện thoại cố định",
     Email: "Email",
     BankAccount:"Tài khoản ngân hàng"
   },
+  STATUSCODES: {
+    Unauthorized: {
+      Code: 401,
+      Message: "Không được xác thực"
+    },
+    Not_Found: {
+      Code: 404,
+      Message: "Không tìm thấy tài nguyên"
+    },
+    Gateway_Timeout: {
+      Code: 504,
+      Message:"Không nhận được phản hồi từ máy chủ"
+    }
+  }
 };
 
 export default RESOURCES;

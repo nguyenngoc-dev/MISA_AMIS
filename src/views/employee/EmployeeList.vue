@@ -1,6 +1,6 @@
 <template>
-  <div class="content" @keydown.insert="showDialog(true)">
-    <div class="content__header" @keydown.insert="showDialog(true)">
+  <div class="content">
+    <div class="content__header">
       <div class="content__header-text">Nhân viên</div>
       <BaseButton
         :btnText="'Thêm mới nhân viên'"
@@ -13,24 +13,31 @@
         class="content-wrapper__action"
         style="justify-content: space-between"
       >
-        <div class="content-wrapper__action--muiltiple">
-        <button
-          class="btn btn-secondary modal-btn-cancel content-wrapper-btn--muiltiple"
-          :class="{'disable-btn' : isDisableButton}"
-          :isprimary="false"
-          :disabled = isDisableButton
-          @click="this.isShowBtnDelete = !this.isShowBtnDelete"
+        <div
+          v-show="checkList.length > 0"
+          class="content-wrapper__action--muiltiple"
         >
-        Thực hiện hàng loạt
-          <div class="icon-dropdown content-wrapper-btn-icon" ></div> 
+          <div class="content-wrapper__action-checked">
+            Đã chọn
+            <strong>{{ checkList.length }}</strong>
+          </div>
           <div
-          v-show="this.isShowBtnDelete"
+            class="content-wrapper__action--remove"
+            @click="this.checkList = []"
+          >
+            Bỏ chọn
+          </div>
+          <div
+            class="content-wrapper__action--delete"
             @click="onDeleteClick(true)"
-            class = "btn btn-secondary modal-btn-cancel content-wrapper-btn--action"
-          >Xóa </div>
-        </button>
+          >
+            <div class="content-wrapper__action-container">
+              <div class="icon-delete"></div>
+            </div>
+            <div class="content-wrapper__action-text">Xóa tất cả</div>
+          </div>
         </div>
-
+        <div style="flex: 1"></div>
         <div
           style="
             display: flex;
@@ -39,7 +46,7 @@
           "
         >
           <div class="textfield">
-            <label for="" class="textfield__label">
+            <label for="" class="textfield__label" style="margin-bottom: 0">
               <div
                 @click="searchData()"
                 class="icon-search sidebar-item__icon content-icon"
@@ -48,31 +55,23 @@
             <input
               class="textfield__input"
               v-model="textSearch"
-              placeholder="Tìm kiếm trong danh sách"
-              @change="searchData()"
+              placeholder="Tìm kiếm theo mã, tên nhân viên"
+              :debounce-events="['input', 'keyup']"
+              v-debounce:600ms.lock="searchData"
             />
           </div>
+
           <div
-            class="
-              tooltip
-              icon-export
-              sidebar-item__icon
-              content-wrapper__action-refresh
-            "
-            @click="exportData()"
-          >
-            <span class="tooltiptext">Xuất khẩu</span>
-          </div>
-          <div
-            class="
-              tooltip
-              icon-reload
-              sidebar-item__icon
-              content-wrapper__action-refresh
-            "
+            class="tooltip icon-reload sidebar-item__icon content-wrapper__action-refresh"
             @click="onLoadCurrentpage(this.currentPageNum)"
           >
             <span class="tooltiptext">Lấy dữ liệu</span>
+          </div>
+          <div
+            class="tooltip icon-export sidebar-item__icon content-wrapper__action-refresh"
+            @click="exportData()"
+          >
+            <span class="tooltiptext">Xuất khẩu</span>
           </div>
         </div>
       </div>
@@ -82,15 +81,11 @@
           <tbody>
             <tr class="tbl-row" style="position: sticky; top: 0; z-index: 10">
               <th class="tbl-col" style="z-index: 99">
-                <BaseInput
+                <input
                   type="checkbox"
                   id="checkAll"
                   @change="handleCheckAll"
-                  :checked="
-                    checkList.length != 0 &&
-                    checkList.length === employees.length &&
-                    checkAll()
-                  "
+                  :checked="isCheckAll"
                 />
                 <label for="checkAll" class="mask">
                   <div class="icon-checked"></div>
@@ -100,12 +95,20 @@
               <th class="tbl-col tbl-col--large">Tên nhân viên</th>
               <th class="tbl-col">Giới tính</th>
               <th class="tbl-col" style="text-align: center">Ngày sinh</th>
-              <th class="tbl-col tbl-col--large">Vị trí</th>
+              <th class="tbl-col tooltip" style="display: table-cell">
+                <span
+                  class="tooltiptext"
+                  style="width: 200px; font-size: 12px; left: -12%; top: 102%"
+                  >Số chứng minh nhân dân</span
+                >Số CMND
+              </th>
+              <th class="tbl-col tbl-col--large">Chức danh</th>
+              <th class="tbl-col tbl-col--large">Tên đơn vị</th>
               <th class="tbl-col">Số điện thoại</th>
               <th class="tbl-col">Số tài khoản</th>
               <th class="tbl-col tbl-col--large">Tên ngân hàng</th>
               <th class="tbl-col tbl-col--large">Chi nhánh ngân hàng</th>
-              <th class="tbl-col">chức năng</th>
+              <th class="tbl-col" style="min-width: 112px">chức năng</th>
             </tr>
             <!-- </thead>    -->
 
@@ -123,33 +126,61 @@
                   :value="employee.EmployeeId"
                   :id="employee.EmployeeId"
                   :checked="checkList.includes(employee.EmployeeId)"
-                  v-model="checkList"
+                  @change="hanlderCheckBox(employee.EmployeeId)"
                 />
                 <label :for="employee.EmployeeId" class="mask">
                   <div class="icon-checked"></div>
                 </label>
               </td>
               <td class="tbl-col">
-                <div>
-                  <span>{{ employee.EmployeeCode || "" }}</span>
+                <div class="text-overflow">
+                  {{ employee.EmployeeCode || "" }}
                 </div>
               </td>
               <td class="tbl-col tbl-col--large">
-                {{ employee.FullName || "" }}
+                <div class="text-overflow">
+                  {{ employee.FullName || "" }}
+                </div>
               </td>
               <td class="tbl-col">
-                {{ GenderTransform(employee.Gender) || "" }}
+                {{ employee.GenderName || "" }}
               </td>
               <td class="tbl-col" style="text-align: center">
                 {{ formatDate(employee.DateOfBirth) || "" }}
               </td>
-              <td class="tbl-col tbl-col--large">
-                {{ employee.Position || "" }}
+              <td class="tbl-col">
+                <div class="text-overflow">
+                  {{ employee.IdentityNumber || "" }}
+                </div>
               </td>
-              <td class="tbl-col">{{ employee.PhoneNumber || "" }}</td>
-              <td class="tbl-col">{{ employee.BankAccount }}</td>
-              <td class="tbl-col tbl-col--large">{{ employee.BankName }}</td>
-              <td class="tbl-col tbl-col--large">{{ employee.BankBranch }}</td>
+              <td class="tbl-col tbl-col--large">
+                <div class="text-overflow">
+                  {{ employee.Position || "" }}
+                </div>
+              </td>
+              <td class="tbl-col tbl-col--large">
+                {{ employee.DepartmentName || "" }}
+              </td>
+              <td class="tbl-col">
+                <div class="text-overflow">
+                  {{ employee.PhoneNumber || "" }}
+                </div>
+              </td>
+              <td class="tbl-col">
+                <div class="text-overflow">
+                  {{ employee.BankAccount }}
+                </div>
+              </td>
+              <td class="tbl-col tbl-col--large">
+                <div class="text-overflow">
+                  {{ employee.BankName }}
+                </div>
+              </td>
+              <td class="tbl-col tbl-col--large">
+                <div class="text-overflow">
+                  {{ employee.BankBranch }}
+                </div>
+              </td>
               <td class="tbl-col">
                 <div class="tbl-col__action">
                   <label
@@ -157,19 +188,15 @@
                     @click="rowOnDblClick(employee)"
                     >Sửa</label
                   >
-                  <label
+                  <button
                     @click="handleOpenListAction($event, employee)"
-                    class="sidebar-item__icon "
-                    style="
-                      display: flex;
-                      justify-content: center;
-                      align-items: center;
-                    "
-                  >
+                    @blur="onBlurActionIcon($event)"
+                    class="sidebar-item__icon"
+                    style="display: flex;justify-content: center;align-items: center;height: 16px;background: none;outline: none;border: none;">
                     <div class="icon-action-dropdown">
                       <!-- <input type="checkbox" hidden /> -->
                     </div>
-                  </label>
+                  </button>
                 </div>
               </td>
             </tr>
@@ -202,6 +229,10 @@
             <BaseLoading v-if="isShowLoading" />
           </tbody>
         </table>
+        <div class="empty-data" v-if="this.employees.length === 0">
+          <img src="../../assets/img/emptyData.svg" alt="" />
+          <div class="empty-data-text">Không có dữ liệu</div>
+        </div>
       </div>
 
       <div class="content-footer">
@@ -251,7 +282,7 @@
           <!-- Phân trang -->
           <paginate
             :page-count="totalPage"
-            :page-range="2"
+            :page-range="3"
             :margin-pages="1"
             :click-handler="clickCallback"
             :prev-text="'Trước'"
@@ -302,11 +333,7 @@
 import paginate from "vuejs-paginate/src/components/Paginate.vue";
 import EmployeeDetail from "../../views/employee/EmployeeDetail.vue";
 import BaseInput from "../../components/base/BaseInput.vue";
-import {
-  formatDate,
-  formatMoney,
-  GenderTransform,
-} from "../../js/base/common.js";
+import { formatDate, formatMoney } from "../../js/base/common.js";
 import axios from "axios";
 import { HTTP } from "../../js/api/ConnectApi.js";
 import RESOURCES from "../../js/base/resouce.js";
@@ -333,10 +360,10 @@ export default {
         },
       },
       dialogTitle: "", // title thông báo khi xóa
-      isDisableButton:true,//disable button xóa hàng loạt
+      isDisableButton: true, //disable button xóa hàng loạt
       isDelete: true, // có phải dialog xóa
       isNotice: false, // dialog cảnh báo
-      isShowBtnDelete:false,//show nút xóa nhiều
+      isShowBtnDelete: false, //show nút xóa nhiều
       showBtnCancel: true, //hiện button không
       checkList: [], // mảng chứa các check box checked
       employeeIdSelected: null, // id của nhân viên khi click nút sửa
@@ -344,10 +371,8 @@ export default {
       employeeIdDelete: null, // lấy ra id khi xóa nhân viên
       employeeIdDuplicate: false, // lấy id nhân viên để nhân bản
       isShowToast: false, //show toast message
-      isCheckAll: false, // check all
       formatDate, // Hàm xử lí ngày tháng
       formatMoney, // Hàm xử lí tiền tệ
-      GenderTransform, //Hàm  xử lí giới tính
       totalPage: 1, // Tổng số trang
       currentPageSizeText: RESOURCES.PAGINATION[0].text, // Tổng số bản ghi trên một trang text
       currentPageSize: 20, //Tổng số bản ghi trên một trang number
@@ -367,7 +392,41 @@ export default {
     // Lấy ra 20 bản ghi đầu tiên
     this.getEmployeesFirst();
   },
+  mounted() {
+    document.addEventListener("keydown", this.onKeyDown);
+  },
+  computed: {
+    // Check xem có phải check all hay không
+    isCheckAll() {
+      let isCheck = true;
+
+      if (this.checkList.length == 0) {
+        return false;
+      }
+      isCheck = this.employees.every((item) =>
+        this.checkList.includes(item.EmployeeId)
+      );
+      // eslint-disable-next-line
+      return isCheck;
+    },
+  },
   methods: {
+    /**
+     * author:Nguyễn Văn Ngọc(21/2/2023)
+     * Hàm onKeyDown xử lí khi nhấn phím tắt
+     */
+    onKeyDown(event) {
+      // Mở Form nhân viên
+      if (event.ctrlKey && event.key === "1") {
+        event.preventDefault();
+        this.showDialog(true);
+      }
+      // export data ra excel
+      if (event.shiftKey && (event.key === "P" || event.key === "p")) {
+        event.preventDefault();
+        this.exportData();
+      }
+    },
     /**
      * author:Nguyễn Văn Ngọc(2/1/2023)
      * Hàm getEmployeesFirst lấy ra số nhân viên trang đầu tiên
@@ -376,7 +435,6 @@ export default {
       try {
         // show loading
         this.isShowLoading = true;
-
         HTTP.post(`/filter`, this.getFilterParams("", 20, 1)).then((res) => {
           this.employees = res.data.Data;
           this.totalPage = res.data.TotalPage;
@@ -384,7 +442,7 @@ export default {
           this.pageTotal = res.data.TotalRecord;
         });
       } catch (error) {
-        console.log(error);
+        this.handleExeption(error);
       }
     },
     // Ẩn hiện form nhân viên
@@ -418,7 +476,7 @@ export default {
       this.showBtnCancel = true;
       this.isDelete = true;
       this.onShowDeleteDialog(true);
-      if(isMultiple) {
+      if (isMultiple) {
         this.dialogTitle = RESOURCES.MODAL_MESSAGE.WARNING;
       }
     },
@@ -443,11 +501,10 @@ export default {
         this.isShowToast = true;
         this.checkList = [];
         this.listAction.isShow = false;
-
         // Load lại dữ liệu
         await this.onLoadCurrentpage(this.currentPageNum);
       } catch (error) {
-        console.log(error);
+        this.handleExeption(error);
       }
     },
     /**
@@ -467,6 +524,8 @@ export default {
     /**
      * author:Nguyễn Văn Ngọc(3/1/2023)
      * Hàm handleOpenListAction Xử lí vị trí của list khi click nút sửa
+     * Xử lí CheckList
+     * Thông báo
      */
 
     handleOpenListAction(e, emp) {
@@ -488,14 +547,36 @@ export default {
             document.body.offsetWidth - position.left - position.width + "px",
         },
       };
-        // if(this.listAction.isShow) {
-        //   e.target.style.border = "1px solid #0075c0";
-        //   e.target.style.height = "16px";
-        // }
-        // else {
-        //   e.target.style.border = 'unset';
-        //   e.target.style.height = "24px";
-        // }
+      if (position.y < 592) {
+        this.listAction.style.top = position.top + position.height + "px";
+      } else {
+        this.listAction.style.top = position.y - 110 + "px";
+      }
+      if (this.listAction.isShow) {
+        e.target.style.border = "1px solid #0075c0";
+      } else {
+        e.target.style.border = "1px solid transparent";
+      }
+    },
+    /**
+     * author:Nguyễn Văn Ngọc(3/1/2023)
+     * Hàm hanlderCheckBox Xử lí khi click vào mỗi ô check
+     * Xử lí CheckList
+     * Thông báo
+     */
+    hanlderCheckBox(value) {
+      if (this.checkList.includes(value)) {
+        this.checkList.splice(this.checkList.indexOf(value), 1);
+      } else {
+        this.checkList.push(value);
+      }
+    },
+    /**
+     * author:Nguyễn Văn Ngọc(3/1/2023)
+     * Hàm onBlurActionIcon bỏ border của label icon action
+     */
+    onBlurActionIcon(e) {
+      e.target.style.border = "1px solid transparent";
     },
     /**
      * author:Nguyễn Văn Ngọc(4/1/2023)
@@ -513,7 +594,7 @@ export default {
         this.employees = response.data.Data;
         this.isShowLoading = false;
       } catch (error) {
-        console.log(error);
+        this.handleExeption(error);
       }
     },
     /**
@@ -521,28 +602,18 @@ export default {
      * Hàm handleCheckAll xử lí check all khi click vào checkall
      */
     handleCheckAll(e) {
+      const employeeIds = this.employees.map((item) => item.EmployeeId);
+
+      const ids = employeeIds.filter((id) => !this.checkList.includes(id));
       if (e.target.checked) {
-        this.checkList = [...this.employees.map((item) => item.EmployeeId)];
+        this.checkList = [...this.checkList, ...ids];
       } else {
-        this.checkList = [];
+        this.checkList = [
+          ...this.checkList.filter((item) => !employeeIds.includes(item)),
+        ];
       }
     },
-    /**
-     * author:Nguyễn Văn Ngọc(4/1/2023)
-     * Hàm checkAll xử lí checked của check all
-     */
-    checkAll() {
-      var me = this;
-      let isCheck = true;
-      let count = 0;
-      this.employees.forEach((item) => {
-        if (this.checkList.includes(item.EmployeeId)) {
-          count++;
-        }
-      });
-      if (count == this.employees.length) return true;
-      else return false;
-    },
+
     /**
      * author:Nguyễn Văn Ngọc(4/1/2023)
      * Hàm rowOnDblClick xử lí check all khi double click mỗi hàng
@@ -579,7 +650,7 @@ export default {
         this.textSearch = "";
         this.currentPageNum = pageNum;
       } catch (error) {
-        console.log(error);
+        this.handleExeption(error);
       }
     },
     /**
@@ -601,7 +672,7 @@ export default {
         this.textSearch = "";
         this.employeeIdSelected = null;
       } catch (error) {
-        console.log(error);
+        this.handleExeption(error);
       }
     },
     /**
@@ -633,7 +704,7 @@ export default {
         this.textSearch = "";
         this.itemActive = index;
       } catch (error) {
-        console.log(error);
+        this.handleExeption(error);
       }
     },
     /**
@@ -680,38 +751,31 @@ export default {
         // Set href của thẻ a là url
         link.href = url;
         // Set attribute của thẻ a và tên của file excel
-        link.setAttribute("download", "Danh_sach_can_bo_giao_vien.xlsx");
+        link.setAttribute("download", "Danh_sach_nhan_vien.xlsx");
         document.body.appendChild(link);
         link.click();
         // Ẩn Loading
         me.isShowLoading = false;
       } catch (error) {
-        console.log(error);
+        this.handleExeption(error);
+      }
+    },
+    /**
+     * author:Nguyễn Văn Ngọc(14/2/2023)
+     * Hàm handleExeption xử lí khi có exeption
+     *
+     */
+    handleExeption(error) {
+      if (error.code == "ERR_NETWORK") {
+        this.changeToastMsg(RESOURCES.FORM_MODE.ERROR,true,false,RESOURCES.NOTIFICATION_TITLE.ERROR);
+        this.onshowToast();
+        this.isShowLoading = false;
       }
     },
   },
 
   updated() {},
-  watch: {
-    currentPageNum: {
-      handler: function (newValue) {
-        this.checkAll();
-      },
-      immediate: true,
-    },
-    checkList: {
-      handler:function (newValue){
-        if(this.checkList.length > 0) {
-          this.isDisableButton = false
-        }
-        else {
-          this.isDisableButton = true;
-          this.isShowBtnDelete = false;
-        }
-      },
-      immediate:true
-    }
-  },
+  watch: {},
 };
 </script>
 <style>

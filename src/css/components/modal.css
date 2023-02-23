@@ -13,7 +13,6 @@
   max-width: 900px;
   width: 900px;
   background-color: #fff;
-  height: calc(100vh - 124px);
   transition: all 0.1s linear;
   animation: down 0.1s linear;
 }
@@ -60,11 +59,11 @@
   display: none;
 }
 
-.modal__header-left-wrapper input[type="radio"] {
+.modal__header-left-wrapper input[type="checkbox"] {
   display: none;
 }
 
-.modal__header-left-wrapper:has(input[type="radio"]:checked) div {
+.modal__header-left-wrapper:has(input[type="checkbox"]:checked) div {
   display: inline-block;
 }
 
@@ -101,8 +100,8 @@
   justify-content: center;
   align-items: flex-start;
 }
-.pb-12 {
-  padding-bottom: 12px;
+.pb-16 {
+  padding-bottom: 16px;
 }
 .pt-16{
 padding-top: 1.6px;
@@ -112,9 +111,9 @@ padding-top: 1.6px;
   justify-content: space-between;
   align-items: center;
   width: 100%;
-  padding: 0 32px 0 32px;
-  height: 74px;
-  background: white;
+  background: #ccc;
+  padding: 12px 32px 12px 32px;
+  background: #F5F5F5;
 }
 
 .line {
@@ -156,7 +155,7 @@ padding-top: 1.6px;
 }
 
 .modal-icon {
-  height: 36px !important;
+  height: 34px !important;
   width: 36px !important;
   top: 24px !important;
   right: 0 !important;
@@ -188,9 +187,9 @@ padding-top: 1.6px;
   display: none;
 }
 
-.modal__gender-item:has(input[type="radio"]:checked) {
-  border: none;
-}
+/* .modal__gender-item:has(input[type="checkbox"]:checked) {
+
+} */
 
 .modal__gender-item:has(input[type="radio"]:checked) div {
   display: block;
@@ -225,12 +224,12 @@ padding-top: 1.6px;
 .modal-contact__content {
   height: 194px;
   width: 100%;
-  padding-right: 18px;
+  padding-right: 8px;
 }
 .modal-contact__content--middle,
 .modal-contact__content--bottom {
   display: flex;
-  align-items: center;
+  align-items: stretch;
 }
 .overlay input[type="checkbox"] {
   display: none;

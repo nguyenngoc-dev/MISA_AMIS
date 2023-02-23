@@ -1,3 +1,11 @@
+.date-picker__icon {
+  top: 28%;
+  right: 14px;
+  position: absolute;
+  background: url(http://localhost:8080/img/Sprites.64af8f61.2ff7618a.svg) no-repeat -128px -312px;
+  width: 16px;
+  height: 16px;
+}
 .dp__input_icon_pad {
   padding-left: 0;
 }

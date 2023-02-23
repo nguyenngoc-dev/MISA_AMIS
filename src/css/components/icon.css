@@ -163,8 +163,8 @@
 .icon-radio-checked {
 	background: url('../../assets/icon/radio-checked.png')
 	no-repeat center;
-	height: 16px;
-	width: 16px;
+	height: 18px;
+	width: 18px;
 	background-size: contain;
 }
 .icon-action-dropdown {
@@ -201,4 +201,9 @@
 	background: url('../../assets/img/Sprites.64af8f61.svg') no-repeat -1265px -90px;
 	width: 23px;
 	height: 20px;
+}
+.icon-delete {
+	background: url('../../assets/img/Sprites.64af8f61.svg') no-repeat -464px -313px;
+	width: 15px;
+	height: 15px;
 }

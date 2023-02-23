@@ -16,16 +16,15 @@
       'modal-textfield__input': true,
       'textfield--error-input': this.isUnit,
     }"
-    tabindex="3"
+    tabindex="1"
     v-model="textSelected"
-    @focus="isCheck()"
     @input="onSearchItem()"
     @keydown="onKeyDown"
-    @blur="onBlurInput"
     :ref="name"
     :name="name"
   />
   <p class="text-error">{{ errorMessage }}</p>
+  <!-- <p class="m-input__error-msg">{{ errorMessage }}</p> -->
   <ul
     :class="{
       'textfield-list': true,
@@ -170,19 +169,19 @@ export default {
      * author:Nguyễn Văn Ngọc(10/1/2023)
      * Hàm onBlurInput xử lí khi nhấn blur khỏi ô input
      */
-    onBlurInput() {
+    // onBlurInput() {
      
-      if (!this.textSelected) {
-        this.$emit("invalidUnit", "Đơn vị không được để trống");
-      }
-      if(this.textSelected) {
-        const validValue = this.entities.find(item => item[this.propName] === this.textSelected);
-        if(!validValue) {
-        this.$emit("invalidUnit", "Đơn vị không được để trống");
-        this.$emit("update:modelValue", "");
-        }
-      }
-    },
+    //   if (!this.textSelected) {
+    //     this.$emit("invalidUnit", "Đơn vị không được để trống");
+    //   }
+    //   if(this.textSelected) {
+    //     const validValue = this.entities.find(item => item[this.propName] === this.textSelected);
+    //     if(!validValue) {
+    //     this.$emit("invalidUnit", "Đơn vị không được để trống");
+    //     this.$emit("update:modelValue", "");
+    //     }
+    //   }
+    // },
     /**
      * author:Nguyễn Văn Ngọc(2/1/2023)
      * Focus vào ô input
