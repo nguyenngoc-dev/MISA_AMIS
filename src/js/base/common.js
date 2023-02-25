@@ -45,12 +45,15 @@ export function formatMoney (money)  {
  */
 export function inputValidation (rules,name,value) {
     const FORM_FIELD = RESOURCES.FORM_FIELD;
-    const {NOT_EMPTY,UNIQUE,ADULT,HAS_FORMAT,MAX_LENGTH} = RESOURCES.FORM_RULES;
+    const {NOT_EMPTY,ADULT,HAS_FORMAT,MAX_LENGTH} = RESOURCES.FORM_RULES;
+
     const ERROR = RESOURCES.ERROR;
     const regexConstant = regexConstants;
     for (const rule of rules) {
-      console.log(rule)
-      switch (rule) {
+      var arrRule = rule.split("|");
+      var nameRule = arrRule[0];
+      var keyRule = arrRule[1];
+      switch (nameRule) {
         case NOT_EMPTY:{
           if(!value.trim()) return ERROR[rule](FORM_FIELD[name]);
           break;
@@ -62,22 +65,25 @@ export function inputValidation (rules,name,value) {
             if (date > dateNow) {
               return ERROR[rule](FORM_FIELD[name]);
             }
+            if(FORM_FIELD[name] == 'Ngày sinh') {
+              if(new Date().getFullYear() - new Date(value).getFullYear() < 18)
+                return ERROR[rule](FORM_FIELD[name]);
+            }
           }
           break;
         }
         case HAS_FORMAT:{
           
-          if(value && !regexConstant[name].test(value))
+          if(value.trim() && !regexConstant[name].test(value))
           {
             return ERROR[rule](FORM_FIELD[name]);
           }
           break;
         }
         case MAX_LENGTH: {
-          const textLength = 100;
-          if(value.length > textLength)
-            return ERROR[rule](FORM_FIELD[name],textLength)
-          break;
+          if (value && value.length > keyRule)
+          return ERROR[nameRule](FORM_FIELD[name], keyRule);
+        break;
         }
         default:
           break;

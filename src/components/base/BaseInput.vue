@@ -3,7 +3,7 @@
     :type="inputType"
     :class="{
       textfield__input: true,
-      'textfield--error-input': !!isErrorInput,
+      'textfield--error-input': isErrorInput,
       'modal-textfield__input': true,
     }"
     :value="modelValue"
@@ -23,7 +23,7 @@ export default {
   props: {
     modelValue: String,
     inputType: String,
-    isErrorInput: String,
+    isErrorInput: Boolean,
     name:String,
     rules:{
       default: new Array(),

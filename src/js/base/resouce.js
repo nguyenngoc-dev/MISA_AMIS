@@ -102,7 +102,14 @@ const RESOURCES = {
   },
   ERROR: {
     NOT_EMPTY: (name) => `${name} không được để trống`,
-    ADULT: (name) => `${name} không hợp lệ`,
+    ADULT: (name) =>{
+      let message = "";
+      if(name == "Ngày sinh") 
+        message = "Nhân viên chưa đủ 18 tuổi";
+      else
+        message = `${name} không hợp lệ`;
+      return message;
+    },
     HAS_FORMAT: (name) => `${name} chưa đúng định dạng`,
     MAX_LENGTH:(name,value) => `${name} giới hạn ${value} kí tự`
   },

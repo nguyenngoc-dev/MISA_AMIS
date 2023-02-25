@@ -12,6 +12,7 @@
     "axios": "^1.2.2",
     "core-js": "^3.8.3",
     "vue": "^3.2.13",
+    "vue-click-outside-element": "^1.0.15",
     "vue-debounce": "^4.0.0",
     "vue-router": "^4.1.6",
     "vuejs-paginate": "^2.1.0"

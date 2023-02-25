@@ -26,7 +26,7 @@
             class="icon-close tooltip"
             for="show-modal"
           >
-            <span class="tooltiptext">Đóng (Esc)</span>
+            <span class="tooltiptext" style="min-width: 80px;">Đóng (Esc)</span>
           </div>
         </div>
       </div>
@@ -38,14 +38,12 @@
                 Mã <span class="required">*</span>
               </label>
               <BaseInput
-                :isErrorInput ="this.isCode || this.isCodeLoss || this.errorOject['EmployeeCode']"
+                :isErrorInput =" this.isCodeLoss || !!this.errorOject['EmployeeCode'] "
                 style="min-width: 149px; width: 149px; margin-right: 6px"
                 v-model="employees.EmployeeCode"
                 :name="'EmployeeCode'"
                 :rules="['NOT_EMPTY','HAS_FORMAT']"
-                :isCode="true"
                 :tooltipMessage="errorCodeMessage"
-                :errorMessage="this.errorOject['EmployeeCode']"
                 placeholder="NV-12345"
                 @errorInputMessage="validateInput"
                 ref="EmployeeCode"
@@ -59,16 +57,15 @@
                 Tên <span class="required">*</span>
               </label>
               <BaseInput
-                :isErrorInput ="this.errorOject['FullName']"
+                :isErrorInput ="!!this.errorOject['FullName']"
                 style="min-width: 233px; width: 233px"
                 :inputType="'text'"
                 v-model="employees.FullName"
-                :rules="['NOT_EMPTY','MAX_LENGTH']"
+                :rules="['NOT_EMPTY','MAX_LENGTH|100']"
                 @errorInputMessage="validateInput"
                 :name="'FullName'"
                 ref="FullName"
                 tabindex="1"
-                
               />
               <p class="text-error">{{this.errorOject['FullName']}} </p>
               <!-- <p class="m-input__error-msg">{{ this.errorOject['FullName'] }}</p> -->
@@ -79,7 +76,7 @@
             <BaseCombobox
               :comboName="'Đơn vị'"
               :errorMessage="this.errorOject['DepartmentId']?'Đơn vị không hợp lệ': null"
-              :isUnit="errorOject['DepartmentId']"
+              :isUnit="!!errorOject['DepartmentId']"
               :api="'https://localhost:44387/api/v1/Departments'"
               :propName="'DepartmentName'"
               :rules="['NOT_EMPTY']"
@@ -98,9 +95,9 @@
             <BaseInput 
             v-model="employees.Position" 
             tabindex="1" 
-            :isErrorInput ="this.errorOject['Position']"
+            :isErrorInput ="!!this.errorOject['Position']"
             :inputType="'text'"
-            :rules="['MAX_LENGTH']"
+            :rules="['MAX_LENGTH|100']"
             @errorInputMessage="validateInput"
             :name="'Position'"  
             ref="Position"
@@ -123,7 +120,7 @@
               :tabIndex="2"
               :name="'DateOfBirth'"
               dateName="'DateOfBirthPicker'"
-              :isErrorInput ="this.errorOject['DateOfBirth']"
+              :isErrorInput ="!!this.errorOject['DateOfBirth']"
               :rules="['ADULT']"
               :errorMsg="this.errorOject['DateOfBirth']"
               ref="DateOfBirth"
@@ -187,7 +184,7 @@
               <label for="" class="tooltip textfield__label modal-label pt-16">
                 <span
                   class="tooltiptext"
-                  style="width: 242px; font-size: 12px; left: -12%;"
+                  style="width: 185px; font-size: 12px; left: -10%;"
                   >Số chứng minh nhân dân</span
                 >
                 Số CMND
@@ -196,7 +193,7 @@
                 style="min-width: 250px; width: 242px"
                 v-model="employees.IdentityNumber"
                 tabindex="4"
-                :isErrorInput ="this.errorOject['IdentityNumber']"
+                :isErrorInput ="!!this.errorOject['IdentityNumber']"
                 ref="IdentityNumber"
                 :name="'IdentityNumber'"
                 :rules="['HAS_FORMAT']"
@@ -218,7 +215,7 @@
               :tabIndex="4"
               :name="'IdentityDate'"
               dateName="'IdentityDatePicker'"
-              :isErrorInput ="this.errorOject['IdentityDate']"
+              :isErrorInput ="!!this.errorOject['IdentityDate']"
               :rules="['ADULT']"
               :errorMsg="this.errorOject['IdentityDate']"
               ref="IdentityDate"
@@ -260,7 +257,7 @@
                   style="min-width: 186px; width: 186px; margin-right: 12px"
                   v-model="employees.PhoneNumber"
                   tabindex="8"
-                  :isErrorInput ="this.errorOject['PhoneNumber']"
+                  :isErrorInput ="!!this.errorOject['PhoneNumber']"
                   :name="'PhoneNumber'"
                   :rules="['HAS_FORMAT']"
                   @errorInputMessage="validateInput"
@@ -277,7 +274,7 @@
                   style="min-width: 186px; width: 186px; margin-right: 12px"
                   v-model="employees.LandlineNumber"
                   tabindex="9"
-                  :isErrorInput ="this.errorOject['LandlineNumber']"
+                  :isErrorInput ="!!this.errorOject['LandlineNumber']"
                   :rules="['HAS_FORMAT']"
                   @errorInputMessage="validateInput"
                   :name="'LandlineNumber'"
@@ -293,9 +290,9 @@
                 <BaseInput
                   style="min-width: 186px; width: 186px; margin-right: 12px"
                   v-model="employees.Email"
-                  :isErrorInput ="this.errorOject['Email']"
+                  :isErrorInput ="!!this.errorOject['Email']"
                   placeholder="nguyen@gmail.com"
-                  :rules="['HAS_FORMAT','MAX_LENGTH']"
+                  :rules="['HAS_FORMAT','MAX_LENGTH|100']"
                   @errorInputMessage="validateInput"
                   ref="Email"
                   :name="'Email'"
@@ -314,7 +311,7 @@
                 <BaseInput
                   tabindex="11"
                   style="min-width: 186px; width: 186px; margin-right: 12px"
-                  :isErrorInput ="this.errorOject['BankAccount']"
+                  :isErrorInput ="!!this.errorOject['BankAccount']"
                   v-model="employees.BankAccount"
                   ref="BankAccount"
                   :name="'BankAccount'"
@@ -322,7 +319,7 @@
                   @errorInputMessage="validateInput"
                 />
                 <p class="text-error">{{ this.errorOject['BankAccount'] }}</p>
-                <div class="m-input__error-msg m-input__error-msg-normal">{{ this.errorOject['BankAccount'] }}</div>
+                <!-- <div class="m-input__error-msg m-input__error-msg-normal">{{ this.errorOject['BankAccount'] }}</div> -->
 
               </div>
               <div class="textfield" style="float: left; margin-bottom: 18px">
@@ -367,6 +364,7 @@
             :btnText="'Cất'"
             :isShowTooltip="true"
             tabindex="14"
+            ref="Save"
             :tooltipContent="'Cất (Ctrl + S)'"
           >
           </BaseButton>
@@ -375,7 +373,7 @@
             :btnText="'Cất và thêm'"
             :isShowTooltip="true"
             tabindex="15"
-            :tooltipContent="'(Ctrl+Shift+S)'"
+            :tooltipContent="'Cất và thêm(Ctrl+Shift+S)'"
           >
           </BaseButton>
         </div>
@@ -399,12 +397,9 @@
   />
 </template>
 <script>
-import axios from "axios";
-import { ref } from "vue";
 import BaseInput from "../../components/base/BaseInput.vue";
 import BaseDatePicker from '../../components/base/BaseDatePicker.vue'
 import RESOURCES from "../../js/base/resouce.js";
-import KEYDOWN from "../../js/base/enums.js";
 import { HTTP, HTTPDepartments } from "../../js/api/ConnectApi.js";
 
 export default {
@@ -412,6 +407,7 @@ export default {
     BaseInput,
     BaseDatePicker
   },
+
   emits: [
     "hideDialog",
     "onLoadData",
@@ -430,7 +426,6 @@ export default {
       DepartmentFilter: [], //Danh sách phòng ban tìm kiếm
       employees: this.onDefaultEmployee(), // object nhân viên
       departmentSelected: {}, // phòng ban được chọn
-      isCode: false, // cờ thông báo mã khong hợp lệ
       oldEmployee:{},//nhân viên ban 
       errorOject:{},// object chứa lỗi 
       isName: false, // .... tên không hợp lệ
@@ -504,17 +499,17 @@ export default {
         });
       } catch (error) {
         console.log(error);
+        this.handleException(error);
       }
     }
     // click vào thêm mới hoặc nhân bản thì  gọi api lấy mã nhân viên mới để truyền vào input Mã nhân viên
     if (this.isAdd || this.isDuplicate) {
-      this.employees.EmployeeCode = this.getNewEmCode();
+       this.getNewEmCode();
     }
   },
   mounted() {
     document.addEventListener("keydown", this.onKeyDown);
     // forcus vào ô mã nhân viên khi hiển thị form chi tiết
-    var me = this;
     this.$refs.EmployeeCode.onFocus();
   },
 
@@ -524,9 +519,10 @@ export default {
      * Hàm onKeyDown xử lí khi nhấn phím tắt
      */
     onKeyDown(event) {
+      var me = this;
       if(event.ctrlKey && (event.key === "S" || event.key === "s")) {
         event.preventDefault();
-        this.onSavebtn(false)
+        me.onSavebtn(false)
       }
       if (event.ctrlKey && event.shiftKey && (event.key === "S" || event.key === "s")) {
         event.preventDefault();
@@ -553,7 +549,7 @@ export default {
         const res = await HTTP.get(`/${this.employeeIdUpdate}`);
         this.employees = res.data;
       } catch (error) {
-        console.log(error);
+        this.handleException(error);
       }
     },
     /**
@@ -567,23 +563,7 @@ export default {
         this.Departments = res.data;
         this.DepartmentFilter = res.data;
       } catch (error) {
-        console.log(error);
-      }
-    },
-    /**
-     * author:Nguyễn Văn Ngọc(3/1/2023)
-     * Hàm onBlurInput xử lí khi blur khỏi ô input
-     */
-    onBlurInput(inputName) {
-      switch (inputName) {
-        case this.employees.EmployeeCode:
-          this.isValidFiled(this.employees.EmployeeCode, "EmployeeCode"); // kiểm tra mã
-          break;
-        case this.employees.FullName:
-          this.isValidFiled(this.employees.FullName, "FullName"); // kiểm tra tên
-          break;
-        default:
-          break;
+        this.handleException(error);
       }
     },
     /**
@@ -771,24 +751,17 @@ export default {
      */
     validate() {
       var me = this;
+      var obj = RESOURCES.FORM_FIELD;
+      console.log(obj);
       for(const property in RESOURCES.FORM_FIELD) {
-        me.$refs[property].checkValidate()
+        if(me.$refs[property])
+        {
+          me.$refs[property].checkValidate();
+        }
       }
       var isValid = true;
       isValid = this.processPopup(); // Thông báo nếu có lỗi
       return isValid;
-    },
-    /**
-     * author:Nguyễn Văn Ngọc(4/1/2023)
-     * Hàm isValidFiled kiểm tra các trường bắt buộc
-     */
-    isValidFiled(object, error) {
-      if (!object) {
-        this.errorOject[error] = "lỗi";
-        this.errorCodeMessage = RESOURCES.FORM_MESSAGE.ERROR.INVALID_CODE
-      } else {
-        this.errorOject[error] = null;
-      }
     },
     /**
      * author:Nguyễn Văn Ngọc(4/1/2023)

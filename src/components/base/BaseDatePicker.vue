@@ -48,10 +48,11 @@
 <script>
 import {inputValidation,formatDate} from "../../js/base/common.js"
 import DatePicker from '@vuepic/vue-datepicker';
-import '@vuepic/vue-datepicker/dist/main.css'
+import '@vuepic/vue-datepicker/dist/main.css';
+
 export default {
   name: "BaseDatePicker",
-  emits: ["errorInputMessage"],
+  emits: ["errorInputMessage","update:modelValue"],
   components: {
     DatePicker
   },
@@ -78,7 +79,7 @@ export default {
       default: new Array(0),
     },
     tabIndex : Number,
-    modelValue: String,
+    modelValue: [String,Date],
     dateName:String
   },
   methods: {
@@ -109,7 +110,6 @@ export default {
      * Author : Nguyễn Văn Ngọc (05/1/2023)
      */
     changeInputValue(event){
-      console.log(event)
       var propertyName = this.dateName;
        var value = event.target.value;
        const dateRegex =/^([1-9]|[0-2][0-9]|3[0-1])\/([1-9]|0[1-9]|1[0-2])\/[2][0-9][0-9][0-9]$/;

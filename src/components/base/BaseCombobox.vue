@@ -21,7 +21,9 @@
     @input="onSearchItem()"
     @keydown="onKeyDown"
     :ref="name"
+    @blur="onBlurInput"
     :name="name"
+    autocomplete="off"
   />
   <p class="text-error">{{ errorMessage }}</p>
   <!-- <p class="m-input__error-msg">{{ errorMessage }}</p> -->
@@ -37,6 +39,7 @@
         'textfield-item': true,
         active: index === itemActive,
       }"
+      :ref="`item_${index}`"
       v-for="(item, index) in this.entityFilter"
       :key="index"
       @click="onSelectItem(item, index)"
@@ -66,9 +69,9 @@ export default {
       type:Array,
     },
   },
-  emits: ["invalidUnit","update:modelValue"],
-  computed() {},
+  emits: ["invalidUnit","update:modelValue","errorInputMessage"],
   created() {
+    // lấy dữ liệu 
     if (this.api) {
       axios.get(this.api).then((response) => {
         this.entities = response.data;
@@ -83,8 +86,21 @@ export default {
       entities: [], // Danh sách bản ghi
       entityFilter: [], // Danh sách bản ghi sổ ra dữ liệu
       textSelected: "", // Tên bản ghi được chọn
+      itemSelected:null,//item được chọn
       itemActive: 0, // set class active cho list item selected
     };
+  },
+  computed: {
+    // Lấy ra index của item được chọn
+    findIndexSelected: function() {
+      var me = this;
+      let findIndex = this.entityFilter.findIndex(
+        item => item[me.propValue] == this.itemSelected[me.propValue]
+      );
+      return findIndex;
+
+    }
+
   },
   methods: {
     /**
@@ -99,10 +115,12 @@ export default {
      * Hàm onSelectItem xử lí khi click vào một item trong danh sách
      */
     onSelectItem(item, index) {
+      var me = this;
       this.entityFilter = this.entities;
+      this.itemSelected = item;
       this.textSelected = item[this.propName];
       this.isCheckDV = false;
-      this.itemActive = index;
+      this.itemActive = this.findIndexSelected;
       this.$emit("invalidUnit", false);
       this.$emit("update:modelValue", item[this.propValue]);
       
@@ -169,19 +187,15 @@ export default {
      * author:Nguyễn Văn Ngọc(10/1/2023)
      * Hàm onBlurInput xử lí khi nhấn blur khỏi ô input
      */
-    // onBlurInput() {
+    onBlurInput() {
      
-    //   if (!this.textSelected) {
-    //     this.$emit("invalidUnit", "Đơn vị không được để trống");
-    //   }
-    //   if(this.textSelected) {
-    //     const validValue = this.entities.find(item => item[this.propName] === this.textSelected);
-    //     if(!validValue) {
-    //     this.$emit("invalidUnit", "Đơn vị không được để trống");
-    //     this.$emit("update:modelValue", "");
-    //     }
-    //   }
-    // },
+      if(this.textSelected) {
+        const validValue = this.entities.find(item => item[this.propName] === this.textSelected);
+        if(!validValue) {
+        this.$emit("update:modelValue", "");
+        }
+      }
+    },
     /**
      * author:Nguyễn Văn Ngọc(2/1/2023)
      * Focus vào ô input

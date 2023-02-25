@@ -19,11 +19,6 @@
     height: calc(100vh - 48px - 71px - 68px - 68px);
 }
 
-
-tbody::-webkit-scrollbar-track { 
-    margin-top: 40px;
-}
-
 .tbl .tbl-row {
     height: 40px;
     border-bottom: 1px solid #E0E0E0;

@@ -65,13 +65,13 @@
             class="tooltip icon-reload sidebar-item__icon content-wrapper__action-refresh"
             @click="onLoadCurrentpage(this.currentPageNum)"
           >
-            <span class="tooltiptext">Lấy dữ liệu</span>
+            <span class="tooltiptext" style="    min-width: 100px;left: 5%;">Lấy lại dữ liệu</span>
           </div>
           <div
             class="tooltip icon-export sidebar-item__icon content-wrapper__action-refresh"
             @click="exportData()"
           >
-            <span class="tooltiptext">Xuất khẩu</span>
+            <span class="tooltiptext" style="min-width: 100px;left: 6%;">Xuất ra Excel(Shift+P)</span>
           </div>
         </div>
       </div>
@@ -132,14 +132,16 @@
                   <div class="icon-checked"></div>
                 </label>
               </td>
-              <td class="tbl-col">
+              <td class="tbl-col tooltip">
                 <div class="text-overflow">
                   {{ employee.EmployeeCode || "" }}
+                  <span  class="tooltiptext" style="top:100%">{{ employee.EmployeeCode  }}</span>
                 </div>
               </td>
-              <td class="tbl-col tbl-col--large">
-                <div class="text-overflow">
+              <td class="tbl-col tbl-col--large tooltip">
+                <div class="text-overflow ">
                   {{ employee.FullName || "" }}
+                  <span  class="tooltiptext" style="top:100%">{{ employee.FullName }}</span>
                 </div>
               </td>
               <td class="tbl-col">
@@ -148,15 +150,17 @@
               <td class="tbl-col" style="text-align: center">
                 {{ formatDate(employee.DateOfBirth) || "" }}
               </td>
-              <td class="tbl-col">
+              <td class="tbl-col tooltip">
                 <div class="text-overflow">
                   {{ employee.IdentityNumber || "" }}
                 </div>
+                <span v-show="employee.IdentityNumber" class="tooltiptext" style="top:100%">{{ employee.IdentityNumber }}</span>
               </td>
-              <td class="tbl-col tbl-col--large">
+              <td class="tbl-col tbl-col--large tooltip">
                 <div class="text-overflow">
                   {{ employee.Position || "" }}
                 </div>
+                <span v-show="employee.Position" class="tooltiptext" style="top:100%">{{ employee.Position }}</span>
               </td>
               <td class="tbl-col tbl-col--large">
                 {{ employee.DepartmentName || "" }}
@@ -166,20 +170,24 @@
                   {{ employee.PhoneNumber || "" }}
                 </div>
               </td>
-              <td class="tbl-col">
+              <td class="tbl-col tooltip">
                 <div class="text-overflow">
                   {{ employee.BankAccount }}
                 </div>
+                <span v-show="employee.BankAccount" class="tooltiptext" style="top:100%">{{ employee.BankAccount }}</span>
               </td>
-              <td class="tbl-col tbl-col--large">
+              <td class="tbl-col tbl-col--large tooltip">
                 <div class="text-overflow">
                   {{ employee.BankName }}
                 </div>
+                <span v-show="employee.BankName" class="tooltiptext" style="top:100%">{{ employee.BankName }}</span>
+
               </td>
-              <td class="tbl-col tbl-col--large">
+              <td class="tbl-col tbl-col--large tooltip">
                 <div class="text-overflow">
                   {{ employee.BankBranch }}
                 </div>
+                <span v-show="employee.BankBranch" class="tooltiptext" style="top:100%">{{ employee.BankBranch }}</span>
               </td>
               <td class="tbl-col">
                 <div class="tbl-col__action">
@@ -333,11 +341,10 @@
 import paginate from "vuejs-paginate/src/components/Paginate.vue";
 import EmployeeDetail from "../../views/employee/EmployeeDetail.vue";
 import BaseInput from "../../components/base/BaseInput.vue";
-import { formatDate, formatMoney } from "../../js/base/common.js";
-import axios from "axios";
+import { formatDate } from "../../js/base/common.js";
 import { HTTP } from "../../js/api/ConnectApi.js";
 import RESOURCES from "../../js/base/resouce.js";
-
+ 
 export default {
   name: "EmployeeList",
   components: {
@@ -372,7 +379,6 @@ export default {
       employeeIdDuplicate: false, // lấy id nhân viên để nhân bản
       isShowToast: false, //show toast message
       formatDate, // Hàm xử lí ngày tháng
-      formatMoney, // Hàm xử lí tiền tệ
       totalPage: 1, // Tổng số trang
       currentPageSizeText: RESOURCES.PAGINATION[0].text, // Tổng số bản ghi trên một trang text
       currentPageSize: 20, //Tổng số bản ghi trên một trang number
@@ -399,7 +405,6 @@ export default {
     // Check xem có phải check all hay không
     isCheckAll() {
       let isCheck = true;
-
       if (this.checkList.length == 0) {
         return false;
       }
@@ -603,7 +608,6 @@ export default {
      */
     handleCheckAll(e) {
       const employeeIds = this.employees.map((item) => item.EmployeeId);
-
       const ids = employeeIds.filter((id) => !this.checkList.includes(id));
       if (e.target.checked) {
         this.checkList = [...this.checkList, ...ids];
