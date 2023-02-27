@@ -16,7 +16,6 @@
 			<p class="toast__content__text">{{toastContent}}</p>
 		</div>
 		<div class="toast__action">
-			<a class="toast__action__main" >Hoàn tác</a>
 			<p class="toast__action_close" @click="$emit('closeToast')">
 				<i class="toast__action_close__img"></i>
 			</p>

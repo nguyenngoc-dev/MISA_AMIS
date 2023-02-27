@@ -32,7 +32,6 @@
           :value="value"
           autocomplete="off"
           :tabindex="tabIndex"
-          @input="changeInputValue"
           @blur="changeInputValue"
         />
         <p class="text-error">{{ errorMsg}}</p>
@@ -118,7 +117,10 @@ export default {
         this.$emit('update:modelValue',newDate, this.name);
        }else{
         this.date= null;
+        this.$refs[this.name] = "";
+        this.$emit('update:modelValue',undefined, this.name);
        }
+       
     },
      /**
      * Disable ngày lớn hơn ngày hiện tại
@@ -144,12 +146,12 @@ export default {
     modelValue: function () {
       this.date = this.modelValue;
     },
-    date: {
-      handler: function() {
-        this.$emit("update:modelValue", this.date, this.name);
-      },
-      immediate:true
-    }
+    // date: {
+    //   handler: function() {
+    //     this.$emit("update:modelValue", this.date, this.name);
+    //   },
+    //   immediate:true
+    // }
   },
   computed: {
     /**

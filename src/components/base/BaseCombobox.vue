@@ -19,6 +19,7 @@
     tabindex="1"
     v-model="textSelected"
     @input="onSearchItem()"
+    @focus="onFocus"
     @keydown="onKeyDown"
     :ref="name"
     @blur="onBlurInput"
@@ -51,7 +52,7 @@
 </template>
 <script>
 import axios from "axios";
-import KEYDOWN from "../../js/base/enums.js";
+import ENUMS from "../../js/base/enums.js";
 import {inputValidation} from "../../js/base/common.js"
 export default {
   name: "BaseCombobox",
@@ -107,7 +108,7 @@ export default {
      * author:Nguyễn Văn Ngọc(3/1/2023)
      * Hàm isCheck set trạng thái khi click vào icon dropdown của đơn vị
      */
-    isCheck(state) {
+    isCheck() {
       this.isCheckDV = !this.isCheckDV;
     },
     /**
@@ -160,23 +161,23 @@ export default {
     onKeyDown(e) {
       const key = e.keyCode;
       switch (key) {
-        case KEYDOWN.ENTER:
+        case ENUMS.KEYDOWN.ENTER:
           this.onSelectItem(
             this.entityFilter[this.itemActive],
             this.itemActive
           );
           break;
-        case KEYDOWN.UPARROW:
+        case ENUMS.KEYDOWN.UPARROW:
           this.isCheckDV = true;
           if (this.itemActive > 0) this.itemActive--;
           break;
-        case KEYDOWN.DOWNARROW:
+        case ENUMS.KEYDOWN.DOWNARROW:
           // eslint-disable-next-line
           let max = this.entityFilter.length;
           this.isCheckDV = true;
           if (this.itemActive < max - 1 ) this.itemActive++;
           break;
-        case KEYDOWN.TAB:
+        case ENUMS.KEYDOWN.TAB:
           this.isCheckDV = false;
           break;
         default:
@@ -202,6 +203,7 @@ export default {
      */
     onFocus() {
       this.$refs[this.name].focus();
+      this.isCheck();
     },
     /**
      * * author:Nguyễn Văn Ngọc(2/1/2023)

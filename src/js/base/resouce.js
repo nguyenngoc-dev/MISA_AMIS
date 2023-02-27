@@ -18,7 +18,7 @@ const RESOURCES = {
       DELETE: "Xóa nhân viên thành công",
     },
     ERROR: {
-      ERRORSERVER:"Lỗi phía máy chủ",
+      ERRORSERVER:"Vui lòng liên hệ MISA để được trợ giúp",
       INVALID_CODE:"Mã nhân viên không được để trống",
       DUPLICATE_CODE:"Mã hiện tại đang bị trùng",
       INVALID_NAME:"Tên nhân viên không được để trống",
@@ -54,6 +54,7 @@ const RESOURCES = {
   MODAL_MESSAGE: {
     INFO: "Dữ liệu đã bị thay đổi. Bạn có muốn cất không?",
     WARNING:`Bạn có chắc chắn muốn xóa nhân viên không?`,
+    DELETE_WARNING:(code)=>`Bạn có thực sự muốn xóa nhân viên <${code}> không?`,
     EMPTY_EMPLOYEE:"Không có nhân viên nào được chọn"
 
   },
@@ -83,16 +84,6 @@ const RESOURCES = {
     NotFound: 404,
     ServerError: 500,
   },
-
-  ERRORCODE: {
-    Exception: 1,
-    DuplicateCode: 2,
-    EmptyCode: 3,
-    InsertFailed: 4,
-    UpdateFailed: 5,
-    DeleteFailed: 6,
-    InvalidInput: 7,
-  },
   FORM_RULES: {
     NOT_EMPTY: "NOT_EMPTY",
     HAS_FORMAT: "HAS_FORMAT",
@@ -117,14 +108,18 @@ const RESOURCES = {
     EmployeeCode: "Mã nhân viên",
     FullName: "Tên nhân viên",
     DepartmentId:"Đơn vị",
+    Position:"Chức danh",
     DateOfBirth:"Ngày sinh",
     IdentityNumber:"Số căn cước",
     IdentityDate:"Ngày cấp",
-    Position:"Chức danh",
-    PhoneNumber: "Số điện thoại",
+    IdentityPlace:"Nơi cấp",
+    Address:"Địa chỉ",
+    PhoneNumber: "Điện thoại di động",
     LandlineNumber:"Điện thoại cố định",
     Email: "Email",
-    BankAccount:"Tài khoản ngân hàng"
+    BankAccount:"Tài khoản ngân hàng",
+    BankName:"Tên ngân hàng",
+    BankBranch:"Chi nhánh"
   },
   STATUSCODES: {
     Unauthorized: {

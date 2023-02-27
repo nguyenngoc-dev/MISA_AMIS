@@ -63,9 +63,11 @@
 
           <div
             class="tooltip icon-reload sidebar-item__icon content-wrapper__action-refresh"
-            @click="onLoadCurrentpage(this.currentPageNum)"
+            @click="isShowLoading = true"
+             :debounce-events="['click']"
+              v-debounce:600ms.lock="onLoadCurrentpage(this.currentPageNum)"
           >
-            <span class="tooltiptext" style="    min-width: 100px;left: 5%;">Lấy lại dữ liệu</span>
+            <span class="tooltiptext" style="min-width: 100px;left: 5%;">Lấy lại dữ liệu</span>
           </div>
           <div
             class="tooltip icon-export sidebar-item__icon content-wrapper__action-refresh"
@@ -224,7 +226,7 @@
                 Nhân bản
               </label>
               <label
-                @click="onDeleteClick()"
+                @click="onDeleteClick(false)"
                 for="action"
                 class="tbl-col__action-item btn-delete"
               >
@@ -314,6 +316,7 @@
     @onshowToast="onshowToast"
     @onhideToast="onhideToast"
     :isDuplicate="employeeIdDuplicate"
+    :isShowForm="isShowDialog"
     @changeToastMsg="changeToastMsg"
   ></EmployeeDetail>
   <BaseDialog
@@ -371,10 +374,12 @@ export default {
       isDelete: true, // có phải dialog xóa
       isNotice: false, // dialog cảnh báo
       isShowBtnDelete: false, //show nút xóa nhiều
+      isSingle:true,//có phải xóa 1
       showBtnCancel: true, //hiện button không
       checkList: [], // mảng chứa các check box checked
       employeeIdSelected: null, // id của nhân viên khi click nút sửa
       isShowDeleteDialog: false, // show dialog thông báo khi xóa
+      employeeDelete:[],// mảng xóa một nhân viên
       employeeIdDelete: null, // lấy ra id khi xóa nhân viên
       employeeIdDuplicate: false, // lấy id nhân viên để nhân bản
       isShowToast: false, //show toast message
@@ -384,7 +389,7 @@ export default {
       currentPageSize: 20, //Tổng số bản ghi trên một trang number
       showListPage: false, // show ra list page size
       currentPageNum: 1, // Trang hiện tại
-      itemActive: null, // set class active cho list item selected
+      itemActive: 0, // set class active cho list item selected
       toastContent: RESOURCES.FORM_MODE.DELETE, // nội dung toast message
       toastTitle: RESOURCES.NOTIFICATION_TITLE.SUCCESS, // Tiêu đề toast,
       isErrorToast: false, // Icon toast lỗi
@@ -445,9 +450,12 @@ export default {
           this.totalPage = res.data.TotalPage;
           this.isShowLoading = false;
           this.pageTotal = res.data.TotalRecord;
-        });
+        })
+        .catch(error => {
+          this.handleExeption(error);
+        }) 
       } catch (error) {
-        this.handleExeption(error);
+         this.handleExeption(error);
       }
     },
     // Ẩn hiện form nhân viên
@@ -483,6 +491,10 @@ export default {
       this.onShowDeleteDialog(true);
       if (isMultiple) {
         this.dialogTitle = RESOURCES.MODAL_MESSAGE.WARNING;
+        this.isSingle = false;
+      }
+      else {
+        this.isSingle = true;
       }
     },
 
@@ -495,16 +507,18 @@ export default {
       try {
         // đóng Dialog
         this.onShowDeleteDialog(false);
+        let data = this.isSingle ? [...this.employeeDelete] : [...this.checkList]; 
         // Show loading
         this.isShowLoading = true;
         // gọi api xóa nhân viên
-        var res = await HTTP.delete("", { data: [...this.checkList] });
+        var res = await HTTP.delete("", { data: data });
         this.toastContent = RESOURCES.FORM_MODE.DELETE;
         this.isErrorToast = false;
         this.isSuccessToast = true;
         this.toastTitle = RESOURCES.NOTIFICATION_TITLE.SUCCESS;
         this.isShowToast = true;
         this.checkList = [];
+        this.employeeDelete=[];
         this.listAction.isShow = false;
         // Load lại dữ liệu
         await this.onLoadCurrentpage(this.currentPageNum);
@@ -537,8 +551,8 @@ export default {
       if (emp.EmployeeId) {
         this.employeeIdSelected = emp.EmployeeId;
         this.employeeIdDelete = emp.EmployeeId;
-        this.dialogTitle = `Bạn có thực sự muốn xóa Nhân viên <${emp.EmployeeCode}> không?`;
-        this.checkList = [this.employeeIdSelected];
+        this.dialogTitle = RESOURCES.MODAL_MESSAGE.DELETE_WARNING(emp.EmployeeCode);
+        this.employeeDelete = [this.employeeIdSelected];
       } else {
         this.employeeIdDelete = null;
       }

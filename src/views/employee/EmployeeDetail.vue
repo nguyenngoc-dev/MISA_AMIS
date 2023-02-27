@@ -38,19 +38,19 @@
                 Mã <span class="required">*</span>
               </label>
               <BaseInput
-                :isErrorInput =" this.isCodeLoss || !!this.errorOject['EmployeeCode'] "
+                :isErrorInput =" this.isDuplicateCode || !!this.errorOject['EmployeeCode'] "
                 style="min-width: 149px; width: 149px; margin-right: 6px"
                 v-model="employees.EmployeeCode"
                 :name="'EmployeeCode'"
-                :rules="['NOT_EMPTY','HAS_FORMAT']"
+                :rules="['NOT_EMPTY','HAS_FORMAT','MAX_LENGTH|20']"
                 :tooltipMessage="errorCodeMessage"
                 placeholder="NV-12345"
                 @errorInputMessage="validateInput"
                 ref="EmployeeCode"
                 tabindex="1"
+                @keydown.shift.tab.prevent="onFocusCancelButton()"
               />
               <div class="text-error">{{ errorCodeMessage  }}</div>
-              <!-- <div class="m-input__error-msg m-input__error-msg-short">{{ errorCodeMessage == "Mã hiện tại đang bị trùng"?errorCodeMessage:this.errorOject['EmployeeCode'] }}</div> -->
             </div>
             <div class="textfield">
               <label for="" class="textfield__label modal-label">
@@ -68,7 +68,6 @@
                 tabindex="1"
               />
               <p class="text-error">{{this.errorOject['FullName']}} </p>
-              <!-- <p class="m-input__error-msg">{{ this.errorOject['FullName'] }}</p> -->
             </div>
           </div>
 
@@ -125,7 +124,6 @@
               :errorMsg="this.errorOject['DateOfBirth']"
               ref="DateOfBirth"
               />
-              <!-- <div class="m-input__error-msg m-input__error-msg-short">{{this.errorOject['DateOfBirth']}}</div> -->
             </div>
             <div style="padding-left: 10px; margin-left: 6px">
               <label class="textfield__label modal-label pt-16">
@@ -196,11 +194,10 @@
                 :isErrorInput ="!!this.errorOject['IdentityNumber']"
                 ref="IdentityNumber"
                 :name="'IdentityNumber'"
-                :rules="['HAS_FORMAT']"
+                :rules="['HAS_FORMAT','MAX_LENGTH|25']"
                 @errorInputMessage="validateInput"
               />
               <p class="text-error">{{ this.errorOject['IdentityNumber'] }}</p>
-              <!-- <div class="m-input__error-msg ">{{ this.errorOject['IdentityNumber'] }}</div> -->
             </div>
             <div
               class="textfield modal-textfield pt-16"
@@ -220,7 +217,6 @@
               :errorMsg="this.errorOject['IdentityDate']"
               ref="IdentityDate"
               />
-              <!-- <div class="m-input__error-msg m-input__error-msg-short">{{this.errorOject['IdentityDate']}}</div> -->
             </div>
           </div>
 
@@ -230,7 +226,13 @@
               style="min-width: 423px; width: 414px"
               v-model="employees.IdentityPlace"
               tabindex="6"
+              :isErrorInput ="!!this.errorOject['IdentityPlace']"
+              ref="IdentityPlace"
+              :name="'IdentityPlace'"
+              :rules="['MAX_LENGTH|255']"
+              @errorInputMessage="validateInput"
             />
+            <p class="text-error">{{ this.errorOject['IdentityPlace'] }}</p>
           </div>
         </div>
         <div class="modal-contact">
@@ -246,7 +248,13 @@
                 tabindex="7"
                 class="full-w"
                 v-model="employees.Address"
+                :isErrorInput ="!!this.errorOject['Address']"
+                ref="Address"
+                :name="'Address'"
+                :rules="['MAX_LENGTH|255']"
+                @errorInputMessage="validateInput"
               />
+              <p class="text-error">{{ this.errorOject['Address'] }}</p>
             </div>
             <div class="modal-contact__content--middle">
               <div class="textfield" style="float: left; margin-bottom: 16px">
@@ -259,12 +267,11 @@
                   tabindex="8"
                   :isErrorInput ="!!this.errorOject['PhoneNumber']"
                   :name="'PhoneNumber'"
-                  :rules="['HAS_FORMAT']"
+                  :rules="['HAS_FORMAT','MAX_LENGTH|50']"
                   @errorInputMessage="validateInput"
                   ref="PhoneNumber"
                 />
                 <p class="text-error">{{ this.errorOject['PhoneNumber'] }}</p>
-                <!-- <div class="m-input__error-msg m-input__error-msg-normal">{{ this.errorOject['PhoneNumber'] }}</div> -->
               </div>
               <div class="textfield" style="float: left; margin-bottom: 16px">
                 <label for="" class="textfield__label modal-label">
@@ -275,13 +282,12 @@
                   v-model="employees.LandlineNumber"
                   tabindex="9"
                   :isErrorInput ="!!this.errorOject['LandlineNumber']"
-                  :rules="['HAS_FORMAT']"
+                  :rules="['HAS_FORMAT','MAX_LENGTH|50']"
                   @errorInputMessage="validateInput"
                   :name="'LandlineNumber'"
                   ref="LandlineNumber"
                 />
               <p class="text-error">{{ this.errorOject['LandlineNumber'] }}</p>
-              <!-- <div class="m-input__error-msg m-input__error-msg-normal">{{ this.errorOject['LandlineNumber'] }}</div> -->
               </div>
               <div class="textfield" style="float: left; margin-bottom: 16px">
                 <label for="" class="textfield__label modal-label">
@@ -299,8 +305,6 @@
                   tabindex="10"
                 />
                 <p class="text-error">{{ this.errorOject['Email'] }}</p>
-                <!-- <div class="m-input__error-msg m-input__error-msg-normal">{{ this.errorOject['Email'] }}</div> -->
-
               </div>
             </div>
             <div class="modal-contact__content--bottom">
@@ -315,12 +319,10 @@
                   v-model="employees.BankAccount"
                   ref="BankAccount"
                   :name="'BankAccount'"
-                  :rules="['HAS_FORMAT']"
+                  :rules="['HAS_FORMAT','MAX_LENGTH|25']"
                   @errorInputMessage="validateInput"
                 />
                 <p class="text-error">{{ this.errorOject['BankAccount'] }}</p>
-                <!-- <div class="m-input__error-msg m-input__error-msg-normal">{{ this.errorOject['BankAccount'] }}</div> -->
-
               </div>
               <div class="textfield" style="float: left; margin-bottom: 18px">
                 <label for="" class="textfield__label modal-label">
@@ -330,7 +332,13 @@
                   tabindex="12"
                   style="min-width: 186px; width: 186px; margin-right: 12px"
                   v-model="employees.BankName"
+                  :isErrorInput ="!!this.errorOject['BankName']"
+                  ref="BankName"
+                  :name="'BankName'"
+                  :rules="['MAX_LENGTH|255']"
+                  @errorInputMessage="validateInput"
                 />
+                <p class="text-error">{{ this.errorOject['BankName'] }}</p>
               </div>
               <div class="textfield" style="float: left; margin-bottom: 18px">
                 <label for="" class="textfield__label modal-label">
@@ -340,7 +348,13 @@
                   tabindex="13"
                   style="min-width: 186px; width: 186px; margin-right: 12px"
                   v-model="employees.BankBranch"
+                  :isErrorInput ="!!this.errorOject['BankBranch']"
+                  ref="BankBranch"
+                  :name="'BankBranch'"
+                  :rules="['MAX_LENGTH|255']"
+                  @errorInputMessage="validateInput"
                 />
+                <p class="text-error">{{ this.errorOject['BankBranch'] }}</p>
               </div>
             </div>
           </div>
@@ -351,9 +365,12 @@
           class="btn btn-secondary modal-btn-cancel"
           tabindex="16"
           @click="$emit('hideDialog')"
+          ref="Cancel"
           :btnText="'Hủy'"
+          :name="'Cancel'"
           :isprimary="false"
           @keydown.tab.prevent="onFocusFirstInput()"
+          @keydown.shift.tab.prevent="onFocusButton()"
         />
         <div class="modal-footer__wrapper">
           <BaseButton
@@ -374,6 +391,8 @@
             :isShowTooltip="true"
             tabindex="15"
             :tooltipContent="'Cất và thêm(Ctrl+Shift+S)'"
+            ref="SaveAndAdd"
+            :name="'SaveAndAdd'"
           >
           </BaseButton>
         </div>
@@ -400,6 +419,7 @@
 import BaseInput from "../../components/base/BaseInput.vue";
 import BaseDatePicker from '../../components/base/BaseDatePicker.vue'
 import RESOURCES from "../../js/base/resouce.js";
+import ENUMS from "../../js/base/enums.js";
 import { HTTP, HTTPDepartments } from "../../js/api/ConnectApi.js";
 
 export default {
@@ -415,7 +435,7 @@ export default {
     "onhideToast",
     "changeToastMsg",
   ],
-  props: ["employeeIdUpdate", "isDuplicate"],
+  props: ["employeeIdUpdate", "isDuplicate","isShowForm"],
 
   data() {
     return {
@@ -434,7 +454,7 @@ export default {
       isIndentityDate: false,
       RESOURCES,
       isUnit: false,
-      isCodeLoss: false, // mã bị trùng
+      isDuplicateCode: false, // mã bị trùng
       titleLossData: "", // Thông báo khi nhập liệu sai
       errorCodeMessage: "", // thông báo lỗi của mã nhân viên
       isNotice: true, // có phải dialog cảnh báo
@@ -512,7 +532,9 @@ export default {
     // forcus vào ô mã nhân viên khi hiển thị form chi tiết
     this.$refs.EmployeeCode.onFocus();
   },
-
+  unmounted() {
+    document.removeEventListener("keydown", this.onKeyDown);
+  },
   methods: {
        /**
      * author:Nguyễn Văn Ngọc(21/2/2023)
@@ -520,18 +542,21 @@ export default {
      */
     onKeyDown(event) {
       var me = this;
-      if(event.ctrlKey && (event.key === "S" || event.key === "s")) {
+      if(this.isShowForm) {
+        if(event.ctrlKey &&  event.key === "s") {
         event.preventDefault();
         me.onSavebtn(false)
       }
-      if (event.ctrlKey && event.shiftKey && (event.key === "S" || event.key === "s")) {
+      else if (event.ctrlKey && event.key === "S") {
         event.preventDefault();
-        this.onSavebtn(true)
+        me.onSavebtn(true)
       }
-      if(event.key == "Escape") {
+       else if(event.key == "Escape") {
         event.preventDefault();
-        this.isChangeData();
+        me.isChangeData();
       }
+      }
+      
       },
     /**
      * author:Nguyễn Văn Ngọc(3/1/2023)
@@ -573,9 +598,23 @@ export default {
     onFocusFirstInput() {
       this.$refs.EmployeeCode.onFocus();
     },
+    /**
+     * author:Nguyễn Văn Ngọc(3/1/2023)
+     * Hàm onFocusCancelButton shift tab index nhảy vào nút hủy
+     */
+    onFocusCancelButton() {
+      this.$refs.Cancel.onFocus();
+    },
+      /**
+     * author:Nguyễn Văn Ngọc(3/1/2023)
+     * Hàm onFocusButton button Hủy shift tab index nhảy vào button thêm và cất
+     */
+    onFocusButton() {
+      this.$refs.SaveAndAdd.onFocus();
+    },
      /**
      * author:Nguyễn Văn Ngọc(3/1/2023)
-     * Hàm onFocusFirstInput tab index nhảy vào ô đầu tiên
+     * Hàm onchecked enter để check gender
      */
     onchecked(e) {
       this.employees.Gender = e.target.childNodes[0]._value;
@@ -633,12 +672,13 @@ export default {
       var me = this;
       if (error.response.status == RESOURCES.STATUSCODE.BadRequest) {
         switch (error.response.data.MoreInfo.ErrorCode) {
-          case RESOURCES.ERRORCODE.DuplicateCode:
-            this.isCodeLoss = true;
+          case ENUMS.ERRORCODE.DuplicateCode:
+            this.isDuplicateCode = true;
             this.onShowDialogChangeData(false,true,RESOURCES.FORM_MESSAGE.ERROR.DUPLICATE_CODE,"",error.response.data.MoreInfo.UserMsg);
+            this.$refs.EmployeeCode.onFocus();
             break;
           // eslint-disable-next-line
-          case RESOURCES.ERRORCODE.InvalidInput:
+          case ENUMS.ERRORCODE.InvalidInput:
             this.onShowDialogChangeData(false,true, null,"", error.response.data.MoreInfo.MoreInfo[0]);
             break;
           default:
@@ -670,7 +710,7 @@ export default {
         this.$emit("changeToastMsg",toastMessage,false,true, RESOURCES.NOTIFICATION_TITLE.SUCCESS);
         this.$emit("onshowToast");
         this.$emit("onLoadData");
-        this.isCodeLoss = false;
+        this.isDuplicateCode = false;
         this.errorCodeMessage = "";
         if (isSaveAndAdd) {
           this.employees = this.onDefaultEmployee();
@@ -700,6 +740,9 @@ export default {
      */
     onShowDialog(state) {
       this.isShowDialog = state;
+      if(this.isDuplicateCode) {
+        this.$refs.EmployeeCode.onFocus();
+      }
       for(const property in this.errorOject) {
         if(this.errorOject[property]) {
           this.$refs[property].onFocus();
@@ -751,8 +794,6 @@ export default {
      */
     validate() {
       var me = this;
-      var obj = RESOURCES.FORM_FIELD;
-      console.log(obj);
       for(const property in RESOURCES.FORM_FIELD) {
         if(me.$refs[property])
         {
