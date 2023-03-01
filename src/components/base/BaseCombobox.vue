@@ -122,7 +122,7 @@ export default {
       this.textSelected = item[this.propName];
       this.isCheckDV = false;
       this.itemActive = this.findIndexSelected;
-      this.$emit("invalidUnit", false);
+      //this.$emit("invalidUnit", false);
       this.$emit("update:modelValue", item[this.propValue]);
       
     },

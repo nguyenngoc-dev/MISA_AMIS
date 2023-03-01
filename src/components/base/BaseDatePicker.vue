@@ -32,7 +32,8 @@
           :value="value"
           autocomplete="off"
           :tabindex="tabIndex"
-          @blur="changeInputValue"
+          @blur="blurInputValue"
+          @input="onInputValue"
         />
         <p class="text-error">{{ errorMsg}}</p>
 
@@ -105,22 +106,39 @@ export default {
       }
     },
     /**
-     * Xử lý nhập input
+     * Xử lý khi blur input
      * Author : Nguyễn Văn Ngọc (05/1/2023)
      */
-    changeInputValue(event){
-      var propertyName = this.dateName;
-       var value = event.target.value;
-       const dateRegex =/^([1-9]|[0-2][0-9]|3[0-1])\/([1-9]|0[1-9]|1[0-2])\/[2][0-9][0-9][0-9]$/;
-       if(dateRegex.test(value)){
-        const newDate = new Date(value.split('/').reverse().join('-'));
+    blurInputValue(event){
+       if(this.isValidDate(event)){
+        const newDate = new Date(event.target.value.split('/').reverse().join('-'));
         this.$emit('update:modelValue',newDate, this.name);
        }else{
         this.date= null;
         this.$refs[this.name] = "";
         this.$emit('update:modelValue',undefined, this.name);
        }
-       
+      //  this.$refs[this.dateName].closeMenu();
+    }, 
+    /**
+     * Xử lý khi nhập input
+     * Author : Nguyễn Văn Ngọc (05/1/2023)
+     */
+    onInputValue(event) {
+      if(this.isValidDate(event)){
+        const newDate = new Date(event.target.value.split('/').reverse().join('-'));
+        this.$emit('update:modelValue',newDate, this.name);
+        }
+    },
+      /**
+     * Check date hợp lệ
+     * Author : Nguyễn Văn Ngọc (05/1/2023)
+     */
+    isValidDate(event) {
+      var propertyName = this.dateName;
+      var value = event.target.value;
+      const dateRegex =/^([1-9]|[0-2][0-9]|3[0-1])\/([1-9]|0[1-9]|1[0-2])\/[1-2][0-9][0-9][0-9]$/;
+      return dateRegex.test(value)
     },
      /**
      * Disable ngày lớn hơn ngày hiện tại

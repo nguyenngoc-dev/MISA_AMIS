@@ -29,6 +29,7 @@ const RESOURCES = {
       ERROR_BANK_ACCOUNT:"Số tài khoản không đúng định dạng"
     }
   },
+  DepartmentId:'DepartmentId',
   FORM_MODE: {
     ADD: "ADD",
     EDIT: "EDIT",

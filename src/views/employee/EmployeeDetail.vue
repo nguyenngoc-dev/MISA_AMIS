@@ -42,7 +42,7 @@
                 style="min-width: 149px; width: 149px; margin-right: 6px"
                 v-model="employees.EmployeeCode"
                 :name="'EmployeeCode'"
-                :rules="['NOT_EMPTY','HAS_FORMAT','MAX_LENGTH|20']"
+                :rules="['NOT_EMPTY','MAX_LENGTH|20']"
                 :tooltipMessage="errorCodeMessage"
                 placeholder="NV-12345"
                 @errorInputMessage="validateInput"
@@ -714,6 +714,7 @@ export default {
         this.errorCodeMessage = "";
         if (isSaveAndAdd) {
           this.employees = this.onDefaultEmployee();
+          this.formTitle = RESOURCES.FORM_TITLE.ADD;
           this.getNewEmCode();
         }
         else {
@@ -820,7 +821,7 @@ export default {
       let isValid = true;
       for(const property in this.errorOject) {
         if(this.errorOject[property]) {
-            if(property == 'DepartmentId') {
+            if(property == RESOURCES.DepartmentId) {
               this.titleLossData = RESOURCES.FORM_MESSAGE.ERROR.ERROR_DEPARTMENT;
             }
             else {

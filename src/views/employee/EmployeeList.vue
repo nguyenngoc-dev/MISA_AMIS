@@ -65,7 +65,7 @@
             class="tooltip icon-reload sidebar-item__icon content-wrapper__action-refresh"
             @click="isShowLoading = true"
              :debounce-events="['click']"
-              v-debounce:600ms.lock="onLoadCurrentpage(this.currentPageNum)"
+              v-debounce:600ms.lock="() => onLoadCurrentpage(currentPageNum)"
           >
             <span class="tooltiptext" style="min-width: 100px;left: 5%;">Lấy lại dữ liệu</span>
           </div>
@@ -301,6 +301,7 @@
             :next-class="'next-btn'"
             :container-class="'pagination'"
             :page-class="'page-item'"
+            :v-show="this.totalPage"
           >
           </paginate>
         </div>
@@ -521,7 +522,7 @@ export default {
         this.employeeDelete=[];
         this.listAction.isShow = false;
         // Load lại dữ liệu
-        await this.onLoadCurrentpage(this.currentPageNum);
+        await this.onLoadCurrentpage(1);
       } catch (error) {
         this.handleExeption(error);
       }
@@ -612,6 +613,8 @@ export default {
         );
         this.employees = response.data.Data;
         this.isShowLoading = false;
+        this.totalPage = response.data.TotalPage;
+        this.pageTotal = response.data.TotalRecord;
       } catch (error) {
         this.handleExeption(error);
       }
@@ -663,6 +666,7 @@ export default {
         ).then((res) => {
           this.employees = res.data.Data;
           this.totalPage = res.data.TotalPage;
+          this.pageTotal = res.data.TotalRecord;
           this.isShowLoading = false;
         });
         this.textSearch = "";
@@ -750,7 +754,7 @@ export default {
     },
     /**
      * author:Nguyễn Văn Ngọc(14/2/2023)
-     * Hàm exportData(text) xuất dữ liệu employees ra file exel
+     * Hàm exportData() xuất dữ liệu employees ra file exel
      *
      */
     async exportData() {
@@ -759,9 +763,10 @@ export default {
       try {
         // Hiển thị Loading
         me.isShowLoading = true;
-        const response = await HTTP.get("/get-employees-excel", {
-          responseType: "blob",
-        });
+        var data = this.getFilterParams(this.textSearch, this.pageTotal, 1);
+        const response = await HTTP.post("/get-employees-excel",data, {
+          responseType: "blob"
+        } );
         // Lấy ra URL
         const url = URL.createObjectURL(new Blob([response.data]));
         // Tạo thẻ a
@@ -793,7 +798,8 @@ export default {
   },
 
   updated() {},
-  watch: {},
+  watch: {
+  },
 };
 </script>
 <style>
@@ -812,5 +818,11 @@ export default {
 .next-btn.disabled {
   cursor: default !important;
   color: #9e9e9e;
+}
+.prev-btn.disabled{
+  margin-right: 4px;
+}
+.next-btn.disabled {
+  margin-left: 4px;
 }
 </style>

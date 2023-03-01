@@ -65,7 +65,7 @@ export function inputValidation (rules,name,value) {
             if (date > dateNow) {
               return ERROR[rule](FORM_FIELD[name]);
             }
-            if(FORM_FIELD[name] == 'Ngày sinh') {
+            if(FORM_FIELD[name] == RESOURCES.FORM_FIELD.DateOfBirth) {
               if(new Date().getFullYear() - new Date(value).getFullYear() < 18)
                 return ERROR[rule](FORM_FIELD[name]);
             }
