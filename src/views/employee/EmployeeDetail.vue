@@ -4,18 +4,7 @@
       <div class="modal__header">
         <div class="modal__header-left">
           <div class="modal__header-left-text">{{ formTitle }}</div>
-          <label for="checkbox1" class="modal__header-left-wrapper tooltip">
-            <input type="checkbox"   name="customer" value="customer"  id="checkbox1" />
-            <span class="tooltiptext" style="min-width: 113px;padding: 0;left: -7px;">Đang phát triển</span>
-            <div class="icon-checked"></div>
-          </label>
-          <span>Là khách hàng</span>
-          <label for="checkbox2" class="modal__header-left-wrapper tooltip">
-            <input type="checkbox"  name="supplier" value="supplier" id="checkbox2" />
-            <span class="tooltiptext" style="min-width: 113px;padding: 0;left: -7px;">Đang phát triển</span>
-            <div class="icon-checked"></div>
-          </label>
-          <span>Là nhà cung cấp</span>
+         
         </div>
         <div class="modal__header-right">
           <div class="icon-help tooltip">
@@ -35,7 +24,7 @@
           <div class="pb-16 flex-start">
             <div class="textfield">
               <label for="" class="textfield__label modal-label">
-                Mã <span class="required">*</span>
+                Mã sản phẩm<span class="required">*</span>
               </label>
               <BaseInput
                 :isErrorInput =" this.isDuplicateCode || !!this.errorOject['EmployeeCode'] "
@@ -54,7 +43,7 @@
             </div>
             <div class="textfield">
               <label for="" class="textfield__label modal-label">
-                Tên <span class="required">*</span>
+                Tên sản phẩm<span class="required">*</span>
               </label>
               <BaseInput
                 :isErrorInput ="!!this.errorOject['FullName']"
@@ -73,8 +62,8 @@
 
           <div class="textfield modal-textfield" style="margin-bottom: 16px">
             <BaseCombobox
-              :comboName="'Đơn vị'"
-              :errorMessage="this.errorOject['DepartmentId']?'Đơn vị không hợp lệ': null"
+              :comboName="'Danh mục'"
+              :errorMessage="this.errorOject['DepartmentId']?'Danh m không hợp lệ': null"
               :isUnit="!!errorOject['DepartmentId']"
               :api="'https://localhost:44387/api/v1/Departments'"
               :propName="'DepartmentName'"
@@ -87,105 +76,36 @@
               v-model="this.employees.DepartmentId"
             />
           </div>
-          <div class="textfield modal-textfield" style="margin-bottom: 12px">
-            <label for="" class="textfield__label modal-label">
-              Chức danh
-            </label>
-            <BaseInput 
-            v-model="employees.Position" 
-            tabindex="1" 
-            :isErrorInput ="!!this.errorOject['Position']"
-            :inputType="'text'"
-            :rules="['MAX_LENGTH|100']"
-            @errorInputMessage="validateInput"
-            :name="'Position'"  
-            ref="Position"
-            />
-          <p class="text-error">{{ this.errorOject['Position'] }}</p>
-          </div>
         </div>
         <div class="flex-start" style="flex-direction: column; width: 414px">
           <div class="pb-16 flex-start">
             <div
               class="textfield modal-textfield"
-              style="min-width: 166px; width: 166px"
+              style="min-width: 168px; width: 168px; margin-right: 6px"
             >
-              <label for="" class="textfield__label modal-label pt-16">
-                Ngày sinh
+              <label for="" class="tooltip textfield__label modal-label pt-16">
+               
+              Số lượng
               </label>
-              <BaseDatePicker
-              v-model="employees.DateOfBirth"
-              @errorInputMessage="validateInput"
-              :tabIndex="2"
-              :name="'DateOfBirth'"
-              dateName="'DateOfBirthPicker'"
-              :isErrorInput ="!!this.errorOject['DateOfBirth']"
-              :rules="['ADULT']"
-              :errorMsg="this.errorOject['DateOfBirth']"
-              ref="DateOfBirth"
+              <BaseInput
+                style="min-width: 168px; width: 168px"
+                v-model="employees.IdentityNumber"
+                tabindex="4"
+                :isErrorInput ="!!this.errorOject['IdentityNumber']"
+                ref="IdentityNumber"
+                :name="'IdentityNumber'"
+                :rules="['HAS_FORMAT','MAX_LENGTH|25']"
+                @errorInputMessage="validateInput"
               />
+              <p class="text-error">{{ this.errorOject['IdentityNumber'] }}</p>
             </div>
-            <div style="padding-left: 10px; margin-left: 6px">
-              <label class="textfield__label modal-label pt-16">
-                Giới tính
-              </label>
-              <div class="modal__gender">
-                <label for="malegender" class="modal__gender-item" tabindex="2"
-                @keyup.enter="onchecked($event)">
-                  <input
-                    type="radio"
-                    name="gioitinh"
-                    checked
-                    id="malegender"
-                    v-model="employees.Gender"
-                    value="0"
-                    tabindex="2"
-                  />
-                  <div class="icon-radio-checked"></div>
-                </label>
-                <span style="margin-left: 10px; margin-right: 20px">Nam</span>
-                <label for="femalegender" class="modal__gender-item" tabindex="2"
-                @keyup.enter="onchecked($event)"
-                >
-                  <input
-                    type="radio"
-                    name="gioitinh"
-                    id="femalegender"
-                    v-model="employees.Gender"
-                    value="1"
-                    tabindex="2"
-                  />
-                  <div class="icon-radio-checked"></div>
-                </label>
-                <span style="margin-left: 10px; margin-right: 20px">Nữ</span>
-                <label for="other" class="modal__gender-item" tabindex="2"
-                @keyup.enter="onchecked($event)">
-                  <input
-                    type="radio"
-                    name="gioitinh"
-                    id="other"
-                    v-model="employees.Gender"
-                    value="2"
-                    tabindex="2"  
-                  />
-                  <div class="icon-radio-checked"></div>
-                </label>
-                <span style="margin-left: 10px">Khác</span>
-              </div>
-            </div>
-          </div>
-          <div class="pb-16 flex-start">
             <div
               class="textfield modal-textfield"
               style="min-width: 251px; width: 242px; margin-right: 6px"
             >
               <label for="" class="tooltip textfield__label modal-label pt-16">
-                <span
-                  class="tooltiptext"
-                  style="width: 185px; font-size: 12px; left: -10%;"
-                  >Số chứng minh nhân dân</span
-                >
-                Số CMND
+              
+                Giảm giá(%)
               </label>
               <BaseInput
                 style="min-width: 250px; width: 242px"
@@ -199,50 +119,71 @@
               />
               <p class="text-error">{{ this.errorOject['IdentityNumber'] }}</p>
             </div>
-            <div
-              class="textfield modal-textfield pt-16"
-              style="min-width: 166px; width: 166px"
-            >
-              <label for="" class="textfield__label modal-label">
-                Ngày cấp
-              </label>
-              <BaseDatePicker
-              v-model="employees.IdentityDate"
-              @errorInputMessage="validateInput"
-              :tabIndex="4"
-              :name="'IdentityDate'"
-              dateName="'IdentityDatePicker'"
-              :isErrorInput ="!!this.errorOject['IdentityDate']"
-              :rules="['ADULT']"
-              :errorMsg="this.errorOject['IdentityDate']"
-              ref="IdentityDate"
-              />
-            </div>
           </div>
-
-          <div class="textfield modal-textfield" style="margin-bottom: 12px">
-            <label for="" class="textfield__label modal-label"> Nơi cấp </label>
-            <BaseInput
-              style="min-width: 423px; width: 414px"
-              v-model="employees.IdentityPlace"
-              tabindex="6"
-              :isErrorInput ="!!this.errorOject['IdentityPlace']"
-              ref="IdentityPlace"
-              :name="'IdentityPlace'"
-              :rules="['MAX_LENGTH|255']"
-              @errorInputMessage="validateInput"
-            />
-            <p class="text-error">{{ this.errorOject['IdentityPlace'] }}</p>
+          <div class="pb-16 flex-start">
+            <div
+              class="textfield modal-textfield"
+              style=" margin-right: 6px"
+            >
+              <label for="" class="tooltip textfield__label modal-label pt-16">
+               Giá bán
+              </label>
+              <BaseInput
+                style="max-width: 423px;width: 423px;"
+                v-model="employees.IdentityNumber"
+                tabindex="4"
+                :isErrorInput ="!!this.errorOject['IdentityNumber']"
+                ref="IdentityNumber"
+                :name="'IdentityNumber'"
+                :rules="['HAS_FORMAT','MAX_LENGTH|25']"
+                @errorInputMessage="validateInput"
+              />
+              <p class="text-error">{{ this.errorOject['IdentityNumber'] }}</p>
+            </div>
+          
           </div>
         </div>
-        <div class="modal-contact">
+        
+  <div class="modal-contact">
           <div class="modal-contact__content">
             <div
               class="textfield modal-textfield full-w"
               style="margin-bottom: 18px"
             >
               <label for="" class="textfield__label modal-label">
-                Địa chỉ
+              Chọn ảnh
+              </label>
+              <BaseInput
+                :type="'file'"
+                tabindex="7"
+                class="full-w inputfile"
+                v-model="employees.Address"
+                :isErrorInput ="!!this.errorOject['Address']"
+                ref="Address"
+                :name="'Address'"
+                :rules="['MAX_LENGTH|255']"
+                @errorInputMessage="validateInput"
+              />
+              <BaseInput
+              :type="'text'"
+                tabindex="7"
+                class="full-w"
+                v-model="employees.Address"
+                :isErrorInput ="!!this.errorOject['Address']"
+                ref="Address"
+                :name="'Address'"
+                :rules="['MAX_LENGTH|255']"
+                @errorInputMessage="validateInput"
+              />
+              <img :src="employees.Address" alt="Lỗi">
+              <p class="text-error">{{ this.errorOject['Address'] }}</p>
+            </div>
+            <div
+              class="textfield modal-textfield full-w"
+              style="margin-bottom: 18px"
+            >
+              <label for="" class="textfield__label modal-label">
+                Mô tả ngắn 
               </label>
               <BaseInput
                 tabindex="7"
@@ -256,110 +197,23 @@
               />
               <p class="text-error">{{ this.errorOject['Address'] }}</p>
             </div>
-            <div class="modal-contact__content--middle">
-              <div class="textfield" style="float: left; margin-bottom: 16px">
-                <label for="" class="textfield__label modal-label">
-                  Điện thoại di động
-                </label>
-                <BaseInput
-                  style="min-width: 186px; width: 186px; margin-right: 12px"
-                  v-model="employees.PhoneNumber"
-                  tabindex="8"
-                  :isErrorInput ="!!this.errorOject['PhoneNumber']"
-                  :name="'PhoneNumber'"
-                  :rules="['HAS_FORMAT','MAX_LENGTH|50']"
-                  @errorInputMessage="validateInput"
-                  ref="PhoneNumber"
-                />
-                <p class="text-error">{{ this.errorOject['PhoneNumber'] }}</p>
-              </div>
-              <div class="textfield" style="float: left; margin-bottom: 16px">
-                <label for="" class="textfield__label modal-label">
-                  Điện thoại cố định
-                </label>
-                <BaseInput
-                  style="min-width: 186px; width: 186px; margin-right: 12px"
-                  v-model="employees.LandlineNumber"
-                  tabindex="9"
-                  :isErrorInput ="!!this.errorOject['LandlineNumber']"
-                  :rules="['HAS_FORMAT','MAX_LENGTH|50']"
-                  @errorInputMessage="validateInput"
-                  :name="'LandlineNumber'"
-                  ref="LandlineNumber"
-                />
-              <p class="text-error">{{ this.errorOject['LandlineNumber'] }}</p>
-              </div>
-              <div class="textfield" style="float: left; margin-bottom: 16px">
-                <label for="" class="textfield__label modal-label">
-                  Email
-                </label>
-                <BaseInput
-                  style="min-width: 186px; width: 186px; margin-right: 12px"
-                  v-model="employees.Email"
-                  :isErrorInput ="!!this.errorOject['Email']"
-                  placeholder="nguyen@gmail.com"
-                  :rules="['HAS_FORMAT','MAX_LENGTH|100']"
-                  @errorInputMessage="validateInput"
-                  ref="Email"
-                  :name="'Email'"
-                  tabindex="10"
-                />
-                <p class="text-error">{{ this.errorOject['Email'] }}</p>
-              </div>
+            <div
+              class="textfield modal-textfield full-w"
+              style="margin-bottom: 18px"
+            >
+              <label for="" class="textfield__label modal-label">
+                Mô tả chi tiết
+              </label>
+              <editor
+                api-key="6evpakssynqtlwg5jb2oddpfql37uf3vp6zd7lluieshqwik"
+              />
+              <p class="text-error">{{ this.errorOject['Address'] }}</p>
             </div>
-            <div class="modal-contact__content--bottom">
-              <div class="textfield" style="float: left; margin-bottom: 18px">
-                <label for="" class="textfield__label modal-label">
-                  Tài khoản ngân hàng
-                </label>
-                <BaseInput
-                  tabindex="11"
-                  style="min-width: 186px; width: 186px; margin-right: 12px"
-                  :isErrorInput ="!!this.errorOject['BankAccount']"
-                  v-model="employees.BankAccount"
-                  ref="BankAccount"
-                  :name="'BankAccount'"
-                  :rules="['HAS_FORMAT','MAX_LENGTH|25']"
-                  @errorInputMessage="validateInput"
-                />
-                <p class="text-error">{{ this.errorOject['BankAccount'] }}</p>
-              </div>
-              <div class="textfield" style="float: left; margin-bottom: 18px">
-                <label for="" class="textfield__label modal-label">
-                  Tên ngân hàng
-                </label>
-                <BaseInput
-                  tabindex="12"
-                  style="min-width: 186px; width: 186px; margin-right: 12px"
-                  v-model="employees.BankName"
-                  :isErrorInput ="!!this.errorOject['BankName']"
-                  ref="BankName"
-                  :name="'BankName'"
-                  :rules="['MAX_LENGTH|255']"
-                  @errorInputMessage="validateInput"
-                />
-                <p class="text-error">{{ this.errorOject['BankName'] }}</p>
-              </div>
-              <div class="textfield" style="float: left; margin-bottom: 18px">
-                <label for="" class="textfield__label modal-label">
-                  Chi nhánh
-                </label>
-                <BaseInput
-                  tabindex="13"
-                  style="min-width: 186px; width: 186px; margin-right: 12px"
-                  v-model="employees.BankBranch"
-                  :isErrorInput ="!!this.errorOject['BankBranch']"
-                  ref="BankBranch"
-                  :name="'BankBranch'"
-                  :rules="['MAX_LENGTH|255']"
-                  @errorInputMessage="validateInput"
-                />
-                <p class="text-error">{{ this.errorOject['BankBranch'] }}</p>
-              </div>
-            </div>
+          
           </div>
         </div>
       </div>
+     
       <div class="modal-footer">
         <BaseButton
           class="btn btn-secondary modal-btn-cancel"
@@ -420,12 +274,13 @@ import BaseInput from "../../components/base/BaseInput.vue";
 import BaseDatePicker from '../../components/base/BaseDatePicker.vue'
 import RESOURCES from "../../js/base/resouce.js";
 import ENUMS from "../../js/base/enums.js";
+import Editor from '@tinymce/tinymce-vue'
 import { HTTP, HTTPDepartments } from "../../js/api/ConnectApi.js";
 
 export default {
   components: {
     BaseInput,
-    BaseDatePicker
+    'editor': Editor
   },
 
   emits: [
@@ -439,12 +294,13 @@ export default {
 
   data() {
     return {
-      formTitle: RESOURCES.FORM_TITLE.ADD, // Title form
+      formTitle: RESOURCES.FORM_TITLE.PRODUCT.ADD, // Title form
       isShowDialog: false, // show dialog báo lỗi khi nhập liệu
       validateError: [], //
       Departments: [], //Danh sách phòng ban
       DepartmentFilter: [], //Danh sách phòng ban tìm kiếm
       employees: this.onDefaultEmployee(), // object nhân viên
+      product:{},
       departmentSelected: {}, // phòng ban được chọn
       oldEmployee:{},//nhân viên ban 
       errorOject:{},// object chứa lỗi 
@@ -465,6 +321,7 @@ export default {
       showBtnChangeVal: false, // show nút thay đổi ở dialog khi click vào x
     };
   },
+
   watch: {
     isDuplicate: {
       async handler(newValue) {
@@ -493,11 +350,11 @@ export default {
   created() {
     // Thay đổi form title
     if (this.isDuplicate) {
-      this.formTitle = RESOURCES.FORM_TITLE.DUPLICATE;
+      this.formTitle = RESOURCES.FORM_TITLE.PRODUCT.DUPLICATE;
     } else if (this.employeeIdUpdate) {
-      this.formTitle = RESOURCES.FORM_TITLE.UPDATE;
+      this.formTitle = RESOURCES.FORM_TITLE.PRODUCT.UPDATE;
     } else {
-      this.formTitle = RESOURCES.FORM_TITLE.ADD;
+      this.formTitle = RESOURCES.FORM_TITLE.PRODUCT.ADD;
     }
     // lấy dữ liệu phòng ban đẩy vào combobox
     this.getDepartment();
@@ -531,11 +388,23 @@ export default {
     document.addEventListener("keydown", this.onKeyDown);
     // forcus vào ô mã nhân viên khi hiển thị form chi tiết
     this.$refs.EmployeeCode.onFocus();
+    //this.watchFileInput();
   },
   unmounted() {
     document.removeEventListener("keydown", this.onKeyDown);
   },
   methods: {
+    // watchFileInput() {
+    //         // will notify a file input
+    //         document.getElementsByTagName('input[type="file"]').change(this.notifyFileInput.bind(this));
+    //     },
+        
+    //     notifyFileInput: function(event) {
+    //         var fileName = event.target.files[0].name;
+    //         // update file name value
+    //         this.file = fileName;
+    //         console.log(event.target.files[0]);
+    //     },
        /**
      * author:Nguyễn Văn Ngọc(21/2/2023)
      * Hàm onKeyDown xử lí khi nhấn phím tắt
@@ -714,7 +583,7 @@ export default {
         this.errorCodeMessage = "";
         if (isSaveAndAdd) {
           this.employees = this.onDefaultEmployee();
-          this.formTitle = RESOURCES.FORM_TITLE.ADD;
+          this.formTitle = RESOURCES.FORM_TITLE.PRODUCT.ADD;
           this.getNewEmCode();
         }
         else {
@@ -840,5 +709,6 @@ export default {
 </script>
 <style  scoped>
 @import "../../css/components/datepicker.css";
+
 </style>
 

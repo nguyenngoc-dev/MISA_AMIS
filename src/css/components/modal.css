@@ -79,6 +79,7 @@
   display: flex;
   flex-wrap: wrap;
   overflow-y: auto;
+  margin-bottom: 20px;
 }
 .modal-main-container {
   display: flex;
@@ -197,7 +198,6 @@ padding-top: 1.6px;
 
 /* contact */
 .modal-contact {
-  margin-top: 18px;
   margin-bottom: 32px;
   width: 100%;
 }
@@ -222,9 +222,9 @@ padding-top: 1.6px;
 }
 
 .modal-contact__content {
-  height: 194px;
   width: 100%;
   padding-right: 8px;
+  height: 320px;
 }
 .modal-contact__content--middle,
 .modal-contact__content--bottom {

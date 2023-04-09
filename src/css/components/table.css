@@ -67,7 +67,7 @@ th {
 
 .tbl .tbl-col--large {
     width: 186px;
-    min-width: 200px;
+    min-width: 300px;
 }
 
 .tbl .tbl-col:first-child {

@@ -1,9 +1,9 @@
 <template>
   <div class="content">
     <div class="content__header">
-      <div class="content__header-text">Nhân viên</div>
+      <div class="content__header-text">Sản phẩm</div>
       <BaseButton
-        :btnText="'Thêm mới nhân viên'"
+        :btnText="'Thêm mới sản phẩm'"
         @click="showDialog(true)"
         class="btn-add-emp"
       />
@@ -93,23 +93,18 @@
                   <div class="icon-checked"></div>
                 </label>
               </th>
-              <th class="tbl-col">Mã nhân viên</th>
-              <th class="tbl-col tbl-col--large">Tên nhân viên</th>
-              <th class="tbl-col">Giới tính</th>
-              <th class="tbl-col" style="text-align: center">Ngày sinh</th>
-              <th class="tbl-col tooltip" style="display: table-cell">
+              <th class="tbl-col">Mã sản phẩm</th>
+              <th class="tbl-col tbl-col--large">Tên sản phẩm</th>
+              <th class="tbl-col tbl-col--large">Danh mục</th>
+              <th class="tbl-col" style="text-align: center">Giá bán</th>
+              <th class="tbl-col tooltip tbl-col--large" style="display: table-cell">
                 <span
                   class="tooltiptext"
                   style="width: 200px; font-size: 12px; left: -12%; top: 102%"
-                  >Số chứng minh nhân dân</span
-                >Số CMND
+                  >Mô tả</span
+                >Mô tả
               </th>
-              <th class="tbl-col tbl-col--large">Chức danh</th>
-              <th class="tbl-col tbl-col--large">Tên đơn vị</th>
-              <th class="tbl-col">Số điện thoại</th>
-              <th class="tbl-col">Số tài khoản</th>
-              <th class="tbl-col tbl-col--large">Tên ngân hàng</th>
-              <th class="tbl-col tbl-col--large">Chi nhánh ngân hàng</th>
+              <th class="tbl-col">Số lượng</th>
               <th class="tbl-col" style="min-width: 112px">chức năng</th>
             </tr>
             <!-- </thead>    -->
@@ -158,39 +153,14 @@
                 </div>
                 <span v-show="employee.IdentityNumber" class="tooltiptext" style="top:100%">{{ employee.IdentityNumber }}</span>
               </td>
-              <td class="tbl-col tbl-col--large tooltip">
+              <td class="tbl-col  tooltip">
                 <div class="text-overflow">
                   {{ employee.Position || "" }}
                 </div>
                 <span v-show="employee.Position" class="tooltiptext" style="top:100%">{{ employee.Position }}</span>
               </td>
-              <td class="tbl-col tbl-col--large">
-                {{ employee.DepartmentName || "" }}
-              </td>
-              <td class="tbl-col">
-                <div class="text-overflow">
-                  {{ employee.PhoneNumber || "" }}
-                </div>
-              </td>
-              <td class="tbl-col tooltip">
-                <div class="text-overflow">
-                  {{ employee.BankAccount }}
-                </div>
-                <span v-show="employee.BankAccount" class="tooltiptext" style="top:100%">{{ employee.BankAccount }}</span>
-              </td>
-              <td class="tbl-col tbl-col--large tooltip">
-                <div class="text-overflow">
-                  {{ employee.BankName }}
-                </div>
-                <span v-show="employee.BankName" class="tooltiptext" style="top:100%">{{ employee.BankName }}</span>
 
-              </td>
-              <td class="tbl-col tbl-col--large tooltip">
-                <div class="text-overflow">
-                  {{ employee.BankBranch }}
-                </div>
-                <span v-show="employee.BankBranch" class="tooltiptext" style="top:100%">{{ employee.BankBranch }}</span>
-              </td>
+
               <td class="tbl-col">
                 <div class="tbl-col__action">
                   <label

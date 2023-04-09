@@ -18,7 +18,7 @@ const RESOURCES = {
       DELETE: "Xóa nhân viên thành công",
     },
     ERROR: {
-      ERRORSERVER:"Vui lòng liên hệ MISA để được trợ giúp",
+      ERRORSERVER:"Vui lòng liên hệ Store để được trợ giúp",
       INVALID_CODE:"Mã nhân viên không được để trống",
       DUPLICATE_CODE:"Mã hiện tại đang bị trùng",
       INVALID_NAME:"Tên nhân viên không được để trống",
@@ -38,9 +38,17 @@ const RESOURCES = {
     ERROR:"ERROR"
   },
   FORM_TITLE: {
-    ADD:"Thêm nhân viên",
-    UPDATE:"Sửa nhân viên",
-    DUPLICATE:"Nhân bản"
+    PRODUCT:{
+      ADD:"Thêm sản phẩm",
+      UPDATE:"Sửa sản phẩm",
+      DUPLICATE:"Nhân bản"
+    },
+    CATEGORY: {
+      ADD:"Thêm danh mục",
+      UPDATE:"Sửa danh mục",
+      DUPLICATE:"Nhân bản"
+    }
+   
   },
   MODAL_TITLE: {
     INFO: "Xác nhận",
@@ -106,9 +114,9 @@ const RESOURCES = {
     MAX_LENGTH:(name,value) => `${name} giới hạn ${value} kí tự`
   },
   FORM_FIELD: {
-    EmployeeCode: "Mã nhân viên",
-    FullName: "Tên nhân viên",
-    DepartmentId:"Đơn vị",
+    EmployeeCode: "Mã",
+    FullName: "Tên",
+    DepartmentId:"Danh mục",
     Position:"Chức danh",
     DateOfBirth:"Ngày sinh",
     IdentityNumber:"Số căn cước",

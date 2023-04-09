@@ -5,6 +5,7 @@
       textfield__input: true,
       'textfield--error-input': isErrorInput,
       'modal-textfield__input': true,
+      'inputfile':inputType==='file'
     }"
     :value="modelValue"
     @input="$emit('update:modelValue', $event.target.value)"
@@ -53,4 +54,12 @@ export default {
 };
 </script>
 <style scoped>
+.inputfile {
+	width: 0.1px;
+	height: 0.1px;
+	opacity: 0;
+	overflow: hidden;
+	position: absolute;
+	z-index: 5;
+}
 </style>
