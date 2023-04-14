@@ -29,7 +29,7 @@
               <BaseInput
                 :isErrorInput =" this.isDuplicateCode || !!this.errorOject['EmployeeCode'] "
                 style="min-width: 149px; width: 149px; margin-right: 6px"
-                v-model="employees.EmployeeCode"
+                v-model="products.ProductCode"
                 :name="'EmployeeCode'"
                 :rules="['NOT_EMPTY','MAX_LENGTH|20']"
                 :tooltipMessage="errorCodeMessage"
@@ -49,7 +49,7 @@
                 :isErrorInput ="!!this.errorOject['FullName']"
                 style="min-width: 233px; width: 233px"
                 :inputType="'text'"
-                v-model="employees.FullName"
+                v-model="products.ProductName"
                 :rules="['NOT_EMPTY','MAX_LENGTH|100']"
                 @errorInputMessage="validateInput"
                 :name="'FullName'"
@@ -63,17 +63,17 @@
           <div class="textfield modal-textfield" style="margin-bottom: 16px">
             <BaseCombobox
               :comboName="'Danh mục'"
-              :errorMessage="this.errorOject['DepartmentId']?'Danh m không hợp lệ': null"
-              :isUnit="!!errorOject['DepartmentId']"
-              :api="'https://localhost:44387/api/v1/Departments'"
-              :propName="'DepartmentName'"
+              :errorMessage="this.errorOject['CategoryId']?'Danh mục không hợp lệ': null"
+              :isUnit="!!errorOject['CategoryId']"
+              :api="'https://localhost:44314/api/v1/Categorys'"
+              :propName="'CategoryName'"
               :rules="['NOT_EMPTY']"
               @errorInputMessage="validateInput"
-              :propValue="'DepartmentId'"
+              :propValue="'CategoryId'"
               @invalidUnit="invalidUnit"
-              :name="'DepartmentId'"
-              ref="DepartmentId"
-              v-model="this.employees.DepartmentId"
+              :name="'CategoryId'"
+              ref="CategoryId"
+              v-model="this.products.CategoryId"
             />
           </div>
         </div>
@@ -89,12 +89,11 @@
               </label>
               <BaseInput
                 style="min-width: 168px; width: 168px"
-                v-model="employees.IdentityNumber"
+                v-model="products.Quantity"
                 tabindex="4"
                 :isErrorInput ="!!this.errorOject['IdentityNumber']"
                 ref="IdentityNumber"
                 :name="'IdentityNumber'"
-                :rules="['HAS_FORMAT','MAX_LENGTH|25']"
                 @errorInputMessage="validateInput"
               />
               <p class="text-error">{{ this.errorOject['IdentityNumber'] }}</p>
@@ -109,12 +108,11 @@
               </label>
               <BaseInput
                 style="min-width: 250px; width: 242px"
-                v-model="employees.IdentityNumber"
+                v-model="products.Discount"
                 tabindex="4"
                 :isErrorInput ="!!this.errorOject['IdentityNumber']"
                 ref="IdentityNumber"
                 :name="'IdentityNumber'"
-                :rules="['HAS_FORMAT','MAX_LENGTH|25']"
                 @errorInputMessage="validateInput"
               />
               <p class="text-error">{{ this.errorOject['IdentityNumber'] }}</p>
@@ -130,12 +128,11 @@
               </label>
               <BaseInput
                 style="max-width: 423px;width: 423px;"
-                v-model="employees.IdentityNumber"
+                v-model="products.Price"
                 tabindex="4"
                 :isErrorInput ="!!this.errorOject['IdentityNumber']"
                 ref="IdentityNumber"
                 :name="'IdentityNumber'"
-                :rules="['HAS_FORMAT','MAX_LENGTH|25']"
                 @errorInputMessage="validateInput"
               />
               <p class="text-error">{{ this.errorOject['IdentityNumber'] }}</p>
@@ -157,7 +154,7 @@
                 :type="'file'"
                 tabindex="7"
                 class="full-w inputfile"
-                v-model="employees.Address"
+                v-model="products.ImageUrl"
                 :isErrorInput ="!!this.errorOject['Address']"
                 ref="Address"
                 :name="'Address'"
@@ -168,14 +165,14 @@
               :type="'text'"
                 tabindex="7"
                 class="full-w"
-                v-model="employees.Address"
+                v-model="products.ImageUrl"
                 :isErrorInput ="!!this.errorOject['Address']"
                 ref="Address"
                 :name="'Address'"
                 :rules="['MAX_LENGTH|255']"
                 @errorInputMessage="validateInput"
               />
-              <img :src="employees.Address" alt="Lỗi">
+              <img :src="products.Address" alt="Lỗi">
               <p class="text-error">{{ this.errorOject['Address'] }}</p>
             </div>
             <div
@@ -188,7 +185,7 @@
               <BaseInput
                 tabindex="7"
                 class="full-w"
-                v-model="employees.Address"
+                v-model="products.ShortDescription"
                 :isErrorInput ="!!this.errorOject['Address']"
                 ref="Address"
                 :name="'Address'"
@@ -206,6 +203,7 @@
               </label>
               <editor
                 api-key="6evpakssynqtlwg5jb2oddpfql37uf3vp6zd7lluieshqwik"
+                v-model="products.DetailDescription"
               />
               <p class="text-error">{{ this.errorOject['Address'] }}</p>
             </div>
@@ -275,7 +273,7 @@ import BaseDatePicker from '../../components/base/BaseDatePicker.vue'
 import RESOURCES from "../../js/base/resouce.js";
 import ENUMS from "../../js/base/enums.js";
 import Editor from '@tinymce/tinymce-vue'
-import { HTTP, HTTPDepartments } from "../../js/api/ConnectApi.js";
+import { HTTP, HTTPCategorys,HTTPProductImages } from "../../js/api/ConnectApi.js";
 
 export default {
   components: {
@@ -290,18 +288,18 @@ export default {
     "onhideToast",
     "changeToastMsg",
   ],
-  props: ["employeeIdUpdate", "isDuplicate","isShowForm"],
+  props: ["productIdUpdate", "isDuplicate","isShowForm",'productImageId'],
 
   data() {
     return {
       formTitle: RESOURCES.FORM_TITLE.PRODUCT.ADD, // Title form
       isShowDialog: false, // show dialog báo lỗi khi nhập liệu
       validateError: [], //
-      Departments: [], //Danh sách phòng ban
-      DepartmentFilter: [], //Danh sách phòng ban tìm kiếm
-      employees: this.onDefaultEmployee(), // object nhân viên
-      product:{},
-      departmentSelected: {}, // phòng ban được chọn
+      categories: [], //Danh sách phòng ban
+      categoryFilter: [], //Danh sách phòng ban tìm kiếm
+      products: this.onDefaultEmployee(), // object nhân viên
+      productImages:{},
+      categorySelected: {}, // phòng ban được chọn
       oldEmployee:{},//nhân viên ban 
       errorOject:{},// object chứa lỗi 
       isName: false, // .... tên không hợp lệ
@@ -327,7 +325,7 @@ export default {
       async handler(newValue) {
         if(newValue == true) {
           const newCode = await this.getNewEmCode();
-          this.employees.EmployeeCode = newCode;
+          this.products.ProductCode = newCode;
         }
       },
       immediate:true
@@ -340,7 +338,7 @@ export default {
      */
     // check xem là thêm hay sửa
     isAdd() {
-      if (this.employeeIdUpdate) {
+      if (this.productIdUpdate) {
         return false;
       } else {
         return true;
@@ -351,7 +349,7 @@ export default {
     // Thay đổi form title
     if (this.isDuplicate) {
       this.formTitle = RESOURCES.FORM_TITLE.PRODUCT.DUPLICATE;
-    } else if (this.employeeIdUpdate) {
+    } else if (this.productIdUpdate) {
       this.formTitle = RESOURCES.FORM_TITLE.PRODUCT.UPDATE;
     } else {
       this.formTitle = RESOURCES.FORM_TITLE.PRODUCT.ADD;
@@ -359,20 +357,20 @@ export default {
     // lấy dữ liệu phòng ban đẩy vào combobox
     this.getDepartment();
     // Truyền dữ liệu vào input khi Sửa
-    if (this.employeeIdUpdate || this.isDuplicate) {
+    if (this.productIdUpdate || this.isDuplicate) {
       try {
         // gọi api lấy dữ liệu truyền vào th employee
-        HTTP.get(`/${this.employeeIdUpdate}`).then((response) => {
-          this.employees = response.data;
-          for(const property in this.employees) {
-            this.oldEmployee[property] = this.employees[property]
+        HTTP.get(`/${this.productIdUpdate}`).then((response) => {
+          this.products = response.data;
+          for(const property in this.products) {
+            this.oldEmployee[property] = this.products[property]
           }
           // Lấy ra department được chọn
-          const departmentSelected = this.Departments.find(
-            (deparment) =>
-              deparment.DepartmentId === this.employees?.DepartmentId
+          const categorySelected = this.categories.find(
+            (category) =>
+            category.CategoryId === this.products?.CategoryId
           );
-          this.employees.DepartmentName = departmentSelected.DepartmentName;
+          this.products.CategoryName = categorySelected.CategoryName;
         });
       } catch (error) {
         console.log(error);
@@ -440,8 +438,8 @@ export default {
      */
     async getEmpById() {
       try {
-        const res = await HTTP.get(`/${this.employeeIdUpdate}`);
-        this.employees = res.data;
+        const res = await HTTP.get(`/${this.productIdUpdate}`);
+        this.products = res.data;
       } catch (error) {
         this.handleException(error);
       }
@@ -453,9 +451,9 @@ export default {
 
     async getDepartment() {
       try {
-        var res = await HTTPDepartments.get();
-        this.Departments = res.data;
-        this.DepartmentFilter = res.data;
+        var res = await HTTPCategorys.get();
+        this.categories = res.data;
+        this.categoryFilter = res.data;
       } catch (error) {
         this.handleException(error);
       }
@@ -465,7 +463,7 @@ export default {
      * Hàm onFocusFirstInput tab index nhảy vào ô đầu tiên
      */
     onFocusFirstInput() {
-      this.$refs.EmployeeCode.onFocus();
+      this.$refs.ProductCode.onFocus();
     },
     /**
      * author:Nguyễn Văn Ngọc(3/1/2023)
@@ -486,7 +484,7 @@ export default {
      * Hàm onchecked enter để check gender
      */
     onchecked(e) {
-      this.employees.Gender = e.target.childNodes[0]._value;
+      this.products.Gender = e.target.childNodes[0]._value;
     },
     /**
      * author:Nguyễn Văn Ngọc(10/1/2023)
@@ -494,22 +492,16 @@ export default {
      */
     onDefaultEmployee() {
       return {
-        EmployeeCode: "",
-        FullName: "",
-        DateOfBirth: null,
-        Gender: 0,
-        DepartmentId: "",
-        IdentityNumber: "",
-        IdentityDate: null,
-        Position: "",
-        IdentityPlace: "",
-        Address: "",
-        PhoneNumber: "",
-        LandlineNumber: "",
-        Email: "",
-        BankAccount: "",
-        BankName: "",
-        BankBranch: "",
+        ProductCode: "",
+        ProductName: "",
+        Price: null,
+        Quantity: 0,
+        CategoryId: "",
+        CategoryName: "",
+        Discount: null,
+        ShortDescription: "",
+        DetailDescription: "",
+        ImageUrl:"",
       };
     },
     /**
@@ -517,13 +509,18 @@ export default {
      * Hàm onSavebtn Xử lí khi click nút cất
      */
     async onSavebtn(isSaveAndAdd) {
+      console.log(this.products);
+      console.log(this.productImages);
+
       var me = this;
       // validate
       if (!this.validate()) {
         this.onShowDialogChangeData(false,true,this.errorCodeMessage,null,this.titleLossData);
       } else {
-        // Chuyển giới tính thành số
-        this.employees.Gender = parseInt(this.employees.Gender);
+        // Chuyển số lượng tính thành số
+        this.products.Quantity = parseInt(this.products.Quantity);
+        this.products.Discount = parseInt(this.products.Discount);
+        this.products.Price = parseInt(this.products.Price);
         if (this.isAdd || this.isDuplicate) {
           //Xử lí khi thêm
           this.handleOnSave(isSaveAndAdd, true, RESOURCES.FORM_MODE.ADD);
@@ -573,19 +570,30 @@ export default {
      */
     async handleOnSave(isSaveAndAdd, isAdd, toastMessage) {
       try {
+        this.productImages.productImageId = this.productImageId;
+        this.productImages.ImageUrl = this.products.ImageUrl || "";
+        this.productImages.ProductId = this.productIdUpdate;
         const response = isAdd
-          ? await HTTP.post("", this.employees)
-          : await HTTP.put(`/${this.employeeIdUpdate}`, this.employees);
+          ? await HTTP.post("", this.products)
+          : await HTTP.put(`/${this.productIdUpdate}`, this.products);
+          if(this.productImages && this.productImageId !=="00000000-0000-0000-0000-000000000000")
+          {
+            const res = isAdd ? await HTTPProductImages.post("", this.productImages)
+          : await HTTPProductImages.put(`/${this.productImageId}`, this.productImages);
+          }
+        
         this.$emit("changeToastMsg",toastMessage,false,true, RESOURCES.NOTIFICATION_TITLE.SUCCESS);
         this.$emit("onshowToast");
         this.$emit("onLoadData");
         this.isDuplicateCode = false;
         this.errorCodeMessage = "";
+        this.productImages = {};
         if (isSaveAndAdd) {
-          this.employees = this.onDefaultEmployee();
+          this.products = this.onDefaultEmployee();
           this.formTitle = RESOURCES.FORM_TITLE.PRODUCT.ADD;
           this.getNewEmCode();
         }
+        
         else {
           this.$emit("hideDialog");
         }
@@ -600,9 +608,9 @@ export default {
      * Hàm getNewEmCode lấy mã nhân viên mới
      */
     async getNewEmCode() {
-      const response = await HTTP.get(`/new-employee-code`);
-      this.employees.EmployeeCode = response.data;
-      this.newEmployeeCode = response.data;
+      const response = await HTTP.get(`/new-product-code`);
+      this.products.ProductCode = response.data;
+      //this.newEmployeeCode = response.data;
     },
     /**
      * author:Nguyễn Văn Ngọc(4/1/2023)
@@ -642,7 +650,7 @@ export default {
      */
     isChangeData() {
       if(this.isAdd) {
-       if(JSON.stringify(this.onDefaultEmployee()) != JSON.stringify(this.employees)) {
+       if(JSON.stringify(this.onDefaultEmployee()) != JSON.stringify(this.products)) {
         this.onShowDialogChangeData(true,false,'', RESOURCES.MODAL_MESSAGE.INFO,'');
        }
        else {
@@ -650,7 +658,7 @@ export default {
        }
       }   
       else {
-        if(JSON.stringify(this.oldEmployee) != JSON.stringify(this.employees)){
+        if(JSON.stringify(this.oldEmployee) != JSON.stringify(this.products)){
             this.onShowDialogChangeData(true,false,'', RESOURCES.MODAL_MESSAGE.INFO,'');
           }
         else {
@@ -679,7 +687,7 @@ export default {
      * Hàm invalidUnit kiểm tra đơn vị có hợp lệ hay không
      */
     invalidUnit(isInvalid) {
-      this.errorOject.DepartmentId = isInvalid;
+      this.errorOject.CategoryId = isInvalid;
     },
 
     /**
@@ -690,7 +698,7 @@ export default {
       let isValid = true;
       for(const property in this.errorOject) {
         if(this.errorOject[property]) {
-            if(property == RESOURCES.DepartmentId) {
+            if(property == RESOURCES.CategoryId) {
               this.titleLossData = RESOURCES.FORM_MESSAGE.ERROR.ERROR_DEPARTMENT;
             }
             else {

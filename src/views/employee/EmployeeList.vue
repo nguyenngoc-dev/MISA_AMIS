@@ -55,7 +55,7 @@
             <input
               class="textfield__input"
               v-model="textSearch"
-              placeholder="Tìm kiếm theo mã, tên nhân viên"
+              placeholder="Tìm kiếm theo mã, tên sản phẩm"
               :debounce-events="['input', 'keyup']"
               v-debounce:600ms.lock="searchData"
             />
@@ -95,6 +95,7 @@
               </th>
               <th class="tbl-col">Mã sản phẩm</th>
               <th class="tbl-col tbl-col--large">Tên sản phẩm</th>
+              <th class="tbl-col tbl-col--large">Ảnh sản phẩm</th>
               <th class="tbl-col tbl-col--large">Danh mục</th>
               <th class="tbl-col" style="text-align: center">Giá bán</th>
               <th class="tbl-col tooltip tbl-col--large" style="display: table-cell">
@@ -111,65 +112,67 @@
 
             <tr
               class="tbl-row"
-              v-for="(employee, index) in employees"
+              v-for="(product, index) in products"
               :key="index"
-              @dblclick="rowOnDblClick(employee)"
+              @dblclick="rowOnDblClick(product)"
             >
               <td class="tbl-col">
                 <input
                   name="checkEmp"
                   class="check-col"
                   type="checkbox"
-                  :value="employee.EmployeeId"
-                  :id="employee.EmployeeId"
-                  :checked="checkList.includes(employee.EmployeeId)"
-                  @change="hanlderCheckBox(employee.EmployeeId)"
+                  :value="product.ProductId"
+                  :id="product.ProductId"
+                  :checked="checkList.includes(product.ProductId)"
+                  @change="hanlderCheckBox(product.ProductId)"
                 />
-                <label :for="employee.EmployeeId" class="mask">
+                <label :for="product.ProductId" class="mask">
                   <div class="icon-checked"></div>
                 </label>
               </td>
               <td class="tbl-col tooltip">
                 <div class="text-overflow">
-                  {{ employee.EmployeeCode || "" }}
-                  <span  class="tooltiptext" style="top:100%">{{ employee.EmployeeCode  }}</span>
+                  {{ product.ProductCode || "" }}
+                  <span  class="tooltiptext" style="top:100%">{{ product.ProductCode  }}</span>
                 </div>
               </td>
               <td class="tbl-col tbl-col--large tooltip">
                 <div class="text-overflow ">
-                  {{ employee.FullName || "" }}
-                  <span  class="tooltiptext" style="top:100%">{{ employee.FullName }}</span>
+                  {{ product.ProductName || "" }}
+                  <span  class="tooltiptext" style="top:100%">{{ product.ProductName }}</span>
+                </div>
+              </td>
+              <td class="tbl-col tbl-col--large tooltip">
+                <div class="text-overflow ">
+                  <img :src="products.ImageUrl" alt="Lỗi">
                 </div>
               </td>
               <td class="tbl-col">
-                {{ employee.GenderName || "" }}
+                {{ product.CategoryName || "" }}
               </td>
-              <td class="tbl-col" style="text-align: center">
-                {{ formatDate(employee.DateOfBirth) || "" }}
+              <td class="tbl-col" >
+                {{  product.Price || "" }}
               </td>
               <td class="tbl-col tooltip">
                 <div class="text-overflow">
-                  {{ employee.IdentityNumber || "" }}
+                  {{ product.ShortDescription || "" }}
                 </div>
-                <span v-show="employee.IdentityNumber" class="tooltiptext" style="top:100%">{{ employee.IdentityNumber }}</span>
               </td>
               <td class="tbl-col  tooltip">
                 <div class="text-overflow">
-                  {{ employee.Position || "" }}
+                  {{ product.Quantity || "" }}
                 </div>
-                <span v-show="employee.Position" class="tooltiptext" style="top:100%">{{ employee.Position }}</span>
               </td>
-
 
               <td class="tbl-col">
                 <div class="tbl-col__action">
                   <label
                     class="tbl-col__action-edit"
-                    @click="rowOnDblClick(employee)"
+                    @click="rowOnDblClick(product)"
                     >Sửa</label
                   >
                   <button
-                    @click="handleOpenListAction($event, employee)"
+                    @click="handleOpenListAction($event, product)"
                     @blur="onBlurActionIcon($event)"
                     class="sidebar-item__icon"
                     style="display: flex;justify-content: center;align-items: center;height: 16px;background: none;outline: none;border: none;">
@@ -209,7 +212,7 @@
             <BaseLoading v-if="isShowLoading" />
           </tbody>
         </table>
-        <div class="empty-data" v-if="this.employees.length === 0">
+        <div class="empty-data" v-if="this.products.length === 0">
           <img src="../../assets/img/emptyData.svg" alt="" />
           <div class="empty-data-text">Không có dữ liệu</div>
         </div>
@@ -283,10 +286,11 @@
     v-if="isShowDialog"
     @hideDialog="showDialog(false)"
     @onLoadData="onLoadCurrentpage(this.currentPageNum)"
-    :employeeIdUpdate="employeeIdSelected"
+    :productIdUpdate="productIdSelected"
+    :productImageId="productImageIdSelected"
     @onshowToast="onshowToast"
     @onhideToast="onhideToast"
-    :isDuplicate="employeeIdDuplicate"
+    :isDuplicate="productIdDuplicate"
     :isShowForm="isShowDialog"
     @changeToastMsg="changeToastMsg"
   ></EmployeeDetail>
@@ -328,7 +332,7 @@ export default {
   },
   data() {
     return {
-      employees: [], // mảng hứng dữ liệu đổ vào bảng
+      products: [], // mảng hứng dữ liệu đổ vào bảng
       isShowDialog: false, // Show chi tiết nhân viên
       isShowLoading: false, // Show loading
       textSearch: "", // nội dung ô tìm kiếm
@@ -340,6 +344,7 @@ export default {
           right: 0,
         },
       },
+      productImageIdSelected:null,
       dialogTitle: "", // title thông báo khi xóa
       isDisableButton: true, //disable button xóa hàng loạt
       isDelete: true, // có phải dialog xóa
@@ -348,11 +353,11 @@ export default {
       isSingle:true,//có phải xóa 1
       showBtnCancel: true, //hiện button không
       checkList: [], // mảng chứa các check box checked
-      employeeIdSelected: null, // id của nhân viên khi click nút sửa
+      productIdSelected: null, // id của nhân viên khi click nút sửa
       isShowDeleteDialog: false, // show dialog thông báo khi xóa
-      employeeDelete:[],// mảng xóa một nhân viên
-      employeeIdDelete: null, // lấy ra id khi xóa nhân viên
-      employeeIdDuplicate: false, // lấy id nhân viên để nhân bản
+      productDelete:[],// mảng xóa một nhân viên
+      productIdDelete: null, // lấy ra id khi xóa nhân viên
+      productIdDuplicate: false, // lấy id nhân viên để nhân bản
       isShowToast: false, //show toast message
       formatDate, // Hàm xử lí ngày tháng
       totalPage: 1, // Tổng số trang
@@ -384,12 +389,13 @@ export default {
       if (this.checkList.length == 0) {
         return false;
       }
-      isCheck = this.employees.every((item) =>
-        this.checkList.includes(item.EmployeeId)
+      isCheck = this.products.every((item) =>
+        this.checkList.includes(item.ProductId)
       );
       // eslint-disable-next-line
       return isCheck;
     },
+    
   },
   methods: {
     /**
@@ -417,7 +423,9 @@ export default {
         // show loading
         this.isShowLoading = true;
         HTTP.post(`/filter`, this.getFilterParams("", 20, 1)).then((res) => {
-          this.employees = res.data.Data;
+          this.products = res.data.Data.filter(product => {
+          return product.IsActive == true
+        });
           this.totalPage = res.data.TotalPage;
           this.isShowLoading = false;
           this.pageTotal = res.data.TotalRecord;
@@ -436,10 +444,11 @@ export default {
      */
     showDialog(state) {
       this.isShowDialog = state;
-      this.employeeIdSelected = null;
-      this.employeeIdDuplicate = false;
+      this.productIdSelected = null;
+      this.productIdDuplicate = false;
       this.showListPage = false;
       this.listAction.isShow = false;
+      this.productImageIdSelected = null;
     },
     /**
      * author:Nguyễn Văn Ngọc(3/1/2023)
@@ -478,7 +487,7 @@ export default {
       try {
         // đóng Dialog
         this.onShowDeleteDialog(false);
-        let data = this.isSingle ? [...this.employeeDelete] : [...this.checkList]; 
+        let data = this.isSingle ? [...this.productDelete] : [...this.checkList]; 
         // Show loading
         this.isShowLoading = true;
         // gọi api xóa nhân viên
@@ -489,7 +498,7 @@ export default {
         this.toastTitle = RESOURCES.NOTIFICATION_TITLE.SUCCESS;
         this.isShowToast = true;
         this.checkList = [];
-        this.employeeDelete=[];
+        this.productDelete=[];
         this.listAction.isShow = false;
         // Load lại dữ liệu
         await this.onLoadCurrentpage(1);
@@ -519,13 +528,14 @@ export default {
      */
 
     handleOpenListAction(e, emp) {
-      if (emp.EmployeeId) {
-        this.employeeIdSelected = emp.EmployeeId;
-        this.employeeIdDelete = emp.EmployeeId;
-        this.dialogTitle = RESOURCES.MODAL_MESSAGE.DELETE_WARNING(emp.EmployeeCode);
-        this.employeeDelete = [this.employeeIdSelected];
+      if (emp.ProductId) {
+        this.productIdSelected = emp.ProductId;
+        this.productImageIdSelected = emp.ProductImageId;
+        this.productIdDelete = emp.ProductId;
+        this.dialogTitle = RESOURCES.MODAL_MESSAGE.DELETE_WARNING(emp.ProductCode);
+        this.productDelete = [this.productIdSelected];
       } else {
-        this.employeeIdDelete = null;
+        this.productIdDelete = null;
       }
       const target = e.target;
       const position = target.getBoundingClientRect();
@@ -581,7 +591,7 @@ export default {
           `/filter`,
           this.getFilterParams(this.textSearch, 20, 1)
         );
-        this.employees = response.data.Data;
+        this.products = response.data.Data;
         this.isShowLoading = false;
         this.totalPage = response.data.TotalPage;
         this.pageTotal = response.data.TotalRecord;
@@ -594,13 +604,13 @@ export default {
      * Hàm handleCheckAll xử lí check all khi click vào checkall
      */
     handleCheckAll(e) {
-      const employeeIds = this.employees.map((item) => item.EmployeeId);
-      const ids = employeeIds.filter((id) => !this.checkList.includes(id));
+      const productIds = this.products.map((item) => item.ProductId);
+      const ids = productIds.filter((id) => !this.checkList.includes(id));
       if (e.target.checked) {
         this.checkList = [...this.checkList, ...ids];
       } else {
         this.checkList = [
-          ...this.checkList.filter((item) => !employeeIds.includes(item)),
+          ...this.checkList.filter((item) => !productIds.includes(item)),
         ];
       }
     },
@@ -610,8 +620,9 @@ export default {
      * Hàm rowOnDblClick xử lí check all khi double click mỗi hàng
      */
     rowOnDblClick(item) {
-      this.employeeIdSelected = item.EmployeeId;
-      this.employeeIdDuplicate = false;
+      this.productIdSelected = item.ProductId;
+      this.productImageIdSelected = item.ProductImageId;
+      this.productIdDuplicate = false;
       this.isShowDialog = true;
     },
     /**
@@ -619,7 +630,7 @@ export default {
      * Hàm onDuplicate hiện form nhân viên khi click vào nút nhân bản
      */
     onDuplicate() {
-      this.employeeIdDuplicate = true;
+      this.productIdDuplicate = true;
       this.isShowDialog = true;
       this.listAction.isShow = false;
     },
@@ -634,7 +645,9 @@ export default {
           `/filter`,
           this.getFilterParams("", this.currentPageSize, pageNum)
         ).then((res) => {
-          this.employees = res.data.Data;
+          this.products = res.data.Data.filter(product => {
+          return product.IsActive == true
+        });
           this.totalPage = res.data.TotalPage;
           this.pageTotal = res.data.TotalRecord;
           this.isShowLoading = false;
@@ -656,13 +669,16 @@ export default {
           `/filter`,
           this.getFilterParams("", this.currentPageSize, num)
         );
-        this.employees = res.data.Data;
+        this.products = res.data.Data.filter(product => {
+          return product.IsActive == true
+        });
         this.totalPage = res.data.TotalPage;
         this.isShowLoading = false;
         this.pageTotal = res.data.TotalRecord;
         this.checkList = [];
         this.textSearch = "";
-        this.employeeIdSelected = null;
+        this.productIdSelected = null;
+        this.productImageIdSelected = null;
       } catch (error) {
         this.handleExeption(error);
       }
@@ -683,11 +699,13 @@ export default {
         this.isShowLoading = !this.isShowLoading;
         // gọi api lấy số bản ghi trên trang dựa vào value
         var res = await HTTP.post(`/filter`, {
-          EmployeeFilter: "",
+          ProductFilter: "",
           PageSize: item.value,
           PageNumber: 1,
         });
-        this.employees = res.data.Data;
+        this.products = res.data.Data.filter(product => {
+          return product.IsActive == true
+        }); 
         this.totalPage = res.data.TotalPage;
         this.isShowLoading = false;
         this.currentPageSizeText = item.text;
@@ -715,16 +733,16 @@ export default {
      * Hàm getFilterParams(text) lấy ra object để gọi api filter
      *
      */
-    getFilterParams(EmployeeFilter, PageSize, PageNumber) {
+    getFilterParams(ProductFilter, PageSize, PageNumber) {
       return {
-        EmployeeFilter: EmployeeFilter,
+        ProductFilter: ProductFilter,
         PageSize: PageSize,
         PageNumber: PageNumber,
       };
     },
     /**
      * author:Nguyễn Văn Ngọc(14/2/2023)
-     * Hàm exportData() xuất dữ liệu employees ra file exel
+     * Hàm exportData() xuất dữ liệu products ra file exel
      *
      */
     async exportData() {
@@ -734,7 +752,7 @@ export default {
         // Hiển thị Loading
         me.isShowLoading = true;
         var data = this.getFilterParams(this.textSearch, this.pageTotal, 1);
-        const response = await HTTP.post("/get-employees-excel",data, {
+        const response = await HTTP.post("/get-products-excel",data, {
           responseType: "blob"
         } );
         // Lấy ra URL
