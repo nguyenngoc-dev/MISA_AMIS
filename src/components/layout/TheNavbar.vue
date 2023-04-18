@@ -28,11 +28,11 @@
         </div>
         <div class="slidebar-item-text">Danh mục</div>
       </router-link>
-      <router-link to="/purchases" class="sidebar-item" tabindex="0">
+      <router-link to="/user" class="sidebar-item" tabindex="0">
         <div class="sidebar-item__icon">
           <div class="icon-buy"></div>
         </div>
-        <div class="slidebar-item-text">Mua hàng</div>
+        <div class="slidebar-item-text">Tài khoản</div>
       </router-link>
       <router-link to="/sell" class="sidebar-item" tabindex="0">
         <div class="sidebar-item__icon">

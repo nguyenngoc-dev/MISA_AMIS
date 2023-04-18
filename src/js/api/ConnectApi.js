@@ -11,3 +11,9 @@ export const HTTPCategorys = axios.create({
 export const HTTPProductImages = axios.create({
   baseURL: "https://localhost:44314/api/v1/ProductImages",
 });
+export const HTTPOrders = axios.create({
+  baseURL: "https://localhost:44314/api/v1/SaleOrders",
+});
+export const HTTPUsers = axios.create({
+  baseURL: "https://localhost:44314/api/v1/Users",
+});

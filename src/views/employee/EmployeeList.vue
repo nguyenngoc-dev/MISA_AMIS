@@ -301,7 +301,7 @@
     :showBtnCancel="showBtnCancel"
     :btnCancelText="'Không'"
     @onHideDialog="onShowDeleteDialog(false)"
-    :dialogHeader="'Xóa nhân viên'"
+    :dialogHeader="'Xóa sản phẩm'"
     :isDelete="isDelete"
     :isNotice="isNotice"
   />

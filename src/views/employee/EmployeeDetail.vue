@@ -172,7 +172,7 @@
                 :rules="['MAX_LENGTH|255']"
                 @errorInputMessage="validateInput"
               />
-              <img :src="products.Address" alt="Lỗi">
+              <img :src="products.ImageUrl" alt="Lỗi">
               <p class="text-error">{{ this.errorOject['Address'] }}</p>
             </div>
             <div

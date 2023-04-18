@@ -13,9 +13,9 @@ const RESOURCES = {
   },
   FORM_MESSAGE: {
     SUCCESS: {
-      ADD: "Thêm mới nhân viên thành công!",
-      EDIT: "Sửa nhân viên thành công!",
-      DELETE: "Xóa nhân viên thành công",
+      ADD: "Thêm mới thành công!",
+      EDIT: "Sửa thành công!",
+      DELETE: "Xóa thành công",
     },
     ERROR: {
       ERRORSERVER:"Vui lòng liên hệ Store để được trợ giúp",

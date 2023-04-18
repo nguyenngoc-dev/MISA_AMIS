@@ -1,9 +1,9 @@
 <template>
     <div class="content">
       <div class="content__header">
-        <div class="content__header-text">Danh mục sản phẩm</div>
+        <div class="content__header-text">Sản phẩm</div>
         <BaseButton
-          :btnText="'Thêm mới danh mục'"
+          :btnText="'Thêm mới sản phẩm'"
           @click="showDialog(true)"
           class="btn-add-emp"
         />
@@ -93,57 +93,86 @@
                     <div class="icon-checked"></div>
                   </label>
                 </th>
-                <th class="tbl-col">Mã danh mục</th>
-                <th class="tbl-col tbl-col--large">Tên danh mục</th>
-                <th class="tbl-col tbl-col--large">Số lượng sản phẩm </th>
+                <th class="tbl-col">Mã sản phẩm</th>
+                <th class="tbl-col tbl-col--large">Tên sản phẩm</th>
+                <th class="tbl-col tbl-col--large">Ảnh sản phẩm</th>
+                <th class="tbl-col tbl-col--large">Danh mục</th>
+                <th class="tbl-col" style="text-align: center">Giá bán</th>
+                <th class="tbl-col tooltip tbl-col--large" style="display: table-cell">
+                  <span
+                    class="tooltiptext"
+                    style="width: 200px; font-size: 12px; left: -12%; top: 102%"
+                    >Mô tả</span
+                  >Mô tả
+                </th>
+                <th class="tbl-col">Số lượng</th>
                 <th class="tbl-col" style="min-width: 112px">chức năng</th>
               </tr>
               <!-- </thead>    -->
   
               <tr
                 class="tbl-row"
-                v-for="(category, index) in categorys"
+                v-for="(product, index) in products"
                 :key="index"
-                @dblclick="rowOnDblClick(category)"
+                @dblclick="rowOnDblClick(product)"
               >
                 <td class="tbl-col">
                   <input
                     name="checkEmp"
                     class="check-col"
                     type="checkbox"
-                    :value="category.CategoryId"
-                    :id="category.CategoryId"
-                    :checked="checkList.includes(category.CategoryId)"
-                    @change="hanlderCheckBox(category.CategoryId)"
+                    :value="product.ProductId"
+                    :id="product.ProductId"
+                    :checked="checkList.includes(product.ProductId)"
+                    @change="hanlderCheckBox(product.ProductId)"
                   />
-                  <label :for="category.CategoryId" class="mask">
+                  <label :for="product.ProductId" class="mask">
                     <div class="icon-checked"></div>
                   </label>
                 </td>
                 <td class="tbl-col tooltip">
                   <div class="text-overflow">
-                    {{ category.CategoryCode || "" }}
-                    <span  class="tooltiptext" style="top:100%">{{ category.CategoryCode  }}</span>
+                    {{ product.ProductCode || "" }}
+                    <span  class="tooltiptext" style="top:100%">{{ product.ProductCode  }}</span>
                   </div>
                 </td>
                 <td class="tbl-col tbl-col--large tooltip">
                   <div class="text-overflow ">
-                    {{ category.CategoryName || "" }}
-                    <span  class="tooltiptext" style="top:100%">{{ category.CategoryName }}</span>
+                    {{ product.ProductName || "" }}
+                    <span  class="tooltiptext" style="top:100%">{{ product.ProductName }}</span>
+                  </div>
+                </td>
+                <td class="tbl-col tbl-col--large tooltip">
+                  <div class="text-overflow ">
+                    <img :src="products.ImageUrl" alt="Lỗi">
                   </div>
                 </td>
                 <td class="tbl-col">
-                  {{ category.TotalQuantity || "" }}
+                  {{ product.CategoryName || "" }}
                 </td>
+                <td class="tbl-col" >
+                  {{  product.Price || "" }}
+                </td>
+                <td class="tbl-col tooltip">
+                  <div class="text-overflow">
+                    {{ product.ShortDescription || "" }}
+                  </div>
+                </td>
+                <td class="tbl-col  tooltip">
+                  <div class="text-overflow">
+                    {{ product.Quantity || "" }}
+                  </div>
+                </td>
+  
                 <td class="tbl-col">
                   <div class="tbl-col__action">
                     <label
                       class="tbl-col__action-edit"
-                      @click="rowOnDblClick(category)"
+                      @click="rowOnDblClick(product)"
                       >Sửa</label
                     >
                     <button
-                      @click="handleOpenListAction($event, category)"
+                      @click="handleOpenListAction($event, product)"
                       @blur="onBlurActionIcon($event)"
                       class="sidebar-item__icon"
                       style="display: flex;justify-content: center;align-items: center;height: 16px;background: none;outline: none;border: none;">
@@ -183,7 +212,7 @@
               <BaseLoading v-if="isShowLoading" />
             </tbody>
           </table>
-          <div class="empty-data" v-if="categorys.length === 0">
+          <div class="empty-data" v-if="this.products.length === 0">
             <img src="../../assets/img/emptyData.svg" alt="" />
             <div class="empty-data-text">Không có dữ liệu</div>
           </div>
@@ -233,23 +262,38 @@
                 </li>
               </ul>
             </div>
+            <!-- Phân trang -->
+            <paginate
+              :page-count="totalPage"
+              :page-range="3"
+              :margin-pages="1"
+              :click-handler="clickCallback"
+              :prev-text="'Trước'"
+              :next-text="'Sau'"
+              :prev-class="'prev-btn'"
+              :next-class="'next-btn'"
+              :container-class="'pagination'"
+              :page-class="'page-item'"
+              :v-show="this.totalPage"
+            >
+            </paginate>
           </div>
         </div>
       </div>
     </div>
   
-    <CategoryDetail
+    <EmployeeDetail
       v-if="isShowDialog"
       @hideDialog="showDialog(false)"
       @onLoadData="onLoadCurrentpage(this.currentPageNum)"
-      :categoryIdUpdate="categoryIdSelected"
+      :productIdUpdate="productIdSelected"
       :productImageId="productImageIdSelected"
       @onshowToast="onshowToast"
       @onhideToast="onhideToast"
-      :isDuplicate="categoryIdDuplicate"
+      :isDuplicate="productIdDuplicate"
       :isShowForm="isShowDialog"
       @changeToastMsg="changeToastMsg"
-    ></CategoryDetail>
+    ></EmployeeDetail>
     <BaseDialog
       @onBtnAccept="deleteEmployee"
       :dialogTitle="dialogTitle"
@@ -257,7 +301,7 @@
       :showBtnCancel="showBtnCancel"
       :btnCancelText="'Không'"
       @onHideDialog="onShowDeleteDialog(false)"
-      :dialogHeader="'Xóa danh mục'"
+      :dialogHeader="'Xóa nhân viên'"
       :isDelete="isDelete"
       :isNotice="isNotice"
     />
@@ -273,21 +317,22 @@
   </template>
   <script>
   import paginate from "vuejs-paginate/src/components/Paginate.vue";
-  import CategoryDetail from "../../views/category/CategoryDetail.vue";
+  import EmployeeDetail from "../../views/employee/EmployeeDetail.vue";
   import BaseInput from "../../components/base/BaseInput.vue";
   import { formatDate } from "../../js/base/common.js";
-  import { HTTP ,HTTPCategorys} from "../../js/api/ConnectApi.js";
+  import { HTTP } from "../../js/api/ConnectApi.js";
   import RESOURCES from "../../js/base/resouce.js";
    
   export default {
     name: "EmployeeList",
     components: {
-    CategoryDetail,
+      EmployeeDetail,
       BaseInput,
+      paginate,
     },
     data() {
       return {
-        categorys: [], // mảng hứng dữ liệu đổ vào bảng
+        products: [], // mảng hứng dữ liệu đổ vào bảng
         isShowDialog: false, // Show chi tiết nhân viên
         isShowLoading: false, // Show loading
         textSearch: "", // nội dung ô tìm kiếm
@@ -308,11 +353,11 @@
         isSingle:true,//có phải xóa 1
         showBtnCancel: true, //hiện button không
         checkList: [], // mảng chứa các check box checked
-        categoryIdSelected: null, // id của nhân viên khi click nút sửa
+        productIdSelected: null, // id của nhân viên khi click nút sửa
         isShowDeleteDialog: false, // show dialog thông báo khi xóa
-        categoryDelete:[],// mảng xóa một nhân viên
-        categoryIdDelete: null, // lấy ra id khi xóa nhân viên
-        categoryIdDuplicate: false, // lấy id nhân viên để nhân bản
+        productDelete:[],// mảng xóa một nhân viên
+        productIdDelete: null, // lấy ra id khi xóa nhân viên
+        productIdDuplicate: false, // lấy id nhân viên để nhân bản
         isShowToast: false, //show toast message
         formatDate, // Hàm xử lí ngày tháng
         totalPage: 1, // Tổng số trang
@@ -344,8 +389,8 @@
         if (this.checkList.length == 0) {
           return false;
         }
-        isCheck = this.categorys.every((item) =>
-          this.checkList.includes(item.CategoryId)
+        isCheck = this.products.every((item) =>
+          this.checkList.includes(item.ProductId)
         );
         // eslint-disable-next-line
         return isCheck;
@@ -377,11 +422,14 @@
         try {
           // show loading
           this.isShowLoading = true;
-          HTTPCategorys.get().then((res) => {
-            this.categorys = res.data;
+          HTTP.post(`/filter`, this.getFilterParams("", 20, 1)).then((res) => {
+            this.products = res.data.Data.filter(product => {
+            return product.IsActive == true
+          });
+            this.totalPage = res.data.TotalPage;
             this.isShowLoading = false;
+            this.pageTotal = res.data.TotalRecord;
           })
-          
           .catch(error => {
             this.handleExeption(error);
           }) 
@@ -396,8 +444,8 @@
        */
       showDialog(state) {
         this.isShowDialog = state;
-        this.categoryIdSelected = null;
-        this.categoryIdDuplicate = false;
+        this.productIdSelected = null;
+        this.productIdDuplicate = false;
         this.showListPage = false;
         this.listAction.isShow = false;
         this.productImageIdSelected = null;
@@ -439,18 +487,18 @@
         try {
           // đóng Dialog
           this.onShowDeleteDialog(false);
-          let data = this.isSingle ? [...this.categoryDelete] : [...this.checkList]; 
+          let data = this.isSingle ? [...this.productDelete] : [...this.checkList]; 
           // Show loading
           this.isShowLoading = true;
           // gọi api xóa nhân viên
-          var res = await HTTPCategorys.delete("", { data: data });
+          var res = await HTTP.delete("", { data: data });
           this.toastContent = RESOURCES.FORM_MODE.DELETE;
           this.isErrorToast = false;
           this.isSuccessToast = true;
           this.toastTitle = RESOURCES.NOTIFICATION_TITLE.SUCCESS;
           this.isShowToast = true;
           this.checkList = [];
-          this.categoryDelete=[];
+          this.productDelete=[];
           this.listAction.isShow = false;
           // Load lại dữ liệu
           await this.onLoadCurrentpage(1);
@@ -480,14 +528,14 @@
        */
   
       handleOpenListAction(e, emp) {
-        if (emp.CategoryId) {
-          this.categoryIdSelected = emp.CategoryId;
+        if (emp.ProductId) {
+          this.productIdSelected = emp.ProductId;
           this.productImageIdSelected = emp.ProductImageId;
-          this.categoryIdDelete = emp.CategoryId;
-          this.dialogTitle = RESOURCES.MODAL_MESSAGE.DELETE_WARNING(emp.CategoryCode);
-          this.categoryDelete = [this.categoryIdSelected];
+          this.productIdDelete = emp.ProductId;
+          this.dialogTitle = RESOURCES.MODAL_MESSAGE.DELETE_WARNING(emp.ProductCode);
+          this.productDelete = [this.productIdSelected];
         } else {
-          this.categoryIdDelete = null;
+          this.productIdDelete = null;
         }
         const target = e.target;
         const position = target.getBoundingClientRect();
@@ -539,11 +587,11 @@
           // hiện loading
           this.isShowLoading = true;
           // gọi api lấy nv theo tên
-          const response = await HTTPCategorys.post(
+          const response = await HTTP.post(
             `/filter`,
             this.getFilterParams(this.textSearch, 20, 1)
           );
-          this.categorys = response.data.Data;
+          this.products = response.data.Data;
           this.isShowLoading = false;
           this.totalPage = response.data.TotalPage;
           this.pageTotal = response.data.TotalRecord;
@@ -556,7 +604,7 @@
        * Hàm handleCheckAll xử lí check all khi click vào checkall
        */
       handleCheckAll(e) {
-        const productIds = this.categorys.map((item) => item.CategoryId);
+        const productIds = this.products.map((item) => item.ProductId);
         const ids = productIds.filter((id) => !this.checkList.includes(id));
         if (e.target.checked) {
           this.checkList = [...this.checkList, ...ids];
@@ -572,9 +620,9 @@
        * Hàm rowOnDblClick xử lí check all khi double click mỗi hàng
        */
       rowOnDblClick(item) {
-        this.categoryIdSelected = item.CategoryId;
+        this.productIdSelected = item.ProductId;
         this.productImageIdSelected = item.ProductImageId;
-        this.categoryIdDuplicate = false;
+        this.productIdDuplicate = false;
         this.isShowDialog = true;
       },
       /**
@@ -582,7 +630,7 @@
        * Hàm onDuplicate hiện form nhân viên khi click vào nút nhân bản
        */
       onDuplicate() {
-        this.categoryIdDuplicate = true;
+        this.productIdDuplicate = true;
         this.isShowDialog = true;
         this.listAction.isShow = false;
       },
@@ -597,8 +645,8 @@
             `/filter`,
             this.getFilterParams("", this.currentPageSize, pageNum)
           ).then((res) => {
-            this.categorys = res.data.Data.filter(category => {
-            return category.IsActive == true
+            this.products = res.data.Data.filter(product => {
+            return product.IsActive == true
           });
             this.totalPage = res.data.TotalPage;
             this.pageTotal = res.data.TotalRecord;
@@ -617,13 +665,19 @@
       async onLoadCurrentpage(num) {
         try {
           this.isShowLoading = true;
-          HTTPCategorys.get().then((res) => {
-            this.categorys = res.data;
-          })
+          var res = await HTTP.post(
+            `/filter`,
+            this.getFilterParams("", this.currentPageSize, num)
+          );
+          this.products = res.data.Data.filter(product => {
+            return product.IsActive == true
+          });
+          this.totalPage = res.data.TotalPage;
           this.isShowLoading = false;
+          this.pageTotal = res.data.TotalRecord;
           this.checkList = [];
           this.textSearch = "";
-          this.categoryIdSelected = null;
+          this.productIdSelected = null;
           this.productImageIdSelected = null;
         } catch (error) {
           this.handleExeption(error);
@@ -649,8 +703,8 @@
             PageSize: item.value,
             PageNumber: 1,
           });
-          this.categorys = res.data.Data.filter(category => {
-            return category.IsActive == true
+          this.products = res.data.Data.filter(product => {
+            return product.IsActive == true
           }); 
           this.totalPage = res.data.TotalPage;
           this.isShowLoading = false;
@@ -688,7 +742,7 @@
       },
       /**
        * author:Nguyễn Văn Ngọc(14/2/2023)
-       * Hàm exportData() xuất dữ liệu categorys ra file exel
+       * Hàm exportData() xuất dữ liệu products ra file exel
        *
        */
       async exportData() {
@@ -698,7 +752,7 @@
           // Hiển thị Loading
           me.isShowLoading = true;
           var data = this.getFilterParams(this.textSearch, this.pageTotal, 1);
-          const response = await HTTP.post("/get-categorys-excel",data, {
+          const response = await HTTP.post("/get-products-excel",data, {
             responseType: "blob"
           } );
           // Lấy ra URL
