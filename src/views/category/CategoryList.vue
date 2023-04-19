@@ -120,19 +120,19 @@
                     <div class="icon-checked"></div>
                   </label>
                 </td>
-                <td class="tbl-col tooltip">
+                <td class="tbl-col tbl-col-category  tooltip">
                   <div class="text-overflow">
                     {{ category.CategoryCode || "" }}
                     <span  class="tooltiptext" style="top:100%">{{ category.CategoryCode  }}</span>
                   </div>
                 </td>
-                <td class="tbl-col tbl-col--large tooltip">
+                <td class="tbl-col tbl-col-category tbl-col--large tooltip">
                   <div class="text-overflow ">
                     {{ category.CategoryName || "" }}
                     <span  class="tooltiptext" style="top:100%">{{ category.CategoryName }}</span>
                   </div>
                 </td>
-                <td class="tbl-col">
+                <td class="tbl-col tbl-col-category">
                   {{ category.TotalQuantity || "" }}
                 </td>
                 <td class="tbl-col">
@@ -190,9 +190,9 @@
         </div>
   
         <div class="content-footer">
-          <div>
+          <!-- <div>
             Tổng: <strong id="pagetotal">{{ pageTotal }}</strong> bản ghi
-          </div>
+          </div> -->
           <div style="display: flex; align-items: center">
             <div class="textfield">
               <label for="" class="textfield__label">
@@ -758,6 +758,13 @@
   }
   .next-btn.disabled {
     margin-left: 4px;
+  }
+  .tbl .tbl-col--large.tbl-col-category {
+    width: 186px;
+    min-width: 450px !important;
+  }
+  .tbl .tbl-col.tbl-col-category {
+    min-width: 330px;
   }
   </style>
   

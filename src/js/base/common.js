@@ -25,6 +25,25 @@ export function formatDate (dateTime)  {
     }
 }
 /**
+ *Format tình trạng đơn hàng
+    * createBy: NvNgoc - (26/12/2022)
+*/
+export function formatStatus (status)  {
+ if(status == 0) {
+  return "Đang chuẩn bị hàng"
+ }
+ else if(status == 1) {
+  return "Đang giao hàng"
+ }
+ else if(status == 2) {
+  return "Giao thành công"
+ }
+ else if(status == 3) {
+  return "Đơn hàng bị hủy"
+
+ }
+}
+/**
  *Format Tiền 
 * createBy: NvNgoc - (26/12/2022)
 */

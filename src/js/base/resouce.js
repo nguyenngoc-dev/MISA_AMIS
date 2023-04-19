@@ -62,8 +62,8 @@ const RESOURCES = {
   },
   MODAL_MESSAGE: {
     INFO: "Dữ liệu đã bị thay đổi. Bạn có muốn cất không?",
-    WARNING:`Bạn có chắc chắn muốn xóa nhân viên không?`,
-    DELETE_WARNING:(code)=>`Bạn có thực sự muốn xóa nhân viên <${code}> không?`,
+    WARNING:`Bạn có chắc chắn muốn xóa không?`,
+    DELETE_WARNING:(code)=>`Bạn có thực sự muốn xóa mã <${code}> không?`,
     EMPTY_EMPLOYEE:"Không có nhân viên nào được chọn"
 
   },

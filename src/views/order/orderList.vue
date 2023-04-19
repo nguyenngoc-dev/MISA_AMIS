@@ -1,12 +1,7 @@
 <template>
     <div class="content">
       <div class="content__header">
-        <div class="content__header-text">Sản phẩm</div>
-        <BaseButton
-          :btnText="'Thêm mới sản phẩm'"
-          @click="showDialog(true)"
-          class="btn-add-emp"
-        />
+        <div class="content__header-text">Đơn hàng</div>
       </div>
       <div class="content-wrapper">
         <div
@@ -93,74 +88,63 @@
                     <div class="icon-checked"></div>
                   </label>
                 </th>
-                <th class="tbl-col">Mã sản phẩm</th>
-                <th class="tbl-col tbl-col--large">Tên sản phẩm</th>
-                <th class="tbl-col tbl-col--large">Ảnh sản phẩm</th>
-                <th class="tbl-col tbl-col--large">Danh mục</th>
-                <th class="tbl-col" style="text-align: center">Giá bán</th>
+                <th class="tbl-col">Mã hóa đơn</th>
+                <th class="tbl-col tbl-col--large">Tên Khách hàng</th>
+                <th class="tbl-col tbl-col--large">Địa chỉ </th>
+                <th class="tbl-col" style="text-align: center">Số điện thoại</th>
                 <th class="tbl-col tooltip tbl-col--large" style="display: table-cell">
-                  <span
-                    class="tooltiptext"
-                    style="width: 200px; font-size: 12px; left: -12%; top: 102%"
-                    >Mô tả</span
-                  >Mô tả
+                  Tình trạng
                 </th>
-                <th class="tbl-col">Số lượng</th>
+                <th class="tbl-col">Tổng tiền</th>
                 <th class="tbl-col" style="min-width: 112px">chức năng</th>
               </tr>
               <!-- </thead>    -->
   
               <tr
                 class="tbl-row"
-                v-for="(product, index) in products"
+                v-for="(saleOrder, index) in saleOrders"
                 :key="index"
-                @dblclick="rowOnDblClick(product)"
+                @dblclick="rowOnDblClick(saleOrder)"
               >
                 <td class="tbl-col">
                   <input
                     name="checkEmp"
                     class="check-col"
                     type="checkbox"
-                    :value="product.ProductId"
-                    :id="product.ProductId"
-                    :checked="checkList.includes(product.ProductId)"
-                    @change="hanlderCheckBox(product.ProductId)"
+                    :value="saleOrder.SaleOrderId"
+                    :id="saleOrder.SaleOrderId"
+                    :checked="checkList.includes(saleOrder.SaleOrderId)"
+                    @change="hanlderCheckBox(saleOrder.SaleOrderId)"
                   />
-                  <label :for="product.ProductId" class="mask">
+                  <label :for="saleOrder.SaleOrderId" class="mask">
                     <div class="icon-checked"></div>
                   </label>
                 </td>
                 <td class="tbl-col tooltip">
                   <div class="text-overflow">
-                    {{ product.ProductCode || "" }}
-                    <span  class="tooltiptext" style="top:100%">{{ product.ProductCode  }}</span>
+                    {{ saleOrder.SaleOrderCode || "" }}
                   </div>
                 </td>
                 <td class="tbl-col tbl-col--large tooltip">
                   <div class="text-overflow ">
-                    {{ product.ProductName || "" }}
-                    <span  class="tooltiptext" style="top:100%">{{ product.ProductName }}</span>
-                  </div>
-                </td>
-                <td class="tbl-col tbl-col--large tooltip">
-                  <div class="text-overflow ">
-                    <img :src="products.ImageUrl" alt="Lỗi">
+                    {{ saleOrder.FirstName + " " + saleOrder.LastName  || "" }}
+                    <span  class="tooltiptext" style="top:100%">{{ saleOrder.ProductName }}</span>
                   </div>
                 </td>
                 <td class="tbl-col">
-                  {{ product.CategoryName || "" }}
+                  {{ saleOrder.CustomerAddress || "" }}
                 </td>
                 <td class="tbl-col" >
-                  {{  product.Price || "" }}
+                  {{  saleOrder.CustomerPhone || "" }}
                 </td>
                 <td class="tbl-col tooltip">
                   <div class="text-overflow">
-                    {{ product.ShortDescription || "" }}
+                    {{ formatStatus(saleOrder.Status) || "" }}
                   </div>
                 </td>
                 <td class="tbl-col  tooltip">
                   <div class="text-overflow">
-                    {{ product.Quantity || "" }}
+                    {{ saleOrder.TotalPrice || "" }}
                   </div>
                 </td>
   
@@ -168,11 +152,11 @@
                   <div class="tbl-col__action">
                     <label
                       class="tbl-col__action-edit"
-                      @click="rowOnDblClick(product)"
+                      @click="rowOnDblClick(saleOrder)"
                       >Sửa</label
                     >
                     <button
-                      @click="handleOpenListAction($event, product)"
+                      @click="handleOpenListAction($event, saleOrder)"
                       @blur="onBlurActionIcon($event)"
                       class="sidebar-item__icon"
                       style="display: flex;justify-content: center;align-items: center;height: 16px;background: none;outline: none;border: none;">
@@ -212,7 +196,7 @@
               <BaseLoading v-if="isShowLoading" />
             </tbody>
           </table>
-          <div class="empty-data" v-if="this.products.length === 0">
+          <div class="empty-data" v-if="this.saleOrders.length === 0">
             <img src="../../assets/img/emptyData.svg" alt="" />
             <div class="empty-data-text">Không có dữ liệu</div>
           </div>
@@ -320,8 +304,9 @@
   import EmployeeDetail from "../employee/EmployeeDetail.vue";
   import BaseInput from "../../components/base/BaseInput.vue";
   import { formatDate } from "../../js/base/common.js";
-  import { HTTP } from "../../js/api/ConnectApi.js";
+  import { HTTP,HTTPOrders } from "../../js/api/ConnectApi.js";
   import RESOURCES from "../../js/base/resouce.js";
+  import {formatStatus} from "../../js/base/common.js"
    
   export default {
     name: "EmployeeList",
@@ -332,7 +317,7 @@
     },
     data() {
       return {
-        products: [], // mảng hứng dữ liệu đổ vào bảng
+        saleOrders: [], // mảng hứng dữ liệu đổ vào bảng
         isShowDialog: false, // Show chi tiết nhân viên
         isShowLoading: false, // Show loading
         textSearch: "", // nội dung ô tìm kiếm
@@ -373,6 +358,7 @@
         pageTotal: 0, // tổng số bản ghi
         pageSizeList: RESOURCES.PAGINATION, // mảng phân trang
         RESOURCES,
+        formatStatus
       };
     },
     created() {
@@ -389,8 +375,8 @@
         if (this.checkList.length == 0) {
           return false;
         }
-        isCheck = this.products.every((item) =>
-          this.checkList.includes(item.ProductId)
+        isCheck = this.saleOrders.every((item) =>
+          this.checkList.includes(item.SaleOrderId)
         );
         // eslint-disable-next-line
         return isCheck;
@@ -422,10 +408,8 @@
         try {
           // show loading
           this.isShowLoading = true;
-          HTTP.post(`/filter`, this.getFilterParams("", 20, 1)).then((res) => {
-            this.products = res.data.Data.filter(product => {
-            return product.IsActive == true
-          });
+          HTTPOrders.get().then((res) => {
+            this.saleOrders = res.data;
             this.totalPage = res.data.TotalPage;
             this.isShowLoading = false;
             this.pageTotal = res.data.TotalRecord;
@@ -491,7 +475,7 @@
           // Show loading
           this.isShowLoading = true;
           // gọi api xóa nhân viên
-          var res = await HTTP.delete("", { data: data });
+          var res = await HTTPOrders.delete("", { data: data });
           this.toastContent = RESOURCES.FORM_MODE.DELETE;
           this.isErrorToast = false;
           this.isSuccessToast = true;
@@ -528,11 +512,11 @@
        */
   
       handleOpenListAction(e, emp) {
-        if (emp.ProductId) {
-          this.productIdSelected = emp.ProductId;
+        if (emp.SaleOrderId) {
+          this.productIdSelected = emp.SaleOrderId;
           this.productImageIdSelected = emp.ProductImageId;
-          this.productIdDelete = emp.ProductId;
-          this.dialogTitle = RESOURCES.MODAL_MESSAGE.DELETE_WARNING(emp.ProductCode);
+          this.productIdDelete = emp.SaleOrderId;
+          this.dialogTitle = RESOURCES.MODAL_MESSAGE.DELETE_WARNING(emp.SaleOrderCode);
           this.productDelete = [this.productIdSelected];
         } else {
           this.productIdDelete = null;
@@ -587,11 +571,8 @@
           // hiện loading
           this.isShowLoading = true;
           // gọi api lấy nv theo tên
-          const response = await HTTP.post(
-            `/filter`,
-            this.getFilterParams(this.textSearch, 20, 1)
-          );
-          this.products = response.data.Data;
+          const response = await HTTPOrders.get()
+          this.saleOrders = response.data;
           this.isShowLoading = false;
           this.totalPage = response.data.TotalPage;
           this.pageTotal = response.data.TotalRecord;
@@ -604,7 +585,7 @@
        * Hàm handleCheckAll xử lí check all khi click vào checkall
        */
       handleCheckAll(e) {
-        const productIds = this.products.map((item) => item.ProductId);
+        const productIds = this.saleOrders.map((item) => item.SaleOrderId);
         const ids = productIds.filter((id) => !this.checkList.includes(id));
         if (e.target.checked) {
           this.checkList = [...this.checkList, ...ids];
@@ -620,7 +601,7 @@
        * Hàm rowOnDblClick xử lí check all khi double click mỗi hàng
        */
       rowOnDblClick(item) {
-        this.productIdSelected = item.ProductId;
+        this.productIdSelected = item.SaleOrderId;
         this.productImageIdSelected = item.ProductImageId;
         this.productIdDuplicate = false;
         this.isShowDialog = true;
@@ -645,8 +626,8 @@
             `/filter`,
             this.getFilterParams("", this.currentPageSize, pageNum)
           ).then((res) => {
-            this.products = res.data.Data.filter(product => {
-            return product.IsActive == true
+            this.saleOrders = res.data.Data.filter(saleOrder => {
+            return saleOrder.IsActive == true
           });
             this.totalPage = res.data.TotalPage;
             this.pageTotal = res.data.TotalRecord;
@@ -665,13 +646,8 @@
       async onLoadCurrentpage(num) {
         try {
           this.isShowLoading = true;
-          var res = await HTTP.post(
-            `/filter`,
-            this.getFilterParams("", this.currentPageSize, num)
-          );
-          this.products = res.data.Data.filter(product => {
-            return product.IsActive == true
-          });
+          var res = await HTTPOrders.get()
+          this.saleOrders = res.data;
           this.totalPage = res.data.TotalPage;
           this.isShowLoading = false;
           this.pageTotal = res.data.TotalRecord;
@@ -698,14 +674,8 @@
         try {
           this.isShowLoading = !this.isShowLoading;
           // gọi api lấy số bản ghi trên trang dựa vào value
-          var res = await HTTP.post(`/filter`, {
-            ProductFilter: "",
-            PageSize: item.value,
-            PageNumber: 1,
-          });
-          this.products = res.data.Data.filter(product => {
-            return product.IsActive == true
-          }); 
+          var res = await HTTPOrders.get()
+          this.saleOrders = res.data;
           this.totalPage = res.data.TotalPage;
           this.isShowLoading = false;
           this.currentPageSizeText = item.text;
@@ -742,7 +712,7 @@
       },
       /**
        * author:Nguyễn Văn Ngọc(14/2/2023)
-       * Hàm exportData() xuất dữ liệu products ra file exel
+       * Hàm exportData() xuất dữ liệu saleOrders ra file exel
        *
        */
       async exportData() {
@@ -752,7 +722,7 @@
           // Hiển thị Loading
           me.isShowLoading = true;
           var data = this.getFilterParams(this.textSearch, this.pageTotal, 1);
-          const response = await HTTP.post("/get-products-excel",data, {
+          const response = await HTTP.post("/get-saleOrders-excel",data, {
             responseType: "blob"
           } );
           // Lấy ra URL

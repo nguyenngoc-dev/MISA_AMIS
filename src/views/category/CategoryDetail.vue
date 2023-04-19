@@ -1,6 +1,6 @@
 <template>
     <div class="overlay" >
-      <div class="modal" >
+      <div class="modal category" >
         <div class="modal__header">
           <div class="modal__header-left">
             <div class="modal__header-left-text">{{ formTitle }}</div>
@@ -19,16 +19,16 @@
             </div>
           </div>
         </div>
-        <div class="modal-main">
+        <div class="modal-main category">
           <div class="modal-main-container">
-            <div class="pb-16 flex-start">
+            <div class="pb-16 ">
               <div class="textfield">
                 <label for="" class="textfield__label modal-label">
                   Mã danh mục<span class="required">*</span>
                 </label>
                 <BaseInput
                   :isErrorInput =" this.isDuplicateCode || !!this.errorOject['EmployeeCode'] "
-                  style="min-width: 149px; width: 149px; margin-right: 6px"
+                  style="min-width: 300px; width: 300px; margin-right: 6px; margin-bottom:32px;"
                   v-model="categories.CategoryCode"
                   :name="'EmployeeCode'"
                   :rules="['NOT_EMPTY','MAX_LENGTH|20']"
@@ -47,7 +47,7 @@
                 </label>
                 <BaseInput
                   :isErrorInput ="!!this.errorOject['FullName']"
-                  style="min-width: 233px; width: 233px"
+                  style="min-width: 300px; width: 300px"
                   :inputType="'text'"
                   v-model="categories.CategoryName"
                   :rules="['NOT_EMPTY','MAX_LENGTH|100']"
@@ -538,7 +538,22 @@
   </script>
   <style  scoped>
   @import "../../css/components/datepicker.css";
-  
+  .modal.category {
+    min-width: 600px;
+    max-width: 600px;
+    width: 600px;
+    background-color: #fff;
+    transition: all 0.1s linear;
+    animation: down 0.1s linear;
+  }
+  .modal-main.category {
+    padding: 0 22px 0 32px;
+    display: block;
+    flex-wrap: wrap;
+    height: 300px;
+    overflow-y: auto;
+    margin-bottom: 20px;
+  }
   </style>
   
   
