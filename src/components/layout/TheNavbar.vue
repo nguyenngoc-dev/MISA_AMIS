@@ -3,11 +3,7 @@
     <div class="navbar-header">
       <div @click="store.handleOpenSidebar" class="sidebar-item__icon icon-menu-collapse header__left-three-strips"></div>
       <div class="sidebar-item__icon navbar-header__icon icon-header"></div>
-      <img
-        src="../../assets/img/Logo_Module_TiengViet_White.66947422.svg"
-        alt=""
-        class="navbar-header__logo"
-      />
+      NgocNguyen
     </div>
     <ul class="sidebar-list">
       <router-link to="/" class="sidebar-item" tabindex="0">
@@ -38,7 +34,7 @@
         <div class="sidebar-item__icon">
           <div class="icon-cart"></div>
         </div>
-        <div class="slidebar-item-text">Bán hàng</div>
+        <div class="slidebar-item-text">Ảnh sản phẩm</div>
       </router-link>
       <router-link to="/manage-order" class="sidebar-item" tabindex="0">
         <div class="sidebar-item__icon">

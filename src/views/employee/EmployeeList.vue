@@ -95,7 +95,7 @@
               </th>
               <th class="tbl-col">Mã sản phẩm</th>
               <th class="tbl-col tbl-col--large">Tên sản phẩm</th>
-              <th class="tbl-col tbl-col--large">Ảnh sản phẩm</th>
+              <th class="tbl-col tbl-col--large" style="text-align: center;">Ảnh sản phẩm</th>
               <th class="tbl-col tbl-col--large">Danh mục</th>
               <th class="tbl-col" style="text-align: center">Giá bán</th>
               <th class="tbl-col tooltip tbl-col--large" style="display: table-cell">
@@ -137,14 +137,14 @@
                 </div>
               </td>
               <td class="tbl-col tbl-col--large tooltip">
-                <div class="text-overflow ">
+                <div class="">
                   {{ product.ProductName || "" }}
                   <span  class="tooltiptext" style="top:100%">{{ product.ProductName }}</span>
                 </div>
               </td>
-              <td class="tbl-col tbl-col--large tooltip">
-                <div class="text-overflow ">
-                  <img :src="products.ImageUrl" alt="Lỗi">
+              <td class="tbl-col tbl-col--large tooltip" style="text-align: center;">
+                <div class="text-overflow tbl-product-image-container">
+                  <img :src="product.ImageUrl" alt="Lỗi" class="tbl-product-image">
                 </div>
               </td>
               <td class="tbl-col">
@@ -812,5 +812,15 @@ export default {
 }
 .next-btn.disabled {
   margin-left: 4px;
+}
+.tbl-product-image-container {
+  border: 1px solid #ccc;
+    margin: 5px;
+    width: 100px;
+    height: 100px;
+}
+.tbl-product-image {
+  width: 100%;
+  height: 100%;
 }
 </style>

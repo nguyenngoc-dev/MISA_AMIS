@@ -2,6 +2,11 @@
     <div class="content">
       <div class="content__header">
         <div class="content__header-text">Tài khoản</div>
+        <BaseButton
+          :btnText="'Thêm mới tài khoản'"
+          @click="showDialog(true)"
+          class="btn-add-emp"
+        />
       </div>
       <div class="content-wrapper">
         <div
@@ -269,18 +274,18 @@
       </div>
     </div>
   
-    <EmployeeDetail
+    <UserDetail
       v-if="isShowDialog"
       @hideDialog="showDialog(false)"
       @onLoadData="onLoadCurrentpage(this.currentPageNum)"
-      :productIdUpdate="productIdSelected"
+      :userIdUpdated="productIdSelected"
       :productImageId="productImageIdSelected"
       @onshowToast="onshowToast"
       @onhideToast="onhideToast"
       :isDuplicate="productIdDuplicate"
       :isShowForm="isShowDialog"
       @changeToastMsg="changeToastMsg"
-    ></EmployeeDetail>
+    ></UserDetail>
     <BaseDialog
       @onBtnAccept="deleteEmployee"
       :dialogTitle="dialogTitle"
@@ -305,6 +310,7 @@
   <script>
   import paginate from "vuejs-paginate/src/components/Paginate.vue";
   import EmployeeDetail from "../../views/employee/EmployeeDetail.vue";
+  import UserDetail from "./UserDetail.vue";
   import BaseInput from "../../components/base/BaseInput.vue";
   import { formatDate } from "../../js/base/common.js";
   import { HTTP,HTTPUsers } from "../../js/api/ConnectApi.js";
@@ -313,9 +319,9 @@
   export default {
     name: "EmployeeList",
     components: {
-      EmployeeDetail,
-      BaseInput,
+            BaseInput,
       paginate,
+      UserDetail
     },
     data() {
       return {

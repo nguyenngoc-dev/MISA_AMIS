@@ -3,7 +3,7 @@
     <div @click="onCollapse" class="header__left">
       <div class="sidebar-item__icon icon-menu header__left-three-strips" @click="store.handleCloseSidebar"></div>
       <div class="header__left-text">
-        công ty TNHH sản xuất - thương mại - dịch vụ qui phúc
+        NgocNguyen Store
       </div>
       <div class="header__left-wrapper">
         <div class="sidebar-item__icon icon-down"></div>

@@ -126,7 +126,7 @@
                   </div>
                 </td>
                 <td class="tbl-col tbl-col--large tooltip">
-                  <div class="text-overflow ">
+                  <div class=" ">
                     {{ saleOrder.FirstName + " " + saleOrder.LastName  || "" }}
                     <span  class="tooltiptext" style="top:100%">{{ saleOrder.ProductName }}</span>
                   </div>
@@ -138,13 +138,13 @@
                   {{  saleOrder.CustomerPhone || "" }}
                 </td>
                 <td class="tbl-col tooltip">
-                  <div class="text-overflow">
+                  <div class="">
                     {{ formatStatus(saleOrder.Status) || "" }}
                   </div>
                 </td>
                 <td class="tbl-col  tooltip">
-                  <div class="text-overflow">
-                    {{ saleOrder.TotalPrice || "" }}
+                  <div class="">
+                    {{ saleOrder.TotalPrice || "0" }} vnđ
                   </div>
                 </td>
   
@@ -266,18 +266,18 @@
       </div>
     </div>
   
-    <EmployeeDetail
+    <OrderDetail
       v-if="isShowDialog"
       @hideDialog="showDialog(false)"
       @onLoadData="onLoadCurrentpage(this.currentPageNum)"
-      :productIdUpdate="productIdSelected"
+      :orderIdUpdate="orderIdSelected"
       :productImageId="productImageIdSelected"
       @onshowToast="onshowToast"
       @onhideToast="onhideToast"
       :isDuplicate="productIdDuplicate"
       :isShowForm="isShowDialog"
       @changeToastMsg="changeToastMsg"
-    ></EmployeeDetail>
+    ></OrderDetail>
     <BaseDialog
       @onBtnAccept="deleteEmployee"
       :dialogTitle="dialogTitle"
@@ -301,7 +301,7 @@
   </template>
   <script>
   import paginate from "vuejs-paginate/src/components/Paginate.vue";
-  import EmployeeDetail from "../employee/EmployeeDetail.vue";
+  import OrderDetail from "../order/OrderDetail.vue";
   import BaseInput from "../../components/base/BaseInput.vue";
   import { formatDate } from "../../js/base/common.js";
   import { HTTP,HTTPOrders } from "../../js/api/ConnectApi.js";
@@ -311,7 +311,7 @@
   export default {
     name: "EmployeeList",
     components: {
-      EmployeeDetail,
+      OrderDetail,
       BaseInput,
       paginate,
     },
@@ -338,7 +338,7 @@
         isSingle:true,//có phải xóa 1
         showBtnCancel: true, //hiện button không
         checkList: [], // mảng chứa các check box checked
-        productIdSelected: null, // id của nhân viên khi click nút sửa
+        orderIdSelected: null, // id của nhân viên khi click nút sửa
         isShowDeleteDialog: false, // show dialog thông báo khi xóa
         productDelete:[],// mảng xóa một nhân viên
         productIdDelete: null, // lấy ra id khi xóa nhân viên
@@ -428,7 +428,7 @@
        */
       showDialog(state) {
         this.isShowDialog = state;
-        this.productIdSelected = null;
+        this.orderIdSelected = null;
         this.productIdDuplicate = false;
         this.showListPage = false;
         this.listAction.isShow = false;
@@ -513,11 +513,11 @@
   
       handleOpenListAction(e, emp) {
         if (emp.SaleOrderId) {
-          this.productIdSelected = emp.SaleOrderId;
+          this.orderIdSelected = emp.SaleOrderId;
           this.productImageIdSelected = emp.ProductImageId;
           this.productIdDelete = emp.SaleOrderId;
           this.dialogTitle = RESOURCES.MODAL_MESSAGE.DELETE_WARNING(emp.SaleOrderCode);
-          this.productDelete = [this.productIdSelected];
+          this.productDelete = [this.orderIdSelected];
         } else {
           this.productIdDelete = null;
         }
@@ -601,7 +601,7 @@
        * Hàm rowOnDblClick xử lí check all khi double click mỗi hàng
        */
       rowOnDblClick(item) {
-        this.productIdSelected = item.SaleOrderId;
+        this.orderIdSelected = item.SaleOrderId;
         this.productImageIdSelected = item.ProductImageId;
         this.productIdDuplicate = false;
         this.isShowDialog = true;
@@ -653,7 +653,7 @@
           this.pageTotal = res.data.TotalRecord;
           this.checkList = [];
           this.textSearch = "";
-          this.productIdSelected = null;
+          this.orderIdSelected = null;
           this.productImageIdSelected = null;
         } catch (error) {
           this.handleExeption(error);

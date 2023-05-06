@@ -1,6 +1,6 @@
 <template>
     <div class="overlay" >
-      <div class="modal category" >
+      <div class="modal user" >
         <div class="modal__header">
           <div class="modal__header-left">
             <div class="modal__header-left-text">{{ formTitle }}</div>
@@ -19,17 +19,18 @@
             </div>
           </div>
         </div>
-        <div class="modal-main category">
+        <div class="modal-main user">
           <div class="modal-main-container">
             <div class="pb-16 ">
-              <div class="textfield">
+                <div class="flex mb-12">
+                <div class="textfield">
                 <label for="" class="textfield__label modal-label">
-                  Mã danh mục<span class="required">*</span>
+                  Tên tài khoản<span class="required">*</span>
                 </label>
                 <BaseInput
                   :isErrorInput =" this.isDuplicateCode || !!this.errorOject['EmployeeCode'] "
-                  style="min-width: 300px; width: 300px; margin-right: 6px; margin-bottom:32px;"
-                  v-model="categories.CategoryCode"
+                  style="min-width: 300px; width: 300px; margin-right: 12px;"
+                  v-model="users.UserName"
                   :name="'EmployeeCode'"
                   :rules="['NOT_EMPTY','MAX_LENGTH|20']"
                   :tooltipMessage="errorCodeMessage"
@@ -43,13 +44,13 @@
               </div>
               <div class="textfield">
                 <label for="" class="textfield__label modal-label">
-                  Tên danh mục<span class="required">*</span>
+                  Mật khẩu<span class="required">*</span>
                 </label>
                 <BaseInput
                   :isErrorInput ="!!this.errorOject['FullName']"
                   style="min-width: 300px; width: 300px"
                   :inputType="'text'"
-                  v-model="categories.CategoryName"
+                  v-model="users.Password"
                   :rules="['NOT_EMPTY','MAX_LENGTH|100']"
                   @errorInputMessage="validateInput"
                   :name="'FullName'"
@@ -58,6 +59,116 @@
                 />
                 <p class="text-error">{{this.errorOject['FullName']}} </p>
               </div>
+                </div>
+              <div class="flex mb-12">
+                <div class="textfield">
+                <label for="" class="textfield__label modal-label">
+                  Họ<span class="required">*</span>
+                </label>
+                <BaseInput
+                  :isErrorInput ="!!this.errorOject['FullName']"
+                  style="min-width: 300px; width: 300px;margin-right: 12px;"
+                  :inputType="'text'"
+                  v-model="users.FirstName"
+                  :rules="['NOT_EMPTY','MAX_LENGTH|100']"
+                  @errorInputMessage="validateInput"
+                  :name="'FullName'"
+                  ref="FullName"
+                  tabindex="1"
+                />
+                <p class="text-error">{{this.errorOject['FullName']}} </p>
+              </div>
+              <div class="textfield">
+                <label for="" class="textfield__label modal-label">
+                  Tên<span class="required">*</span>
+                </label>
+                <BaseInput
+                  :isErrorInput ="!!this.errorOject['FullName']"
+                  style="min-width: 300px; width: 300px"
+                  :inputType="'text'"
+                  v-model="users.LastName"
+                  :rules="['NOT_EMPTY','MAX_LENGTH|100']"
+                  @errorInputMessage="validateInput"
+                  :name="'FullName'"
+                  ref="FullName"
+                  tabindex="1"
+                />
+                <p class="text-error">{{this.errorOject['FullName']}} </p>
+              </div>
+              </div>
+              <div class="flex mb-12">
+                <div class="textfield">
+                <label for="" class="textfield__label modal-label">
+                  Địa chỉ<span class="required">*</span>
+                </label>
+                <BaseInput
+                  :isErrorInput ="!!this.errorOject['FullName']"
+                  style="min-width: 300px; width: 300px;margin-right: 12px;"
+                  :inputType="'text'"
+                  v-model="users.Address"
+                  :rules="['NOT_EMPTY','MAX_LENGTH|100']"
+                  @errorInputMessage="validateInput"
+                  :name="'FullName'"
+                  ref="FullName"
+                  tabindex="1"
+                />
+                <p class="text-error">{{this.errorOject['FullName']}} </p>
+              </div>
+              <div class="textfield">
+                <label for="" class="textfield__label modal-label">
+                  Vai trò<span class="required">*</span>
+                </label>
+                <BaseInput
+                  :isErrorInput ="!!this.errorOject['FullName']"
+                  style="min-width: 300px; width: 300px"
+                  :inputType="'text'"
+                  v-model="users.Role"
+                  :rules="['NOT_EMPTY','MAX_LENGTH|100']"
+                  @errorInputMessage="validateInput"
+                  :name="'FullName'"
+                  ref="FullName"
+                  tabindex="1"
+                />
+                <p class="text-error">{{this.errorOject['FullName']}} </p>
+              </div>
+              </div>
+              <div class="flex mb-12">
+                <div class="textfield">
+                <label for="" class="textfield__label modal-label">
+                  Email<span class="required">*</span>
+                </label>
+                <BaseInput
+                  :isErrorInput ="!!this.errorOject['FullName']"
+                  style="min-width: 300px; width: 300px;margin-right: 12px;"
+                  :inputType="'text'"
+                  v-model="users.Email"
+                  :rules="['NOT_EMPTY','MAX_LENGTH|100']"
+                  @errorInputMessage="validateInput"
+                  :name="'FullName'"
+                  ref="FullName"
+                  tabindex="1"
+                />
+                <p class="text-error">{{this.errorOject['FullName']}} </p>
+              </div>
+              <div class="textfield">
+                <label for="" class="textfield__label modal-label">
+                  Số điện thoại<span class="required">*</span>
+                </label>
+                <BaseInput
+                  :isErrorInput ="!!this.errorOject['FullName']"
+                  style="min-width: 300px; width: 300px"
+                  :inputType="'text'"
+                  v-model="users.PhoneNumber"
+                  :rules="['NOT_EMPTY','MAX_LENGTH|100']"
+                  @errorInputMessage="validateInput"
+                  :name="'FullName'"
+                  ref="FullName"
+                  tabindex="1"
+                />
+                <p class="text-error">{{this.errorOject['FullName']}} </p>
+              </div>
+              </div>
+              
             </div>
           </div>
         </div>
@@ -123,7 +234,7 @@
   import RESOURCES from "../../js/base/resouce.js";
   import ENUMS from "../../js/base/enums.js";
   import Editor from '@tinymce/tinymce-vue'
-  import { HTTP, HTTPCategorys,HTTPProductImages } from "../../js/api/ConnectApi.js";
+  import { HTTP, HTTPUsers,HTTPProductImages } from "../../js/api/ConnectApi.js";
   
   export default {
     components: {
@@ -137,16 +248,16 @@
       "onhideToast",
       "changeToastMsg",
     ],
-    props: ["categoryIdUpdate", "isDuplicate","isShowForm",'categoryImageId'],
+    props: ["userIdUpdated", "isDuplicate","isShowForm",'categoryImageId'],
   
     data() {
       return {
-        formTitle: RESOURCES.FORM_TITLE.CATEGORY.ADD, // Title form
+        formTitle: RESOURCES.FORM_TITLE.USER.ADD, // Title form
         isShowDialog: false, // show dialog báo lỗi khi nhập liệu
         validateError: [], //
-        categories: this.onDefaultEmployee(), // object nhân viên
+        users: this.onDefaultEmployee(), // object nhân viên
         productImages:{},
-        categorySelected: {}, // phòng ban được chọn
+        userSelected: {}, // phòng ban được chọn
         oldEmployee:{},//nhân viên ban 
         errorOject:{},// object chứa lỗi 
         isName: false, // .... tên không hợp lệ
@@ -172,7 +283,7 @@
         async handler(newValue) {
           if(newValue == true) {
             const newCode = await this.getNewEmCode();
-            this.categories.CategoryCode = newCode;
+            this.users.CategoryCode = newCode;
           }
         },
         immediate:true
@@ -185,7 +296,7 @@
        */
       // check xem là thêm hay sửa
       isAdd() {
-        if (this.categoryIdUpdate) {
+        if (this.userIdUpdated) {
           return false;
         } else {
           return true;
@@ -195,27 +306,27 @@
     created() {
       // Thay đổi form title
       if (this.isDuplicate) {
-        this.formTitle = RESOURCES.FORM_TITLE.CATEGORY.DUPLICATE;
-      } else if (this.categoryIdUpdate) {
-        this.formTitle = RESOURCES.FORM_TITLE.CATEGORY.UPDATE;
+        this.formTitle = RESOURCES.FORM_TITLE.USER.DUPLICATE;
+      } else if (this.userIdUpdated) {
+        this.formTitle = RESOURCES.FORM_TITLE.USER.UPDATE;
       } else {
-        this.formTitle = RESOURCES.FORM_TITLE.CATEGORY.ADD;
+        this.formTitle = RESOURCES.FORM_TITLE.USER.ADD;
       }
       // Truyền dữ liệu vào input khi Sửa
-      if (this.categoryIdUpdate || this.isDuplicate) {
+      if (this.userIdUpdated || this.isDuplicate) {
         try {
           // gọi api lấy dữ liệu truyền vào th employee
-          HTTPCategorys.get(`/${this.categoryIdUpdate}`).then((response) => {
-            this.categories = response.data;
-            for(const property in this.categories) {
-              this.oldEmployee[property] = this.categories[property]
+          HTTPUsers.get(`/${this.userIdUpdated}`).then((response) => {
+            this.users = response.data;
+            for(const property in this.users) {
+              this.oldEmployee[property] = this.users[property]
             }
             // Lấy ra department được chọn
-            const categorySelected = this.categories.find(
-              (category) =>
-              category.CategoryId === this.categories?.CategoryId
+            const userSelected = this.users.find(
+              (user) =>
+              user.UserId === this.users?.UserId
             );
-            this.categories.CategoryName = categorySelected.CategoryName;
+            this.users.UserName = userSelected.UserName;
           });
         } catch (error) {
           console.log(error);
@@ -283,8 +394,8 @@
        */
       async getEmpById() {
         try {
-          const res = await HTTPCategorys.get(`/${this.categoryIdUpdate}`);
-          this.categories = res.data;
+          const res = await HTTPUsers.get(`/${this.userIdUpdated}`);
+          this.users = res.data;
         } catch (error) {
           this.handleException(error);
         }
@@ -296,8 +407,8 @@
   
       async getDepartment() {
         try {
-          var res = await HTTPCategorys.get();
-          this.categories = res.data;
+          var res = await HTTPUsers.get();
+          this.users = res.data;
           this.categoryFilter = res.data;
         } catch (error) {
           this.handleException(error);
@@ -329,7 +440,7 @@
        * Hàm onchecked enter để check gender
        */
       onchecked(e) {
-        this.categories.Gender = e.target.childNodes[0]._value;
+        this.users.Gender = e.target.childNodes[0]._value;
       },
       /**
        * author:Nguyễn Văn Ngọc(10/1/2023)
@@ -338,7 +449,7 @@
       onDefaultEmployee() {
         return {
           CategoryCode:"",
-          CategoryName:""
+          UserName:""
         };
       },
       /**
@@ -346,7 +457,7 @@
        * Hàm onSavebtn Xử lí khi click nút cất
        */
       async onSavebtn(isSaveAndAdd) {
-        console.log(this.categories);
+        console.log(this.users);
         var me = this;
         // validate
         if (!this.validate()) {
@@ -402,8 +513,8 @@
       async handleOnSave(isSaveAndAdd, isAdd, toastMessage) {
         try {
           const response = isAdd
-            ? await HTTPCategorys.post("", this.categories)
-            : await HTTPCategorys.put(`/${this.categoryIdUpdate}`, this.categories);
+            ? await HTTPUsers.post("", this.users)
+            : await HTTPUsers.put(`/${this.userIdUpdated}`, this.users);
           this.$emit("changeToastMsg",toastMessage,false,true, RESOURCES.NOTIFICATION_TITLE.SUCCESS);
           this.$emit("onshowToast");
           this.$emit("onLoadData");
@@ -411,8 +522,8 @@
           this.errorCodeMessage = "";
           this.productImages = {};
           if (isSaveAndAdd) {
-            this.categories = this.onDefaultEmployee();
-            this.formTitle = RESOURCES.FORM_TITLE.CATEGORY.ADD;
+            this.users = this.onDefaultEmployee();
+            this.formTitle = RESOURCES.FORM_TITLE.USER.ADD;
           }
           
           else {
@@ -430,7 +541,7 @@
        */
       async getNewEmCode() {
         const response = await HTTP.get(`/new-product-code`);
-        this.categories.CategoryCode = response.data;
+        this.users.CategoryCode = response.data;
         //this.newEmployeeCode = response.data;
       },
       /**
@@ -471,7 +582,7 @@
        */
       isChangeData() {
         if(this.isAdd) {
-         if(JSON.stringify(this.onDefaultEmployee()) != JSON.stringify(this.categories)) {
+         if(JSON.stringify(this.onDefaultEmployee()) != JSON.stringify(this.users)) {
           this.onShowDialogChangeData(true,false,'', RESOURCES.MODAL_MESSAGE.INFO,'');
          }
          else {
@@ -479,7 +590,7 @@
          }
         }   
         else {
-          if(JSON.stringify(this.oldEmployee) != JSON.stringify(this.categories)){
+          if(JSON.stringify(this.oldEmployee) != JSON.stringify(this.users)){
               this.onShowDialogChangeData(true,false,'', RESOURCES.MODAL_MESSAGE.INFO,'');
             }
           else {
@@ -508,7 +619,7 @@
        * Hàm invalidUnit kiểm tra đơn vị có hợp lệ hay không
        */
       invalidUnit(isInvalid) {
-        this.errorOject.CategoryId = isInvalid;
+        this.errorOject.UserId = isInvalid;
       },
   
       /**
@@ -519,7 +630,7 @@
         let isValid = true;
         for(const property in this.errorOject) {
           if(this.errorOject[property]) {
-              if(property == RESOURCES.CategoryId) {
+              if(property == RESOURCES.UserId) {
                 this.titleLossData = RESOURCES.FORM_MESSAGE.ERROR.ERROR_DEPARTMENT;
               }
               else {
@@ -538,21 +649,24 @@
   </script>
   <style  scoped>
   @import "../../css/components/datepicker.css";
-  .modal.category {
+  .modal.user {
     min-width: 600px;
-    max-width: 600px;
-    width: 600px;
+    max-width: 675px;
+    width: 700px;
     background-color: #fff;
     transition: all 0.1s linear;
     animation: down 0.1s linear;
   }
-  .modal-main.category {
+  .modal-main.user {
     padding: 0 22px 0 32px;
     display: block;
     flex-wrap: wrap;
-    height: 170px;
+    height: 300px;
     overflow-y: auto;
     margin-bottom: 20px;
+  }
+  .mb-12 {
+    margin-bottom: 12px;
   }
   </style>
   

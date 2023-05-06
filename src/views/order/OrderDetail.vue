@@ -1,6 +1,6 @@
 <template>
     <div class="overlay" >
-      <div class="modal category" >
+      <div class="modal saleorders" >
         <div class="modal__header">
           <div class="modal__header-left">
             <div class="modal__header-left-text">{{ formTitle }}</div>
@@ -19,23 +19,23 @@
             </div>
           </div>
         </div>
-        <div class="modal-main category">
+        <div class="modal-main saleorders">
           <div class="modal-main-container">
             <div class="pb-16 ">
-              <div class="textfield">
+                <div class="flex mb-12">
+                <div class="textfield">
                 <label for="" class="textfield__label modal-label">
-                  Mã danh mục<span class="required">*</span>
+                  Mã hóa đơn<span class="required">*</span>
                 </label>
                 <BaseInput
                   :isErrorInput =" this.isDuplicateCode || !!this.errorOject['EmployeeCode'] "
-                  style="min-width: 300px; width: 300px; margin-right: 6px; margin-bottom:32px;"
-                  v-model="categories.CategoryCode"
+                  style="min-width: 300px; width: 300px; margin-right: 12px;"
+                  v-model="saleorders.SaleOrderCode"
                   :name="'EmployeeCode'"
                   :rules="['NOT_EMPTY','MAX_LENGTH|20']"
                   :tooltipMessage="errorCodeMessage"
                   placeholder="NV-12345"
                   @errorInputMessage="validateInput"
-                  ref="EmployeeCode"
                   tabindex="1"
                   @keydown.shift.tab.prevent="onFocusCancelButton()"
                 />
@@ -43,21 +43,108 @@
               </div>
               <div class="textfield">
                 <label for="" class="textfield__label modal-label">
-                  Tên danh mục<span class="required">*</span>
+                  Họ <span class="required">*</span>
                 </label>
                 <BaseInput
                   :isErrorInput ="!!this.errorOject['FullName']"
                   style="min-width: 300px; width: 300px"
                   :inputType="'text'"
-                  v-model="categories.CategoryName"
+                  v-model="saleorders.FirstName"
                   :rules="['NOT_EMPTY','MAX_LENGTH|100']"
                   @errorInputMessage="validateInput"
                   :name="'FullName'"
-                  ref="FullName"
                   tabindex="1"
                 />
                 <p class="text-error">{{this.errorOject['FullName']}} </p>
               </div>
+                </div>
+              <div class="flex mb-12">
+                <div class="textfield">
+                <label for="" class="textfield__label modal-label">
+                  Tên<span class="required">*</span>
+                </label>
+                <BaseInput
+                  :isErrorInput ="!!this.errorOject['FullName']"
+                  style="min-width: 300px; width: 300px;margin-right: 12px;"
+                  :inputType="'text'"
+                  v-model="saleorders.LastName"
+                  :rules="['NOT_EMPTY','MAX_LENGTH|100']"
+                  @errorInputMessage="validateInput"
+                  :name="'FullName'"
+                  tabindex="1"
+                />
+                <p class="text-error">{{this.errorOject['FullName']}} </p>
+              </div>
+              <div class="textfield">
+                <label for="" class="textfield__label modal-label">
+                  Địa chỉ<span class="required">*</span>
+                </label>
+                <BaseInput
+                  :isErrorInput ="!!this.errorOject['FullName']"
+                  style="min-width: 300px; width: 300px"
+                  :inputType="'text'"
+                  v-model="saleorders.CustomerAddress"
+                  :rules="['NOT_EMPTY','MAX_LENGTH|100']"
+                  @errorInputMessage="validateInput"
+                  :name="'FullName'"
+                  tabindex="1"
+                />
+                <p class="text-error">{{this.errorOject['FullName']}} </p>
+              </div>
+              </div>
+              <div class="flex mb-12">
+              <div class="textfield">
+                <label for="" class="textfield__label modal-label">
+                  Số điện thoại<span class="required">*</span>
+                </label>
+                <BaseInput
+                  :isErrorInput ="!!this.errorOject['FullName']"
+                  style="min-width: 300px; width: 300px;margin-right: 12px;"
+                  :inputType="'text'"
+                  v-model="saleorders.CustomerPhone"
+                  :rules="['NOT_EMPTY','MAX_LENGTH|100']"
+                  @errorInputMessage="validateInput"
+                  :name="'FullName'"
+                  tabindex="1"
+                />
+                <p class="text-error">{{this.errorOject['FullName']}} </p>
+                
+              </div>
+              <div class="textfield">
+                <label for="" class="textfield__label modal-label">
+                  Tình trạng<span class="required">*</span>
+                </label>
+                <BaseInput
+                  :isErrorInput ="!!this.errorOject['FullName']"
+                  style="min-width: 300px; width: 300px;margin-right: 12px;"
+                  :inputType="'number'"
+                  v-model="saleorders.Status"
+                  :name="'FullName'"
+                  tabindex="1"
+                />
+                <p class="text-error">{{this.errorOject['FullName']}} </p>
+              </div>
+              </div>
+              <div class="flex mb-12">
+               
+              <div class="textfield">
+                <label for="" class="textfield__label modal-label">
+                  Tổng tiền<span class="required">*</span>
+                </label>
+                <BaseInput
+                  :isErrorInput ="!!this.errorOject['FullName']"
+                  style="min-width: 300px; width: 300px"
+                  :inputType="'text'"
+                  v-model="saleorders.TotalPrice"
+                  :rules="['NOT_EMPTY','MAX_LENGTH|100']"
+                  @errorInputMessage="validateInput"
+                  :name="'FullName'"
+                  tabindex="1"
+                />
+                <p class="text-error">{{this.errorOject['FullName']}} </p>
+              </div>
+              </div>
+              
             </div>
           </div>
         </div>
@@ -123,7 +210,7 @@
   import RESOURCES from "../../js/base/resouce.js";
   import ENUMS from "../../js/base/enums.js";
   import Editor from '@tinymce/tinymce-vue'
-  import { HTTP, HTTPCategorys,HTTPProductImages } from "../../js/api/ConnectApi.js";
+  import { HTTP, HTTPOrders } from "../../js/api/ConnectApi.js";
   
   export default {
     components: {
@@ -137,16 +224,16 @@
       "onhideToast",
       "changeToastMsg",
     ],
-    props: ["categoryIdUpdate", "isDuplicate","isShowForm",'categoryImageId'],
+    props: ["orderIdUpdate", "isDuplicate","isShowForm",'categoryImageId'],
   
     data() {
       return {
-        formTitle: RESOURCES.FORM_TITLE.CATEGORY.ADD, // Title form
+        formTitle: RESOURCES.FORM_TITLE.ORDER.ADD, // Title form
         isShowDialog: false, // show dialog báo lỗi khi nhập liệu
         validateError: [], //
-        categories: this.onDefaultEmployee(), // object nhân viên
+        saleorders: this.onDefaultEmployee(), // object nhân viên
         productImages:{},
-        categorySelected: {}, // phòng ban được chọn
+        userSelected: {}, // phòng ban được chọn
         oldEmployee:{},//nhân viên ban 
         errorOject:{},// object chứa lỗi 
         isName: false, // .... tên không hợp lệ
@@ -172,7 +259,7 @@
         async handler(newValue) {
           if(newValue == true) {
             const newCode = await this.getNewEmCode();
-            this.categories.CategoryCode = newCode;
+            this.saleorders.CategoryCode = newCode;
           }
         },
         immediate:true
@@ -185,7 +272,7 @@
        */
       // check xem là thêm hay sửa
       isAdd() {
-        if (this.categoryIdUpdate) {
+        if (this.orderIdUpdate) {
           return false;
         } else {
           return true;
@@ -195,27 +282,22 @@
     created() {
       // Thay đổi form title
       if (this.isDuplicate) {
-        this.formTitle = RESOURCES.FORM_TITLE.CATEGORY.DUPLICATE;
-      } else if (this.categoryIdUpdate) {
-        this.formTitle = RESOURCES.FORM_TITLE.CATEGORY.UPDATE;
+        this.formTitle = RESOURCES.FORM_TITLE.ORDER.DUPLICATE;
+      } else if (this.orderIdUpdate) {
+        this.formTitle = RESOURCES.FORM_TITLE.ORDER.UPDATE;
       } else {
-        this.formTitle = RESOURCES.FORM_TITLE.CATEGORY.ADD;
+        this.formTitle = RESOURCES.FORM_TITLE.ORDER.ADD;
       }
       // Truyền dữ liệu vào input khi Sửa
-      if (this.categoryIdUpdate || this.isDuplicate) {
+      if (this.orderIdUpdate || this.isDuplicate) {
         try {
           // gọi api lấy dữ liệu truyền vào th employee
-          HTTPCategorys.get(`/${this.categoryIdUpdate}`).then((response) => {
-            this.categories = response.data;
-            for(const property in this.categories) {
-              this.oldEmployee[property] = this.categories[property]
+          HTTPOrders.get(`/${this.orderIdUpdate}`).then((response) => {
+            this.saleorders = response.data;
+            for(const property in this.saleorders) {
+              this.oldEmployee[property] = this.saleorders[property]
             }
-            // Lấy ra department được chọn
-            const categorySelected = this.categories.find(
-              (category) =>
-              category.CategoryId === this.categories?.CategoryId
-            );
-            this.categories.CategoryName = categorySelected.CategoryName;
+           
           });
         } catch (error) {
           console.log(error);
@@ -230,7 +312,7 @@
     mounted() {
       document.addEventListener("keydown", this.onKeyDown);
       // forcus vào ô mã nhân viên khi hiển thị form chi tiết
-      this.$refs.EmployeeCode.onFocus();
+    //   this.$refs.EmployeeCode.onFocus();
       //this.watchFileInput();
     },
     unmounted() {
@@ -283,8 +365,8 @@
        */
       async getEmpById() {
         try {
-          const res = await HTTPCategorys.get(`/${this.categoryIdUpdate}`);
-          this.categories = res.data;
+          const res = await HTTPOrders.get(`/${this.orderIdUpdate}`);
+          this.saleorders = res.data;
         } catch (error) {
           this.handleException(error);
         }
@@ -296,8 +378,8 @@
   
       async getDepartment() {
         try {
-          var res = await HTTPCategorys.get();
-          this.categories = res.data;
+          var res = await HTTPOrders.get();
+          this.saleorders = res.data;
           this.categoryFilter = res.data;
         } catch (error) {
           this.handleException(error);
@@ -329,7 +411,7 @@
        * Hàm onchecked enter để check gender
        */
       onchecked(e) {
-        this.categories.Gender = e.target.childNodes[0]._value;
+        this.saleorders.Gender = e.target.childNodes[0]._value;
       },
       /**
        * author:Nguyễn Văn Ngọc(10/1/2023)
@@ -338,7 +420,7 @@
       onDefaultEmployee() {
         return {
           CategoryCode:"",
-          CategoryName:""
+          SaleOrderCode:""
         };
       },
       /**
@@ -346,7 +428,7 @@
        * Hàm onSavebtn Xử lí khi click nút cất
        */
       async onSavebtn(isSaveAndAdd) {
-        console.log(this.categories);
+        console.log(this.saleorders);
         var me = this;
         // validate
         if (!this.validate()) {
@@ -402,8 +484,8 @@
       async handleOnSave(isSaveAndAdd, isAdd, toastMessage) {
         try {
           const response = isAdd
-            ? await HTTPCategorys.post("", this.categories)
-            : await HTTPCategorys.put(`/${this.categoryIdUpdate}`, this.categories);
+            ? await HTTPOrders.post("", this.saleorders)
+            : await HTTPOrders.put(`/${this.orderIdUpdate}`, this.saleorders);
           this.$emit("changeToastMsg",toastMessage,false,true, RESOURCES.NOTIFICATION_TITLE.SUCCESS);
           this.$emit("onshowToast");
           this.$emit("onLoadData");
@@ -411,8 +493,8 @@
           this.errorCodeMessage = "";
           this.productImages = {};
           if (isSaveAndAdd) {
-            this.categories = this.onDefaultEmployee();
-            this.formTitle = RESOURCES.FORM_TITLE.CATEGORY.ADD;
+            this.saleorders = this.onDefaultEmployee();
+            this.formTitle = RESOURCES.FORM_TITLE.ORDER.ADD;
           }
           
           else {
@@ -430,7 +512,7 @@
        */
       async getNewEmCode() {
         const response = await HTTP.get(`/new-product-code`);
-        this.categories.CategoryCode = response.data;
+        this.saleorders.CategoryCode = response.data;
         //this.newEmployeeCode = response.data;
       },
       /**
@@ -471,7 +553,7 @@
        */
       isChangeData() {
         if(this.isAdd) {
-         if(JSON.stringify(this.onDefaultEmployee()) != JSON.stringify(this.categories)) {
+         if(JSON.stringify(this.onDefaultEmployee()) != JSON.stringify(this.saleorders)) {
           this.onShowDialogChangeData(true,false,'', RESOURCES.MODAL_MESSAGE.INFO,'');
          }
          else {
@@ -479,7 +561,7 @@
          }
         }   
         else {
-          if(JSON.stringify(this.oldEmployee) != JSON.stringify(this.categories)){
+          if(JSON.stringify(this.oldEmployee) != JSON.stringify(this.saleorders)){
               this.onShowDialogChangeData(true,false,'', RESOURCES.MODAL_MESSAGE.INFO,'');
             }
           else {
@@ -508,7 +590,7 @@
        * Hàm invalidUnit kiểm tra đơn vị có hợp lệ hay không
        */
       invalidUnit(isInvalid) {
-        this.errorOject.CategoryId = isInvalid;
+        this.errorOject.SaleOrderId = isInvalid;
       },
   
       /**
@@ -519,7 +601,7 @@
         let isValid = true;
         for(const property in this.errorOject) {
           if(this.errorOject[property]) {
-              if(property == RESOURCES.CategoryId) {
+              if(property == RESOURCES.SaleOrderId) {
                 this.titleLossData = RESOURCES.FORM_MESSAGE.ERROR.ERROR_DEPARTMENT;
               }
               else {
@@ -538,21 +620,24 @@
   </script>
   <style  scoped>
   @import "../../css/components/datepicker.css";
-  .modal.category {
+  .modal.saleorders {
     min-width: 600px;
-    max-width: 600px;
-    width: 600px;
+    max-width: 675px;
+    width: 700px;
     background-color: #fff;
     transition: all 0.1s linear;
     animation: down 0.1s linear;
   }
-  .modal-main.category {
+  .modal-main.saleorders {
     padding: 0 22px 0 32px;
     display: block;
     flex-wrap: wrap;
-    height: 170px;
+    height: 300px;
     overflow-y: auto;
     margin-bottom: 20px;
+  }
+  .mb-12 {
+    margin-bottom: 12px;
   }
   </style>
   

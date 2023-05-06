@@ -141,7 +141,7 @@
           </div>
         </div>
         
-  <div class="modal-contact">
+        <div class="modal-contact">
           <div class="modal-contact__content">
             <div
               class="textfield modal-textfield full-w"

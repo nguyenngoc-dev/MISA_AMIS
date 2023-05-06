@@ -23,7 +23,7 @@
 	</div>
 </template>
 <script>
-import RESOURCES from "../../js/base/resouce.js";
+import RESOURCES from "../../js/base/resouce";
 export default {
   emits:["closeToast","onhideToast"],
   data() {

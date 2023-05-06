@@ -47,6 +47,16 @@ const RESOURCES = {
       ADD:"Thêm danh mục",
       UPDATE:"Sửa danh mục",
       DUPLICATE:"Nhân bản"
+    },
+    USER: {
+      ADD:"Thêm tài khoản",
+      UPDATE:"Sửa tài khoản",
+      DUPLICATE:"Nhân bản"
+    },
+    ORDER: {
+      ADD:"Thêm hóa đơn",
+      UPDATE:"Sửa hóa đơn",
+
     }
    
   },
