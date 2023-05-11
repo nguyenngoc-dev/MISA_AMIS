@@ -1,389 +1,288 @@
 <template>
-    <div class="content">
-      <div class="content__header">
-        <div class="content__header-text">Đơn hàng</div>
-      </div>
-      <div class="content-wrapper">
-        <div
-          class="content-wrapper__action"
-          style="justify-content: space-between"
-        >
-          <div
-            v-show="checkList.length > 0"
-            class="content-wrapper__action--muiltiple"
-          >
-            <div class="content-wrapper__action-checked">
-              Đã chọn
-              <strong>{{ checkList.length }}</strong>
-            </div>
-            <div
-              class="content-wrapper__action--remove"
-              @click="this.checkList = []"
-            >
-              Bỏ chọn
-            </div>
-            <div
-              class="content-wrapper__action--delete"
-              @click="onDeleteClick(true)"
-            >
-              <div class="content-wrapper__action-container">
-                <div class="icon-delete"></div>
-              </div>
-              <div class="content-wrapper__action-text">Xóa tất cả</div>
-            </div>
+  <div class="content">
+    <div class="content__header">
+      <div class="content__header-text">Đơn hàng</div>
+    </div>
+    <div class="content-wrapper">
+      <div class="content-wrapper__action" style="justify-content: space-between">
+        <div v-show="checkList.length > 0" class="content-wrapper__action--muiltiple">
+          <div class="content-wrapper__action-checked">
+            Đã chọn
+            <strong>{{ checkList.length }}</strong>
           </div>
-          <div style="flex: 1"></div>
-          <div
-            style="
+          <div class="content-wrapper__action--remove" @click="this.checkList = []">
+            Bỏ chọn
+          </div>
+          <div class="content-wrapper__action--delete" @click="onDeleteClick(true)">
+            <div class="content-wrapper__action-container">
+              <div class="icon-delete"></div>
+            </div>
+            <div class="content-wrapper__action-text">Xóa tất cả</div>
+          </div>
+        </div>
+        <div style="flex: 1"></div>
+        <div style="
               display: flex;
               justify-content: space-between;
               align-items: center;
-            "
-          >
-            <div class="textfield">
-              <label for="" class="textfield__label" style="margin-bottom: 0">
-                <div
-                  @click="searchData()"
-                  class="icon-search sidebar-item__icon content-icon"
-                ></div>
-              </label>
-              <input
-                class="textfield__input"
-                v-model="textSearch"
-                placeholder="Tìm kiếm theo mã, tên sản phẩm"
-                :debounce-events="['input', 'keyup']"
-                v-debounce:600ms.lock="searchData"
-              />
-            </div>
-  
-            <div
-              class="tooltip icon-reload sidebar-item__icon content-wrapper__action-refresh"
-              @click="isShowLoading = true"
-               :debounce-events="['click']"
-                v-debounce:600ms.lock="() => onLoadCurrentpage(currentPageNum)"
-            >
-              <span class="tooltiptext" style="min-width: 100px;left: 5%;">Lấy lại dữ liệu</span>
-            </div>
-            <div
-              class="tooltip icon-export sidebar-item__icon content-wrapper__action-refresh"
-              @click="exportData()"
-            >
-              <span class="tooltiptext" style="min-width: 100px;left: 6%;">Xuất ra Excel(Shift+P)</span>
-            </div>
+            ">
+          <div class="textfield">
+            <label for="" class="textfield__label" style="margin-bottom: 0">
+              <div @click="searchData()" class="icon-search sidebar-item__icon content-icon"></div>
+            </label>
+            <input class="textfield__input" v-model="textSearch" placeholder="Tìm kiếm theo mã, tên sản phẩm"
+              :debounce-events="['input', 'keyup']" v-debounce:600ms.lock="searchData" />
           </div>
-        </div>
-        <div class="grid-table">
-          <table class="tbl">
-            <!-- <thead> -->
-            <tbody>
-              <tr class="tbl-row" style="position: sticky; top: 0; z-index: 10">
-                <th class="tbl-col" style="z-index: 99">
-                  <input
-                    type="checkbox"
-                    id="checkAll"
-                    @change="handleCheckAll"
-                    :checked="isCheckAll"
-                  />
-                  <label for="checkAll" class="mask">
-                    <div class="icon-checked"></div>
-                  </label>
-                </th>
-                <th class="tbl-col">Mã hóa đơn</th>
-                <th class="tbl-col tbl-col--large">Tên Khách hàng</th>
-                <th class="tbl-col tbl-col--large">Địa chỉ </th>
-                <th class="tbl-col" style="text-align: center">Số điện thoại</th>
-                <th class="tbl-col tooltip tbl-col--large" style="display: table-cell">
-                  Tình trạng
-                </th>
-                <th class="tbl-col">Tổng tiền</th>
-                <th class="tbl-col" style="min-width: 112px">chức năng</th>
-              </tr>
-              <!-- </thead>    -->
-  
-              <tr
-                class="tbl-row"
-                v-for="(saleOrder, index) in saleOrders"
-                :key="index"
-                @dblclick="rowOnDblClick(saleOrder)"
-              >
-                <td class="tbl-col">
-                  <input
-                    name="checkEmp"
-                    class="check-col"
-                    type="checkbox"
-                    :value="saleOrder.SaleOrderId"
-                    :id="saleOrder.SaleOrderId"
-                    :checked="checkList.includes(saleOrder.SaleOrderId)"
-                    @change="hanlderCheckBox(saleOrder.SaleOrderId)"
-                  />
-                  <label :for="saleOrder.SaleOrderId" class="mask">
-                    <div class="icon-checked"></div>
-                  </label>
-                </td>
-                <td class="tbl-col tooltip">
-                  <div class="text-overflow">
-                    {{ saleOrder.SaleOrderCode || "" }}
-                  </div>
-                </td>
-                <td class="tbl-col tbl-col--large tooltip">
-                  <div class=" ">
-                    {{ saleOrder.FirstName + " " + saleOrder.LastName  || "" }}
-                    <span  class="tooltiptext" style="top:100%">{{ saleOrder.ProductName }}</span>
-                  </div>
-                </td>
-                <td class="tbl-col">
-                  {{ saleOrder.CustomerAddress || "" }}
-                </td>
-                <td class="tbl-col" >
-                  {{  saleOrder.CustomerPhone || "" }}
-                </td>
-                <td class="tbl-col tooltip">
-                  <div class="">
-                    {{ formatStatus(saleOrder.Status) || "" }}
-                  </div>
-                </td>
-                <td class="tbl-col  tooltip">
-                  <div class="">
-                    {{ saleOrder.TotalPrice || "0" }} vnđ
-                  </div>
-                </td>
-  
-                <td class="tbl-col">
-                  <div class="tbl-col__action">
-                    <label
-                      class="tbl-col__action-edit"
-                      @click="rowOnDblClick(saleOrder)"
-                      >Sửa</label
-                    >
-                    <button
-                      @click="handleOpenListAction($event, saleOrder)"
-                      @blur="onBlurActionIcon($event)"
-                      class="sidebar-item__icon"
-                      style="display: flex;justify-content: center;align-items: center;height: 16px;background: none;outline: none;border: none;">
-                      <div class="icon-action-dropdown">
-                        <!-- <input type="checkbox" hidden /> -->
-                      </div>
-                    </button>
-                  </div>
-                </td>
-              </tr>
-  
-              <!-- Action List -->
-              <ul
-                class="tbl-col__action-list textfield-list"
-                v-if="listAction.isShow"
-                :style="listAction.style"
-              >
-                <label
-                  @click="onDuplicate()"
-                  for="action"
-                  class="tbl-col__action-item"
-                  tabindex="0"
-                >
-                  Nhân bản
-                </label>
-                <label
-                  @click="onDeleteClick(false)"
-                  for="action"
-                  class="tbl-col__action-item btn-delete"
-                >
-                  <label for="show-modal__confirm">Xóa</label>
-                </label>
-                <label for="action" class="tbl-col__action-item">
-                  Ngừng sử dụng
-                </label>
-              </ul>
-              <BaseLoading v-if="isShowLoading" />
-            </tbody>
-          </table>
-          <div class="empty-data" v-if="this.saleOrders.length === 0">
-            <img src="../../assets/img/emptyData.svg" alt="" />
-            <div class="empty-data-text">Không có dữ liệu</div>
+
+          <div class="tooltip icon-reload sidebar-item__icon content-wrapper__action-refresh"
+            @click="isShowLoading = true" :debounce-events="['click']"
+            v-debounce:600ms.lock="() => onLoadCurrentpage(currentPageNum)">
+            <span class="tooltiptext" style="min-width: 100px;left: 5%;">Lấy lại dữ liệu</span>
           </div>
-        </div>
-  
-        <div class="content-footer">
-          <div>
-            Tổng: <strong id="pagetotal">{{ pageTotal }}</strong> bản ghi
-          </div>
-          <div style="display: flex; align-items: center">
-            <div class="textfield">
-              <label for="" class="textfield__label">
-                <label
-                  for="dropbtn"
-                  class="textfield__icon"
-                  style="
-                    display: flex;
-                    justify-content: center;
-                    align-items: center;
-                  "
-                  @click="showPageList()"
-                  tabindex="0"
-                >
-                  <div class="icon-dropdown"></div>
-                </label>
-                <!-- <input type="checkbox" name="" id="dropbtn" /> -->
-              </label>
-  
-              <BaseInput
-                :class="{
-                  'textfield-max-content': true,
-                  'show-list': showListPage,
-                }"
-                v-model="currentPageSizeText"
-              />
-              <ul :class="{ 'textfield-list': true, 'show-list': showListPage }">
-                <li
-                  v-for="(item, index) in pageSizeList"
-                  :key="index"
-                  :class="{
-                    'textfield-item': true,
-                    active: index === itemActive,
-                  }"
-                  @click="onSelectPageSize(index, item)"
-                >
-                  {{ item.text }}
-                </li>
-              </ul>
-            </div>
-            <!-- Phân trang -->
-            <paginate
-              :page-count="totalPage"
-              :page-range="3"
-              :margin-pages="1"
-              :click-handler="clickCallback"
-              :prev-text="'Trước'"
-              :next-text="'Sau'"
-              :prev-class="'prev-btn'"
-              :next-class="'next-btn'"
-              :container-class="'pagination'"
-              :page-class="'page-item'"
-              :v-show="this.totalPage"
-            >
-            </paginate>
+          <div class="tooltip icon-export sidebar-item__icon content-wrapper__action-refresh" @click="exportData()">
+            <span class="tooltiptext" style="min-width: 100px;left: 6%;">Xuất ra Excel(Shift+P)</span>
           </div>
         </div>
       </div>
+      <div class="grid-table">
+        <table class="tbl">
+          <!-- <thead> -->
+          <tbody>
+            <tr class="tbl-row" style="position: sticky; top: 0; z-index: 10">
+              <th class="tbl-col" style="z-index: 99">
+                <input type="checkbox" id="checkAll" @change="handleCheckAll" :checked="isCheckAll" />
+                <label for="checkAll" class="mask">
+                  <div class="icon-checked"></div>
+                </label>
+              </th>
+              <th class="tbl-col">Mã hóa đơn</th>
+              <th class="tbl-col tbl-col--large">Tên Khách hàng</th>
+              <th class="tbl-col tbl-col--large">Địa chỉ </th>
+              <th class="tbl-col" style="text-align: center">Số điện thoại</th>
+              <th class="tbl-col tooltip tbl-col--large" style="display: table-cell">
+                Tình trạng
+              </th>
+              <th class="tbl-col">Tổng tiền</th>
+              <th class="tbl-col" style="min-width: 112px">chức năng</th>
+            </tr>
+            <!-- </thead>    -->
+
+            <tr class="tbl-row" v-for="(saleOrder, index) in saleOrders" :key="index"
+              @dblclick="rowOnDblClick(saleOrder)">
+              <td class="tbl-col">
+                <input name="checkEmp" class="check-col" type="checkbox" :value="saleOrder.SaleOrderId"
+                  :id="saleOrder.SaleOrderId" :checked="checkList.includes(saleOrder.SaleOrderId)"
+                  @change="hanlderCheckBox(saleOrder.SaleOrderId)" />
+                <label :for="saleOrder.SaleOrderId" class="mask">
+                  <div class="icon-checked"></div>
+                </label>
+              </td>
+              <td class="tbl-col tooltip">
+                <div class="text-overflow">
+                  {{ saleOrder.SaleOrderCode || "" }}
+                </div>
+              </td>
+              <td class="tbl-col tbl-col--large tooltip">
+                <div class=" ">
+                  {{ saleOrder.FirstName + " " + saleOrder.LastName || "" }}
+                  <span class="tooltiptext" style="top:100%">{{ saleOrder.ProductName }}</span>
+                </div>
+              </td>
+              <td class="tbl-col">
+                {{ saleOrder.CustomerAddress || "" }}
+              </td>
+              <td class="tbl-col">
+                {{ saleOrder.CustomerPhone || "" }}
+              </td>
+              <td class="tbl-col tooltip">
+                <div class="">
+                  {{ formatStatus(saleOrder.Status) || "" }}
+                </div>
+              </td>
+              <td class="tbl-col  tooltip">
+                <div class="">
+                  {{ formatMoney(saleOrder.TotalPrice) || "0" }} 
+                </div>
+              </td>
+
+              <td class="tbl-col">
+                <div class="tbl-col__action">
+                  <label class="tbl-col__action-edit" @click="rowOnDblClick(saleOrder)">Sửa</label>
+                  <button @click="handleOpenListAction($event, saleOrder)" @blur="onBlurActionIcon($event)"
+                    class="sidebar-item__icon"
+                    style="display: flex;justify-content: center;align-items: center;height: 16px;background: none;outline: none;border: none;">
+                    <div class="icon-action-dropdown">
+                      <!-- <input type="checkbox" hidden /> -->
+                    </div>
+                  </button>
+                </div>
+              </td>
+            </tr>
+
+            <!-- Action List -->
+            <ul class="tbl-col__action-list orderlist textfield-list" v-if="listAction.isShow" :style="listAction.style">
+              <label @click="onDeleteClick(false)" for="action" class="tbl-col__action-item btn-delete">
+                <label for="show-modal__confirm">Xóa</label>
+              </label>
+              
+            </ul>
+            <BaseLoading v-if="isShowLoading" />
+          </tbody>
+        </table>
+        <div class="empty-data" v-if="this.saleOrders.length === 0">
+          <img src="../../assets/img/emptyData.svg" alt="" />
+          <div class="empty-data-text">Không có dữ liệu</div>
+        </div>
+      </div>
+
+      <div class="content-footer">
+        <div>
+          Tổng: <strong id="pagetotal">{{ pageTotal }}</strong> bản ghi
+        </div>
+        <div style="display: flex; align-items: center">
+          <div class="textfield">
+            <label for="" class="textfield__label">
+              <label for="dropbtn" class="textfield__icon" style="
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
+                  " @click="showPageList()" tabindex="0">
+                <div class="icon-dropdown"></div>
+              </label>
+              <!-- <input type="checkbox" name="" id="dropbtn" /> -->
+            </label>
+
+            <BaseInput :class="{
+              'textfield-max-content': true,
+              'show-list': showListPage,
+            }" v-model="currentPageSizeText" />
+            <ul :class="{ 'textfield-list': true, 'show-list': showListPage }">
+              <li v-for="(item, index) in pageSizeList" :key="index" :class="{
+                'textfield-item': true,
+                active: index === itemActive,
+              }" @click="onSelectPageSize(index, item)">
+                {{ item.text }}
+              </li>
+            </ul>
+          </div>
+          <!-- Phân trang -->
+          <paginate :page-count="totalPage" :page-range="3" :margin-pages="1" :click-handler="clickCallback"
+            :prev-text="'Trước'" :next-text="'Sau'" :prev-class="'prev-btn'" :next-class="'next-btn'"
+            :container-class="'pagination'" :page-class="'page-item'" :v-show="this.totalPage">
+          </paginate>
+        </div>
+      </div>
     </div>
-  
-    <OrderDetail
-      v-if="isShowDialog"
-      @hideDialog="showDialog(false)"
-      @onLoadData="onLoadCurrentpage(this.currentPageNum)"
-      :orderIdUpdate="orderIdSelected"
-      :productImageId="productImageIdSelected"
-      @onshowToast="onshowToast"
-      @onhideToast="onhideToast"
-      :isDuplicate="productIdDuplicate"
-      :isShowForm="isShowDialog"
-      @changeToastMsg="changeToastMsg"
-    ></OrderDetail>
-    <BaseDialog
-      @onBtnAccept="deleteEmployee"
-      :dialogTitle="dialogTitle"
-      v-if="isShowDeleteDialog"
-      :showBtnCancel="showBtnCancel"
-      :btnCancelText="'Không'"
-      @onHideDialog="onShowDeleteDialog(false)"
-      :dialogHeader="'Xóa nhân viên'"
-      :isDelete="isDelete"
-      :isNotice="isNotice"
-    />
-    <BaseToast
-      v-if="isShowToast"
-      @closeToast="onhideToast"
-      @onhideToast="onhideToast"
-      :toastType="toastContent"
-      :toastTitle="toastTitle"
-      :isSuccessToast="isSuccessToast"
-      :isErrorToast="isErrorToast"
-    />
-  </template>
-  <script>
-  import paginate from "vuejs-paginate/src/components/Paginate.vue";
-  import OrderDetail from "../order/OrderDetail.vue";
-  import BaseInput from "../../components/base/BaseInput.vue";
-  import { formatDate } from "../../js/base/common.js";
-  import { HTTP,HTTPOrders } from "../../js/api/ConnectApi.js";
-  import RESOURCES from "../../js/base/resouce.js";
-  import {formatStatus} from "../../js/base/common.js"
-   
-  export default {
-    name: "EmployeeList",
-    components: {
-      OrderDetail,
-      BaseInput,
-      paginate,
-    },
-    data() {
-      return {
-        saleOrders: [], // mảng hứng dữ liệu đổ vào bảng
-        isShowDialog: false, // Show chi tiết nhân viên
-        isShowLoading: false, // Show loading
-        textSearch: "", // nội dung ô tìm kiếm
-        listAction: {
-          // object list khi click nút sửa
-          isShow: false,
-          style: {
-            top: 0,
-            right: 0,
-          },
+  </div>
+
+  <OrderDetail v-if="isShowDialog" @hideDialog="showDialog(false)" @onLoadData="onLoadCurrentpage(this.currentPageNum)"
+    :orderIdUpdate="orderIdSelected" :productImageId="productImageIdSelected" @onshowToast="onshowToast"
+    @onhideToast="onhideToast" :isDuplicate="productIdDuplicate" :isShowForm="isShowDialog"
+    @changeToastMsg="changeToastMsg"></OrderDetail>
+  <BaseDialog @onBtnAccept="deleteEmployee" :dialogTitle="dialogTitle" v-if="isShowDeleteDialog"
+    :showBtnCancel="showBtnCancel" :btnCancelText="'Không'" @onHideDialog="onShowDeleteDialog(false)"
+    :dialogHeader="'Xóa nhân viên'" :isDelete="isDelete" :isNotice="isNotice" />
+  <BaseToast v-if="isShowToast" @closeToast="onhideToast" @onhideToast="onhideToast" :toastType="toastContent"
+    :toastTitle="toastTitle" :isSuccessToast="isSuccessToast" :isErrorToast="isErrorToast" />
+</template>
+<script>
+import paginate from "vuejs-paginate/src/components/Paginate.vue";
+import OrderDetail from "../order/OrderDetail.vue";
+import BaseInput from "../../components/base/BaseInput.vue";
+import { formatDate,formatMoney } from "../../js/base/common.js";
+import { HTTP, HTTPOrders } from "../../js/api/ConnectApi.js";
+import RESOURCES from "../../js/base/resouce.js";
+export default {
+  name: "EmployeeList",
+  components: {
+    OrderDetail,
+    BaseInput,
+    paginate,
+  },
+  data() {
+    return {
+      saleOrders: [], // mảng hứng dữ liệu đổ vào bảng
+      isShowDialog: false, // Show chi tiết nhân viên
+      isShowLoading: false, // Show loading
+      textSearch: "", // nội dung ô tìm kiếm
+      listAction: {
+        // object list khi click nút sửa
+        isShow: false,
+        style: {
+          top: 0,
+          right: 0,
         },
-        productImageIdSelected:null,
-        dialogTitle: "", // title thông báo khi xóa
-        isDisableButton: true, //disable button xóa hàng loạt
-        isDelete: true, // có phải dialog xóa
-        isNotice: false, // dialog cảnh báo
-        isShowBtnDelete: false, //show nút xóa nhiều
-        isSingle:true,//có phải xóa 1
-        showBtnCancel: true, //hiện button không
-        checkList: [], // mảng chứa các check box checked
-        orderIdSelected: null, // id của nhân viên khi click nút sửa
-        isShowDeleteDialog: false, // show dialog thông báo khi xóa
-        productDelete:[],// mảng xóa một nhân viên
-        productIdDelete: null, // lấy ra id khi xóa nhân viên
-        productIdDuplicate: false, // lấy id nhân viên để nhân bản
-        isShowToast: false, //show toast message
-        formatDate, // Hàm xử lí ngày tháng
-        totalPage: 1, // Tổng số trang
-        currentPageSizeText: RESOURCES.PAGINATION[0].text, // Tổng số bản ghi trên một trang text
-        currentPageSize: 20, //Tổng số bản ghi trên một trang number
-        showListPage: false, // show ra list page size
-        currentPageNum: 1, // Trang hiện tại
-        itemActive: 0, // set class active cho list item selected
-        toastContent: RESOURCES.FORM_MODE.DELETE, // nội dung toast message
-        toastTitle: RESOURCES.NOTIFICATION_TITLE.SUCCESS, // Tiêu đề toast,
-        isErrorToast: false, // Icon toast lỗi
-        isSuccessToast: true, // icon toast thành công
-        pageTotal: 0, // tổng số bản ghi
-        pageSizeList: RESOURCES.PAGINATION, // mảng phân trang
-        RESOURCES,
-        formatStatus
-      };
-    },
-    created() {
-      // Lấy ra 20 bản ghi đầu tiên
-      this.getEmployeesFirst();
-    },
-    mounted() {
-      document.addEventListener("keydown", this.onKeyDown);
-    },
-    computed: {
-      // Check xem có phải check all hay không
-      isCheckAll() {
-        let isCheck = true;
-        if (this.checkList.length == 0) {
-          return false;
-        }
-        isCheck = this.saleOrders.every((item) =>
-          this.checkList.includes(item.SaleOrderId)
-        );
-        // eslint-disable-next-line
-        return isCheck;
       },
-      
+      productImageIdSelected: null,
+      dialogTitle: "", // title thông báo khi xóa
+      isDisableButton: true, //disable button xóa hàng loạt
+      isDelete: true, // có phải dialog xóa
+      isNotice: false, // dialog cảnh báo
+      isShowBtnDelete: false, //show nút xóa nhiều
+      isSingle: true,//có phải xóa 1
+      showBtnCancel: true, //hiện button không
+      checkList: [], // mảng chứa các check box checked
+      orderIdSelected: null, // id của nhân viên khi click nút sửa
+      isShowDeleteDialog: false, // show dialog thông báo khi xóa
+      productDelete: [],// mảng xóa một nhân viên
+      productIdDelete: null, // lấy ra id khi xóa nhân viên
+      productIdDuplicate: false, // lấy id nhân viên để nhân bản
+      isShowToast: false, //show toast message
+      formatDate, // Hàm xử lí ngày tháng
+      totalPage: 1, // Tổng số trang
+      currentPageSizeText: RESOURCES.PAGINATION[0].text, // Tổng số bản ghi trên một trang text
+      currentPageSize: 20, //Tổng số bản ghi trên một trang number
+      showListPage: false, // show ra list page size
+      currentPageNum: 1, // Trang hiện tại
+      itemActive: 0, // set class active cho list item selected
+      toastContent: RESOURCES.FORM_MODE.DELETE, // nội dung toast message
+      toastTitle: RESOURCES.NOTIFICATION_TITLE.SUCCESS, // Tiêu đề toast,
+      isErrorToast: false, // Icon toast lỗi
+      isSuccessToast: true, // icon toast thành công
+      pageTotal: 0, // tổng số bản ghi
+      pageSizeList: RESOURCES.PAGINATION, // mảng phân trang
+      RESOURCES,
+      formatMoney
+    };
+  },
+  created() {
+    // Lấy ra 20 bản ghi đầu tiên
+    this.getEmployeesFirst();
+  },
+  mounted() {
+    document.addEventListener("keydown", this.onKeyDown);
+  },
+  computed: {
+    // Check xem có phải check all hay không
+    isCheckAll() {
+      let isCheck = true;
+      if (this.checkList.length == 0) {
+        return false;
+      }
+      isCheck = this.saleOrders.every((item) =>
+        this.checkList.includes(item.SaleOrderId)
+      );
+      // eslint-disable-next-line
+      return isCheck;
     },
-    methods: {
+
+  },
+  methods: {
+    formatStatus(status) {
+
+      if (status == 1) {
+        return "Đang giao hàng"
+      }
+      else if (status == 2) {
+        return "Giao thành công"
+      }
+      else if (status == 3) {
+        return "Đơn hàng bị hủy"
+      }
+      else {
+        return "Đang chuẩn bị hàng"
+      }
+    },
       /**
        * author:Nguyễn Văn Ngọc(21/2/2023)
        * Hàm onKeyDown xử lí khi nhấn phím tắt
@@ -414,11 +313,11 @@
             this.isShowLoading = false;
             this.pageTotal = res.data.TotalRecord;
           })
-          .catch(error => {
-            this.handleExeption(error);
-          }) 
+            .catch(error => {
+              this.handleExeption(error);
+            })
         } catch (error) {
-           this.handleExeption(error);
+          this.handleExeption(error);
         }
       },
       // Ẩn hiện form nhân viên
@@ -461,7 +360,7 @@
           this.isSingle = true;
         }
       },
-  
+
       /**
        * author:Nguyễn Văn Ngọc(3/1/2023)
        * Hàm deleteEmployee xóa nhân viên
@@ -471,7 +370,7 @@
         try {
           // đóng Dialog
           this.onShowDeleteDialog(false);
-          let data = this.isSingle ? [...this.productDelete] : [...this.checkList]; 
+          let data = this.isSingle ? [...this.productDelete] : [...this.checkList];
           // Show loading
           this.isShowLoading = true;
           // gọi api xóa nhân viên
@@ -482,7 +381,7 @@
           this.toastTitle = RESOURCES.NOTIFICATION_TITLE.SUCCESS;
           this.isShowToast = true;
           this.checkList = [];
-          this.productDelete=[];
+          this.productDelete = [];
           this.listAction.isShow = false;
           // Load lại dữ liệu
           await this.onLoadCurrentpage(1);
@@ -510,7 +409,7 @@
        * Xử lí CheckList
        * Thông báo
        */
-  
+
       handleOpenListAction(e, emp) {
         if (emp.SaleOrderId) {
           this.orderIdSelected = emp.SaleOrderId;
@@ -595,7 +494,7 @@
           ];
         }
       },
-  
+
       /**
        * author:Nguyễn Văn Ngọc(4/1/2023)
        * Hàm rowOnDblClick xử lí check all khi double click mỗi hàng
@@ -627,8 +526,8 @@
             this.getFilterParams("", this.currentPageSize, pageNum)
           ).then((res) => {
             this.saleOrders = res.data.Data.filter(saleOrder => {
-            return saleOrder.IsActive == true
-          });
+              return saleOrder.IsActive == true
+            });
             this.totalPage = res.data.TotalPage;
             this.pageTotal = res.data.TotalRecord;
             this.isShowLoading = false;
@@ -722,9 +621,9 @@
           // Hiển thị Loading
           me.isShowLoading = true;
           var data = this.getFilterParams(this.textSearch, this.pageTotal, 1);
-          const response = await HTTP.post("/get-saleOrders-excel",data, {
+          const response = await HTTP.post("/get-saleOrders-excel", data, {
             responseType: "blob"
-          } );
+          });
           // Lấy ra URL
           const url = URL.createObjectURL(new Blob([response.data]));
           // Tạo thẻ a
@@ -748,40 +647,47 @@
        */
       handleExeption(error) {
         if (error.code == "ERR_NETWORK") {
-          this.changeToastMsg(RESOURCES.FORM_MODE.ERROR,true,false,RESOURCES.NOTIFICATION_TITLE.ERROR);
+          this.changeToastMsg(RESOURCES.FORM_MODE.ERROR, true, false, RESOURCES.NOTIFICATION_TITLE.ERROR);
           this.onshowToast();
           this.isShowLoading = false;
         }
       },
     },
-  
-    updated() {},
+
+    updated() { },
     watch: {
     },
   };
-  </script>
-  <style>
-  .pagination {
-    list-style: none;
-  }
-  
-  .page-item {
-    padding: 0 8px;
-    margin: 0 4px;
-  }
-  .page-item.active {
-    border: 1px solid #50b83c;
-  }
-  .prev-btn.disabled,
-  .next-btn.disabled {
-    cursor: default !important;
-    color: #9e9e9e;
-  }
-  .prev-btn.disabled{
-    margin-right: 4px;
-  }
-  .next-btn.disabled {
-    margin-left: 4px;
-  }
-  </style>
+</script>
+<style scoped>
+.pagination {
+  list-style: none;
+}
+
+.page-item {
+  padding: 0 8px;
+  margin: 0 4px;
+}
+
+.page-item.active {
+  border: 1px solid #50b83c;
+}
+
+.prev-btn.disabled,
+.next-btn.disabled {
+  cursor: default !important;
+  color: #9e9e9e;
+}
+
+.prev-btn.disabled {
+  margin-right: 4px;
+}
+
+.next-btn.disabled {
+  margin-left: 4px;
+}
+.tbl-col__action-list.orderlist {
+  height: 33px;
+}
+</style>
   

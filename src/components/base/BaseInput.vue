@@ -11,6 +11,7 @@
     @input="$emit('update:modelValue', $event.target.value)"
     :ref="name"
     :name="name"
+    :multiple="isMultiple"
   />
   
 </template>
@@ -26,6 +27,10 @@ export default {
     inputType: String,
     isErrorInput: Boolean,
     name:String,
+    isMultiple: {
+      default:false,
+      type:Boolean
+    },
     rules:{
       default: new Array(),
       type:Array,

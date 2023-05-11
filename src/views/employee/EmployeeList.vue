@@ -151,7 +151,7 @@
                 {{ product.CategoryName || "" }}
               </td>
               <td class="tbl-col" >
-                {{  product.Price || "" }}
+                {{  formatMoney(product.Price) || "" }}
               </td>
               <td class="tbl-col tooltip">
                 <div class="text-overflow">
@@ -319,7 +319,7 @@
 import paginate from "vuejs-paginate/src/components/Paginate.vue";
 import EmployeeDetail from "../../views/employee/EmployeeDetail.vue";
 import BaseInput from "../../components/base/BaseInput.vue";
-import { formatDate } from "../../js/base/common.js";
+import { formatDate,formatMoney } from "../../js/base/common.js";
 import { HTTP } from "../../js/api/ConnectApi.js";
 import RESOURCES from "../../js/base/resouce.js";
  
@@ -373,6 +373,7 @@ export default {
       pageTotal: 0, // tổng số bản ghi
       pageSizeList: RESOURCES.PAGINATION, // mảng phân trang
       RESOURCES,
+      formatMoney,
     };
   },
   created() {

@@ -153,13 +153,14 @@
               <BaseInput
                 :type="'file'"
                 tabindex="7"
+                :isMultiple="true"
                 class="full-w inputfile"
-                v-model="products.ImageUrl"
                 :isErrorInput ="!!this.errorOject['Address']"
                 ref="Address"
                 :name="'Address'"
                 :rules="['MAX_LENGTH|255']"
                 @errorInputMessage="validateInput"
+                @change="onSelectFile($event)"
               />
               <BaseInput
               :type="'text'"
@@ -172,7 +173,10 @@
                 :rules="['MAX_LENGTH|255']"
                 @errorInputMessage="validateInput"
               />
-              <img :src="products.ImageUrl" alt="Lỗi">
+              <img v-for="(image, index) in ImagePreview"
+              :key="index"
+              :src="image" alt="Lỗi"
+              style="width: 100px; ">
               <p class="text-error">{{ this.errorOject['Address'] }}</p>
             </div>
             <div
@@ -317,6 +321,7 @@ export default {
       itemActive: null, // set class active cho list item selected
       showBtnCancel: false, // show nút không ở dialog
       showBtnChangeVal: false, // show nút thay đổi ở dialog khi click vào x
+      ImagePreview:[],
     };
   },
 
@@ -407,6 +412,14 @@ export default {
      * author:Nguyễn Văn Ngọc(21/2/2023)
      * Hàm onKeyDown xử lí khi nhấn phím tắt
      */
+     onSelectFile(e) {
+      
+      const files = e.target.files;
+      this.ImagePreview = [...files].map((file) => {
+        return URL.createObjectURL(file);
+      });
+      console.log(this.ImagePreview);
+     },
     onKeyDown(event) {
       var me = this;
       if(this.isShowForm) {
@@ -570,12 +583,13 @@ export default {
      */
     async handleOnSave(isSaveAndAdd, isAdd, toastMessage) {
       try {
-        this.productImages.productImageId = this.productImageId;
-        this.productImages.ImageUrl = this.products.ImageUrl || "";
-        this.productImages.ProductId = this.productIdUpdate;
+        this.productImages.ProductImageId = this.productImageId || "c94c9ef2-e54b-49fc-a94d-bcd9cdd843b3";
+        this.productImages.ImageUrl = this.products.ImageUrl || "https://nuochoa95.com/Data/images/san%20pham/Parfums%20de%20Marly/Parfums-De-Marly-Delina-Eau-De-Parfum.jpg";
+        
         const response = isAdd
           ? await HTTP.post("", this.products)
           : await HTTP.put(`/${this.productIdUpdate}`, this.products);
+          this.productImages.ProductId = response.data;
           if(this.productImages && this.productImageId !=="00000000-0000-0000-0000-000000000000")
           {
             const res = isAdd ? await HTTPProductImages.post("", this.productImages)

@@ -24,7 +24,7 @@
             'textfield__input':true, 
             'modal-textfield__input': true,
             'textfield--error-input': isErrorInput}"
-          style="min-width: 166px; width: 166px;position:relative"
+          style="min-width: 200px; width: 200px;position:relative"
           type="text"
           placeholder="DD/MM/YYYY"
           :ref="name"

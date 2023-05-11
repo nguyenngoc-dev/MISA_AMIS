@@ -38,6 +38,7 @@
                   @errorInputMessage="validateInput"
                   tabindex="1"
                   @keydown.shift.tab.prevent="onFocusCancelButton()"
+                  disabled
                 />
                 <div class="text-error">{{ errorCodeMessage  }}</div>
               </div>
@@ -54,6 +55,7 @@
                   @errorInputMessage="validateInput"
                   :name="'FullName'"
                   tabindex="1"
+                  disabled
                 />
                 <p class="text-error">{{this.errorOject['FullName']}} </p>
               </div>
@@ -72,6 +74,7 @@
                   @errorInputMessage="validateInput"
                   :name="'FullName'"
                   tabindex="1"
+                  disabled
                 />
                 <p class="text-error">{{this.errorOject['FullName']}} </p>
               </div>
@@ -88,6 +91,7 @@
                   @errorInputMessage="validateInput"
                   :name="'FullName'"
                   tabindex="1"
+                  disabled
                 />
                 <p class="text-error">{{this.errorOject['FullName']}} </p>
               </div>
@@ -106,6 +110,7 @@
                   @errorInputMessage="validateInput"
                   :name="'FullName'"
                   tabindex="1"
+                  disabled
                 />
                 <p class="text-error">{{this.errorOject['FullName']}} </p>
                 
@@ -121,6 +126,8 @@
                   v-model="saleorders.Status"
                   :name="'FullName'"
                   tabindex="1"
+                  max="3"
+                  min="0"
                 />
                 <p class="text-error">{{this.errorOject['FullName']}} </p>
               </div>
@@ -140,6 +147,7 @@
                   @errorInputMessage="validateInput"
                   :name="'FullName'"
                   tabindex="1"
+                  disabled
                 />
                 <p class="text-error">{{this.errorOject['FullName']}} </p>
               </div>
