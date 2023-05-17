@@ -78,6 +78,7 @@
                 />
                 <p class="text-error">{{this.errorOject['FullName']}} </p>
               </div>
+
               <div class="textfield">
                 <label for="" class="textfield__label modal-label">
                   Tên<span class="required">*</span>
@@ -96,6 +97,40 @@
                 <p class="text-error">{{this.errorOject['FullName']}} </p>
               </div>
               </div>
+               <!-- <div class="flex mb-12 ">
+                   <div class="textfield modal-textfield user-combo" style="max-width: 300px; width: 300px;margin-right: 12px;">
+                 <BaseCombobox
+                   :comboName="'Tỉnh thành'"
+                   :errorMessage="this.errorOject['RegionID']?'Danh mục không hợp lệ': null"
+                   :isUnit="!!errorOject['RegionID']"
+                   :api="'https://localhost:44314/api/v1/Regions?parentID=234'"
+                   :propName="'RegionName'"
+                   :rules="['NOT_EMPTY']"
+                   @errorInputMessage="validateInput"
+                   :propValue="'RegionID'"
+                   @invalidUnit="invalidUnit"
+                   :name="'RegionID'"
+                   ref="RegionID"
+                   v-model="this.province"
+                 />
+               </div>                
+               <div class="textfield modal-textfield user-combo" style="max-width: 300px; width: 300px">
+                 <BaseCombobox
+                   :comboName="'Quận huyện'"
+                   :errorMessage="this.errorOject['RegionID']?'Danh mục không hợp lệ': null"
+                   :isUnit="!!errorOject['RegionID']"
+                   :api="'https://localhost:44314/api/v1/Regions?parentID=234'"
+                   :propName="'RegionName'"
+                   :rules="['NOT_EMPTY']"
+                   @errorInputMessage="validateInput"
+                   :propValue="'RegionID'"
+                   @invalidUnit="invalidUnit"
+                   :name="'RegionID'"
+                   ref="RegionID"
+                   v-model="this.province"
+                 />
+               </div>
+              </div> -->
               <div class="flex mb-12">
                 <div class="textfield">
                 <label for="" class="textfield__label modal-label">
@@ -275,6 +310,9 @@
         itemActive: null, // set class active cho list item selected
         showBtnCancel: false, // show nút không ở dialog
         showBtnChangeVal: false, // show nút thay đổi ở dialog khi click vào x
+        province:"",
+        district:"",
+        commune:"",
       };
     },
   
@@ -667,6 +705,9 @@
   }
   .mb-12 {
     margin-bottom: 12px;
+  }
+  .user-combo.modal-textfield .modal-textfield__input {
+    width: 300px;
   }
   </style>
   

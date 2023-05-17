@@ -69,12 +69,6 @@
             >
               <span class="tooltiptext" style="min-width: 100px;left: 5%;">Lấy lại dữ liệu</span>
             </div>
-            <div
-              class="tooltip icon-export sidebar-item__icon content-wrapper__action-refresh"
-              @click="exportData()"
-            >
-              <span class="tooltiptext" style="min-width: 100px;left: 6%;">Xuất ra Excel(Shift+P)</span>
-            </div>
           </div>
         </div>
         <div class="grid-table">
@@ -193,47 +187,7 @@
           <!-- <div>
             Tổng: <strong id="pagetotal">{{ pageTotal }}</strong> bản ghi
           </div> -->
-          <div style="display: flex; align-items: center">
-            <div class="textfield">
-              <label for="" class="textfield__label">
-                <label
-                  for="dropbtn"
-                  class="textfield__icon"
-                  style="
-                    display: flex;
-                    justify-content: center;
-                    align-items: center;
-                  "
-                  @click="showPageList()"
-                  tabindex="0"
-                >
-                  <div class="icon-dropdown"></div>
-                </label>
-                <!-- <input type="checkbox" name="" id="dropbtn" /> -->
-              </label>
-  
-              <BaseInput
-                :class="{
-                  'textfield-max-content': true,
-                  'show-list': showListPage,
-                }"
-                v-model="currentPageSizeText"
-              />
-              <ul :class="{ 'textfield-list': true, 'show-list': showListPage }">
-                <li
-                  v-for="(item, index) in pageSizeList"
-                  :key="index"
-                  :class="{
-                    'textfield-item': true,
-                    active: index === itemActive,
-                  }"
-                  @click="onSelectPageSize(index, item)"
-                >
-                  {{ item.text }}
-                </li>
-              </ul>
-            </div>
-          </div>
+          
         </div>
       </div>
     </div>
@@ -283,7 +237,6 @@
     name: "EmployeeList",
     components: {
     CategoryDetail,
-      BaseInput,
     },
     data() {
       return {

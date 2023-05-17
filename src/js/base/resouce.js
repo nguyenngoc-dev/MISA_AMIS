@@ -95,6 +95,24 @@ const RESOURCES = {
       text: "120 bản ghi trên 1 trang",
     },
   ],
+  ORDERSTATUS: [
+    {
+      value: 0,
+      text: "Đang chuẩn bị hàng",
+    },
+    {
+      value: 1,
+      text: "Đang giao hàng",
+    },
+    {
+      value: 2,
+      text: "Giao hàng thành công",
+    },
+    {
+      value: 3,
+      text: "Đơn hàng bị hủy",
+    },
+  ],
 
   STATUSCODE: {
     OK: 200,

@@ -153,7 +153,7 @@
               <BaseInput
                 :type="'file'"
                 tabindex="7"
-                :isMultiple="true"
+                :isMultiple="false"
                 class="full-w inputfile"
                 :isErrorInput ="!!this.errorOject['Address']"
                 ref="Address"
@@ -166,7 +166,6 @@
               :type="'text'"
                 tabindex="7"
                 class="full-w"
-                v-model="products.ImageUrl"
                 :isErrorInput ="!!this.errorOject['Address']"
                 ref="Address"
                 :name="'Address'"
@@ -322,6 +321,7 @@ export default {
       showBtnCancel: false, // show nút không ở dialog
       showBtnChangeVal: false, // show nút thay đổi ở dialog khi click vào x
       ImagePreview:[],
+      attachFile:null,
     };
   },
 
@@ -351,6 +351,7 @@ export default {
     },
   },
   created() {
+
     // Thay đổi form title
     if (this.isDuplicate) {
       this.formTitle = RESOURCES.FORM_TITLE.PRODUCT.DUPLICATE;
@@ -367,6 +368,7 @@ export default {
         // gọi api lấy dữ liệu truyền vào th employee
         HTTP.get(`/${this.productIdUpdate}`).then((response) => {
           this.products = response.data;
+          this.ImagePreview.push(this.products.ImageUrl)
           for(const property in this.products) {
             this.oldEmployee[property] = this.products[property]
           }
@@ -418,7 +420,7 @@ export default {
       this.ImagePreview = [...files].map((file) => {
         return URL.createObjectURL(file);
       });
-      console.log(this.ImagePreview);
+      this.attachFile = files[0];
      },
     onKeyDown(event) {
       var me = this;
@@ -585,10 +587,16 @@ export default {
       try {
         this.productImages.ProductImageId = this.productImageId || "c94c9ef2-e54b-49fc-a94d-bcd9cdd843b3";
         this.productImages.ImageUrl = this.products.ImageUrl || "https://nuochoa95.com/Data/images/san%20pham/Parfums%20de%20Marly/Parfums-De-Marly-Delina-Eau-De-Parfum.jpg";
-        
+        let formData = new FormData();
+        for(const product in this.products) {
+          formData.append(product, this.products[product]);
+        }
+        formData.append("AttachFile",this.attachFile);
         const response = isAdd
-          ? await HTTP.post("", this.products)
-          : await HTTP.put(`/${this.productIdUpdate}`, this.products);
+          ? await HTTP.post("", formData,{headers: {
+          "Content-Type": "multipart/form-data",
+        }})
+          : await HTTP.put(`/${this.productIdUpdate}`, formData);
           this.productImages.ProductId = response.data;
           if(this.productImages && this.productImageId !=="00000000-0000-0000-0000-000000000000")
           {

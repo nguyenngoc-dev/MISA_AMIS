@@ -142,7 +142,7 @@
                   <span  class="tooltiptext" style="top:100%">{{ product.ProductName }}</span>
                 </div>
               </td>
-              <td class="tbl-col tbl-col--large tooltip" style="text-align: center;">
+              <td class="tbl-col tbl-col--large tooltip" style="text-align: center;width: 270px;">
                 <div class="text-overflow tbl-product-image-container">
                   <img :src="product.ImageUrl" alt="Lỗi" class="tbl-product-image">
                 </div>
@@ -155,7 +155,7 @@
               </td>
               <td class="tbl-col tooltip">
                 <div class="text-overflow">
-                  {{ product.ShortDescription || "" }}
+                  {{ product.ShortDescription || "" }}  
                 </div>
               </td>
               <td class="tbl-col  tooltip">
@@ -592,7 +592,9 @@ export default {
           `/filter`,
           this.getFilterParams(this.textSearch, 20, 1)
         );
-        this.products = response.data.Data;
+        this.products = response.data.Data.filter(product => {
+          return product.IsActive == true
+        });
         this.isShowLoading = false;
         this.totalPage = response.data.TotalPage;
         this.pageTotal = response.data.TotalRecord;
