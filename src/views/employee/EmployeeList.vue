@@ -144,7 +144,7 @@
               </td>
               <td class="tbl-col tbl-col--large tooltip" style="text-align: center;width: 270px;">
                 <div class="text-overflow tbl-product-image-container">
-                  <img :src="product.ImageUrl" alt="Lỗi" class="tbl-product-image">
+                  <img :src="product.ImageUrl" alt="Lỗi" style="width: unset;" class="tbl-product-image">
                 </div>
               </td>
               <td class="tbl-col">
@@ -154,8 +154,9 @@
                 {{  formatMoney(product.Price) || "" }}
               </td>
               <td class="tbl-col tooltip">
-                <div class="text-overflow">
-                  {{ product.ShortDescription || "" }}  
+                <div class="text-overflow" style="width: 250px;">
+                  {{ product.ShortDescription || "" }} 
+                  <span  class="tooltiptext" style="top:100%; white-space: pre-wrap;">{{ product.ShortDescription }}</span> 
                 </div>
               </td>
               <td class="tbl-col  tooltip">

@@ -73,28 +73,7 @@
                 <p class="text-error">{{ this.errorOject['FullName'] }} </p>
 
               </div>
-              <div class="textfield">
-                <label for="" class="textfield__label modal-label">
-                  Tình trạng<span class="required">*</span>
-                </label>
-                <BaseInput :isErrorInput="!!this.errorOject['FullName']"
-                  style="min-width: 300px; width: 300px;margin-right: 12px;" :inputType="'number'"
-                  v-model="saleorders.Status" :name="'FullName'" tabindex="1" max="3" min="0" />
-                <p class="text-error">{{ this.errorOject['FullName'] }} </p>
-              </div>
-            </div>
-            <div class="flex mb-12">
-
-              <div class="textfield">
-                <label for="" class="textfield__label modal-label">
-                  Tổng tiền<span class="required">*</span>
-                </label>
-                <BaseInput :isErrorInput="!!this.errorOject['FullName']" style="min-width: 300px; width: 300px"
-                  :inputType="'text'" v-model="saleorders.TotalPrice" :rules="['NOT_EMPTY', 'MAX_LENGTH|100']"
-                  @errorInputMessage="validateInput" :name="'FullName'" tabindex="1" disabled />
-                <p class="text-error">{{ this.errorOject['FullName'] }} </p>
-              </div>
-              <div style="display: flex; align-items: center; margin-left: 12px; flex: 1;">
+              <div style="display: flex; align-items: center;  flex: 1;">
                 <div class="textfield" style="width: 100%;">
                   <label for="" class="textfield__label modal-label">
                     Tình Trạng <span class="required">*</span>
@@ -105,7 +84,7 @@
                     height: 36px;
                     width: 36px;
                     top: 22px;
-                    right: 13px;
+                    right: 1px;
                   " @click="showPageList()" tabindex="0">
                       <div class="icon-dropdown"></div>
                     </label>
@@ -117,7 +96,7 @@
                   }" v-model="currentPageSizeText"
                   style="width: 300px;"
                   />
-                  <ul style="width: 96%;" :class="{ 'textfield-list': true, 'show-list': showListPage }">
+                  <ul  :class="{ 'textfield-list': true, 'show-list': showListPage }">
                     <li v-for="(item, index) in pageSizeList" :key="index" :class="{
                       'textfield-item': true,
                       active: index === itemActive,
@@ -132,6 +111,19 @@
                   :container-class="'pagination'" :page-class="'page-item'" :v-show="this.totalPage">
                 </paginate>
               </div>
+            </div>
+            <div class="flex mb-12">
+
+              <div class="textfield">
+                <label for="" class="textfield__label modal-label">
+                  Tổng tiền<span class="required">*</span>
+                </label>
+                <BaseInput :isErrorInput="!!this.errorOject['FullName']" style="min-width: 300px; width: 300px"
+                  :inputType="'text'" v-model="saleorders.TotalPrice" :rules="['NOT_EMPTY', 'MAX_LENGTH|100']"
+                  @errorInputMessage="validateInput" :name="'FullName'" tabindex="1" />
+                <p class="text-error">{{ this.errorOject['FullName'] }} </p>
+              </div>
+             
             </div>
 
           </div>
@@ -253,7 +245,8 @@ export default {
           for (const property in this.saleorders) {
             this.oldEmployee[property] = this.saleorders[property]
           }
-
+          this.currentPageSizeText = RESOURCES.ORDERSTATUS[this.saleorders.Status].text;
+          this.itemActive = this.saleorders.Status;
         });
       } catch (error) {
         console.log(error);
@@ -280,21 +273,13 @@ export default {
        * Hàm onSelectPageSize chọn số bản ghi trên một trang
        */
        async onSelectPageSize(index, item) {
-        try {
-          this.isShowLoading = !this.isShowLoading;
-          // gọi api lấy số bản ghi trên trang dựa vào value
-          var res = await HTTPOrders.get()
-          this.saleOrders = res.data;
-          this.totalPage = res.data.TotalPage;
+          this.saleorders.Status = item.value;
           this.isShowLoading = false;
-          this.currentPageSizeText = item.text;
           this.currentPageSize = item.value;
           this.showListPage = false;
           this.textSearch = "";
+          this.currentPageSizeText = item.text;
           this.itemActive = index;
-        } catch (error) {
-          this.handleExeption(error);
-        }
       },
       /**
        * author:Nguyễn Văn Ngọc(10/1/2023)

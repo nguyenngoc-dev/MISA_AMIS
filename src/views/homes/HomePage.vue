@@ -90,7 +90,7 @@
             <!-- </thead>    -->
 
             <tr class="tbl-row" v-for="(saleOrder, index) in saleOrders" :key="index"
-              @dblclick="rowOnDblClick(saleOrder)">
+              @dblclick="onShowDetailOrder(saleOrder)">
               <td class="tbl-col tooltip" style="width: 200px;">
                 <div>
                   {{ saleOrder.SaleOrderCode || "" }}
@@ -169,7 +169,51 @@
       </div>
     </div>
   </div>
-
+  <div class="order-detail-dialog" v-if="isShowDetailOrder">
+    <div style="display: flex;
+          justify-content: space-between;
+          align-items: center;">
+      <h2 style=" margin: 0;
+          color: black;
+          margin-bottom: 12px;
+          font-size: 18px;">Chi tiết đơn hàng</h2>
+    
+      <div class="icon-close-container">
+        <div @click="onCloseOrderDetail()" class="icon-close"></div>
+      </div>
+    </div>
+  <div style="font-size: 16px; font-weight: bold; margin-bottom: 12px;" class="reject-reason" v-if="!!orderSelected.RejectReason">
+        Lý do hủy đơn: {{ orderSelected.RejectReason }}
+  </div>
+    <table>
+      <thead>
+        <tr>
+          <th>Mã sản phẩm</th>
+          <th>Tên sản phẩm</th>
+          <th>Ảnh sản phẩm</th>
+          <th>Số lượng</th>
+          <th>Đơn giá</th>
+          <th>Thành tiền</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr v-for="(orderItem, index) in detailProduct" :key="index">
+          <td>{{ orderItem.Product.ProductCode }}</td>
+          <td>{{ orderItem.Product.ProductName }}</td>
+          <td> <img :src="orderItem.Product.ImageUrl" alt=""> </td>
+          <td>{{ orderItem.Quantity }}</td>
+          <td>{{ formatMoney(orderItem.Product.Price) }}</td>
+          <td>{{ formatMoney(orderItem.Product.Price * orderItem.Quantity) }}</td>
+        </tr>
+      </tbody>
+      <tfoot>
+        <tr>
+          <td colspan="5"><strong>Tổng tiền</strong></td>
+          <td>{{ formatMoney(orderSelected.TotalPrice) }}</td>
+        </tr>
+      </tfoot>
+    </table>
+  </div>
   <OrderDetail v-if="isShowDialog" @hideDialog="showDialog(false)" @onLoadData="onLoadCurrentpage(this.currentPageNum)"
     :orderIdUpdate="orderIdSelected" :productImageId="productImageIdSelected" @onshowToast="onshowToast"
     @onhideToast="onhideToast" :isDuplicate="productIdDuplicate" :isShowForm="isShowDialog"
@@ -185,7 +229,7 @@ import paginate from "vuejs-paginate/src/components/Paginate.vue";
 import OrderDetail from "../order/OrderDetail.vue";
 import BaseInput from "../../components/base/BaseInput.vue";
 import { formatDate, formatMoney } from "../../js/base/common.js";
-import { HTTP, HTTPOrders } from "../../js/api/ConnectApi.js";
+import { HTTP, HTTPOrders,HTTPOrderItem } from "../../js/api/ConnectApi.js";
 import RESOURCES from "../../js/base/resouce.js";
 import BaseDatePicker from '../../components/base/BaseDatePicker.vue'
 export default {
@@ -244,7 +288,10 @@ export default {
       totalProductPerchased: 0,
       totalOrder: 0,
       totalValue: 0,
-      formatMoney
+      formatMoney,
+      isShowDetailOrder:false,
+      orderSelected: {},
+      detailProduct:[],
     };
   },
   async created() {
@@ -272,6 +319,27 @@ export default {
 
   },
   methods: {
+    onCloseOrderDetail() {
+      this.isShowDetailOrder = false;
+    },
+    async onShowDetailOrder(saleorder) {
+      this.orderSelected = saleorder;
+      this.detailProduct = [];
+      this.isShowDetailOrder = true;
+      const res = await HTTPOrderItem.get();
+      let orderItems = res.data;
+      let needOrderItem =[];
+      orderItems.forEach(item => {
+        if (item.SaleOrderId == this.orderSelected.SaleOrderId) {
+          needOrderItem.push(item);
+          }
+      });
+      for (let i = 0; i < needOrderItem.length; i++) {
+          const response = await HTTP.get(`/${needOrderItem[i].ProductId}`);
+          this.detailProduct.push({Product:response.data,Quantity:needOrderItem[i].Quantity})
+      }
+
+    },
     async onFilterOrder() {
       this.isShowLoading = true;
       this.totalValue = 0;
@@ -841,6 +909,71 @@ export default {
 .sumary .empty-data {
   text-align: center;
   position: unset;
+}
+.order-detail-dialog {
+    position: fixed;
+    background: white;
+    padding: 20px;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    min-width: 700px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    z-index: 1000;
+}
+
+.order-detail-dialog .icon-close-container {
+    display: flex;
+    justify-content: flex-end;
+    margin-bottom: 12px;
+}
+.order-detail-dialog .container {
+    min-height: 400px;
+    max-width: 1060px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+.order-detail-dialog table {
+    border-collapse: collapse;
+    width: 100%;
+}
+
+.order-detail-dialog th,
+td {
+    border: 1px solid #ddd;
+    padding: 8px;
+}
+
+.order-detail-dialog th {
+    padding-top: 12px;
+    padding-bottom: 12px;
+    color: white;
+    background-color: var(--primary-color);
+    text-align: center;
+}
+
+.order-detail-dialog tr {
+    cursor: pointer;
+    min-height: 40px;
+}
+
+.order-detail-dialog tr::nth-child(even) {
+    background-color: #f2f2f2;
+}
+
+.order-detail-dialog tr:hover {
+    background-color: #ddd;
+}
+
+.order-detail-dialog img {
+    max-width: 100px;
+    height: auto;
+}
+
+.order-detail-dialog .order-info p {
+    margin-bottom: 10px;
 }
 </style>
     
